@@ -1,0 +1,38 @@
+{
+    "name": "webgl-api",
+    "version": "1.0.0",
+    "description": "A Web API for scalable 3D rendering in the cloud.",
+    "browser": "src/index.ts",
+    "scripts": {
+        "start": "webpack serve --mode development",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/novorender/webgl-api.git"
+    },
+    "keywords": [
+        "3d",
+        "webgl",
+        "cad",
+        "gis"
+    ],
+    "author": "Tore Lode",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/novorender/webgl-api/issues"
+    },
+    "homepage": "https://github.com/novorender/webgl-api#readme",
+    "devDependencies": {
+        "ts-loader": "^9.2.8",
+        "typescript": "^4.6.3",
+        "webpack": "^5.72.0",
+        "webpack-cli": "^4.9.2",
+        "webpack-dev-server": "^4.8.1",
+        "webpack-glsl-loader": "^1.0.1"
+    },
+    "dependencies": {
+        "gl-matrix": "^3.4.3",
+        "tslib": "^2.3.1"
+    }
+}
