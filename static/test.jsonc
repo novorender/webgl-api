@@ -1,4 +1,5 @@
 {
+    "$schema": "../src/render-state-schema.json",
     "actions": [
         {
             "kind": "clear",
@@ -10,21 +11,21 @@
             ],
             "depth": 1
         },
-        // {
-        //     "kind": "fill_rect",
-        //     "rect": {
-        //         "x": 100,
-        //         "y": 100,
-        //         "width": 200,
-        //         "height": 200
-        //     },
-        //     "color": [
-        //         1,
-        //         1,
-        //         0,
-        //         1
-        //     ]
-        // },
+        {
+            "kind": "fill_rect",
+            "rect": {
+                "x": 100,
+                "y": 100,
+                "width": 200,
+                "height": 200
+            },
+            "color": [
+                1,
+                1,
+                0,
+                1
+            ]
+        },
         {
             "kind": "draw_cube",
             "rotationX": 30,

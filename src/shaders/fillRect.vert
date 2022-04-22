@@ -1,10 +1,14 @@
 #version 300 es
 
 in vec2 position;
-uniform vec2 scale;
-uniform vec2 offset;
+
+uniform RectUniforms {
+    vec2 scale;
+    vec2 offset;
+    vec4 color;
+};
 
 void main() {
-    vec2 xy = position * scale + offset * 2.0 - 1.0;
-    gl_Position = vec4(xy, 0.0, 1.0);
+    vec2 xy = position * scale * 2. + offset * 2. - 1.;
+    gl_Position = vec4(xy, 0, 1);
 }

@@ -6,6 +6,7 @@ import { createShaderProgram } from "./shader";
 import { ActionBase } from "./actionBase";
 import { GL } from "./glEnum";
 import { FrameContext } from "./frameContext";
+import { createUniformBlockBuffer, createVertexArrayBuffer, getUniformsInfo } from "./util";
 
 const vertices = [
     -1, -1, -1, 1, -1, -1, 1, 1, -1, -1, 1, -1,
@@ -34,58 +35,40 @@ const indices = [
 
 class Action extends ActionBase {
     readonly #program;
-    readonly #positions;
-    readonly #colors;
     readonly #indices;
     readonly #vao;
-    readonly #projectionMatrixUniform;
-    readonly #viewMatrixUniform;
-    readonly #modelMatrixUniform;
+    readonly #cameraUniforms; // Should really be in view or somewhere else.
+    readonly #meshUniforms;
 
     constructor(readonly view: View) {
         super(view);
         const { gl } = view;
-
         const program = this.#program = createShaderProgram(gl, { vertex: vs, fragment: fs });
-        const posAttrib = gl.getAttribLocation(program, "position");
-        console.assert(posAttrib >= 0);
-        const colAttrib = gl.getAttribLocation(program, "color");
-        console.assert(colAttrib >= 0);
-        this.#projectionMatrixUniform = gl.getUniformLocation(program, "projectionMatrix");
-        this.#viewMatrixUniform = gl.getUniformLocation(program, "viewMatrix");
-        this.#modelMatrixUniform = gl.getUniformLocation(program, "modelMatrix");
-
-        this.#positions = gl.createBuffer()!;
-        gl.bindBuffer(GL.ARRAY_BUFFER, this.#positions);
-        gl.bufferData(GL.ARRAY_BUFFER, new Float32Array(vertices), GL.STATIC_DRAW);
-
-        this.#colors = gl.createBuffer()!;
-        gl.bindBuffer(GL.ARRAY_BUFFER, this.#colors);
-        gl.bufferData(GL.ARRAY_BUFFER, new Float32Array(colors), GL.STATIC_DRAW);
+        const uniformsInfo = getUniformsInfo(gl, program);
+        this.#cameraUniforms = createUniformBlockBuffer(gl, program, "CameraUniforms", uniformsInfo);
+        this.#meshUniforms = createUniformBlockBuffer(gl, program, "MeshUniforms", uniformsInfo);
+        this.#vao = createVertexArrayBuffer(gl, program, {
+            buffers: [
+                { data: new Float32Array(vertices) },
+                { data: new Float32Array(colors) },
+            ],
+            attributes: {
+                position: { numComponents: 3, buffer: 0 },
+                color: { numComponents: 3, buffer: 1 },
+            }
+        });
 
         this.#indices = gl.createBuffer()!;
         gl.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.#indices);
         gl.bufferData(GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), GL.STATIC_DRAW);
         gl.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, null);
-
-        gl.bindBuffer(GL.ARRAY_BUFFER, null);
-        this.#vao = gl.createVertexArray()!;
-        gl.bindVertexArray(this.#vao);
-        gl.bindBuffer(GL.ARRAY_BUFFER, this.#positions);
-        gl.vertexAttribPointer(posAttrib, 3, GL.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(posAttrib);
-        gl.bindBuffer(GL.ARRAY_BUFFER, this.#colors);
-        gl.vertexAttribPointer(colAttrib, 3, GL.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(colAttrib);
-        gl.bindBuffer(GL.ARRAY_BUFFER, null);
-        gl.bindVertexArray(null);
     }
 
     override dispose() {
         const { gl } = this.view;
-        gl.deleteVertexArray(this.#vao);
-        gl.deleteBuffer(this.#positions);
-        gl.deleteBuffer(this.#colors);
+        this.#vao.dispose();
+        this.#cameraUniforms.dispose();
+        this.#meshUniforms.dispose();
         gl.deleteBuffer(this.#indices);
         gl.deleteProgram(this.#program);
     }
@@ -142,13 +125,21 @@ class Action extends ActionBase {
         gl.enable(gl.DEPTH_TEST);
 
         gl.useProgram(this.#program);
-        gl.uniformMatrix4fv(this.#projectionMatrixUniform, false, projectionMatrix);
-        gl.uniformMatrix4fv(this.#viewMatrixUniform, false, viewMatrix);
-        gl.uniformMatrix4fv(this.#modelMatrixUniform, false, modelMatrix);
 
-        gl.bindVertexArray(this.#vao);
+        const cameraUniforms = this.#cameraUniforms;
+        cameraUniforms.set({ projectionMatrix, viewMatrix });
+
+        const meshUniforms = this.#meshUniforms;
+        meshUniforms.set({ modelMatrix });
+
+        gl.bindBufferBase(GL.UNIFORM_BUFFER, cameraUniforms.blockIndex, cameraUniforms.buffer);
+        gl.bindBufferBase(GL.UNIFORM_BUFFER, meshUniforms.blockIndex, meshUniforms.buffer);
+
+        gl.bindVertexArray(this.#vao.array);
         gl.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.#indices);
         gl.drawElements(GL.TRIANGLES, indices.length, GL.UNSIGNED_SHORT, 0);
+        gl.bindBufferBase(GL.UNIFORM_BUFFER, meshUniforms.blockIndex, null);
+        gl.bindBufferBase(GL.UNIFORM_BUFFER, cameraUniforms.blockIndex, null);
 
         gl.disable(gl.DEPTH_TEST);
     }
@@ -159,7 +150,12 @@ export namespace DrawCubeAction {
         return new Action(view);
     }
     export interface Params {
+        readonly kind: "draw_cube";
         readonly rotationX?: number; // in degrees
         readonly rotationY?: number; // in degrees
     }
+    export interface Data extends Params {
+        readonly kind: "draw_cube";
+    }
+    export declare const data: Data;
 }

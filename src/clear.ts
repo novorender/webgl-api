@@ -27,17 +27,20 @@ class Action extends ActionBase {
             gl.clear(mask);
     }
 }
+
 export namespace ClearAction {
-    // export interface Interface extends Action { };
     export function create(view: View): ActionBase {
         return new Action(view);
     }
     export interface Params {
-        // readonly kind: "clear";
         readonly color?: RGBA;
         readonly depth?: UnitFloat;
         readonly stencil?: UInt8;
         // readonly normal?: Vec3;
         // readonly linearZ?: number;
     }
+    export interface Data extends Params {
+        readonly kind: "clear";
+    }
+    export declare const data: Data;
 }

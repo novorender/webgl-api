@@ -1,4 +1,5 @@
-import { getActionTypes } from "./actions";
+import { ActionBase } from "./actionBase";
+import { ActionKind, getActionTypes } from "./actions";
 import { FrameContext } from "./frameContext";
 import { GL } from "./glEnum";
 import { RenderState } from "./state";
@@ -42,6 +43,16 @@ export class View {
         gl.useProgram(null);
         gl.bindBuffer(GL.ARRAY_BUFFER, null);
         gl.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, null);
+        // gl.bindBuffer(GL.READ_BUFFER, null);
+        // gl.bindBuffer(GL.DRAW_BUFFER0, null);
+        // gl.bindBuffer(GL.DRAW_BUFFER1, null);
+        // gl.bindBuffer(GL.DRAW_BUFFER2, null);
+        // gl.bindBuffer(GL.DRAW_BUFFER3, null);
+        // gl.bindBuffer(GL.DRAW_BUFFER4, null);
+        // gl.bindBuffer(GL.DRAW_BUFFER5, null);
+        // gl.bindBuffer(GL.DRAW_BUFFER6, null);
+        // gl.bindBuffer(GL.DRAW_BUFFER7, null);
+        gl.bindVertexArray(null);
         const n = this.#activeTextureUnits;
         for (let i = 0; i < n; i++) {
             gl.activeTexture(GL.TEXTURE0 + i);
@@ -49,7 +60,8 @@ export class View {
             gl.bindTexture(GL.TEXTURE_CUBE_MAP, null);
         }
         gl.activeTexture(GL.TEXTURE0);
-        // TODO: unbind frame and render buffers 
+        gl.bindRenderbuffer(GL.RENDERBUFFER, null);
+        gl.bindFramebuffer(GL.FRAMEBUFFER, null);
         const err = gl.getError();
         return err;
     }

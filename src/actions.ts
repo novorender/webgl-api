@@ -1,15 +1,16 @@
 import { ClearAction } from "./clear";
+// import type { ClearAction } from "./clear";
 import { DrawCubeAction } from "./drawCube";
 import { FillRectAction } from "./fillRect";
 import { View } from "./view";
 
-export function getActionTypes(view: View) {
-    const actionNamespaces = {
-        clear: ClearAction,
-        fill_rect: FillRectAction,
-        draw_cube: DrawCubeAction,
-    } as const;
+const actionNamespaces = {
+    clear: ClearAction,
+    fill_rect: FillRectAction,
+    draw_cube: DrawCubeAction,
+} as const;
 
+export function getActionTypes(view: View) {
     // create action types lazily through getters
     const actionTypes = {};
     for (const [key, value] of Object.entries(actionNamespaces)) {
@@ -30,6 +31,11 @@ export function getActionTypes(view: View) {
     return actionTypes as AT;
 }
 
-type AT = ReturnType<typeof getActionTypes>;
-type ActionKind = keyof AT;
-export type RenderActionData = { readonly kind: ActionKind };
+
+type NT = typeof actionNamespaces[keyof typeof actionNamespaces];
+export type RenderActionData = NT["data"];
+export type ActionKind = RenderActionData["kind"];
+// type AT = ReturnType<typeof getActionTypes>;
+// export type ActionKind = keyof AT;
+// export type RenderActionData = PT<ActionKind>;
+// export type RenderActionData = { readonly kind: ActionKind };

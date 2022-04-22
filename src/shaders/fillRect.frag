@@ -1,10 +1,13 @@
 #version 300 es
-precision mediump float;
+precision highp float;
 
-// uniform vec2 resolution;
-uniform vec4 color;
-// uniform sampler2D tex;
 out vec4 fragColor;
+
+uniform RectUniforms {
+    vec2 scale;
+    vec2 offset;
+    vec4 color;
+};
 
 void main() {
     // vec2 uv = gl_FragCoord.xy / resolution;

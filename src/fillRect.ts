@@ -6,60 +6,50 @@ import { createShaderProgram } from "./shader";
 import { ActionBase } from "./actionBase";
 import { GL } from "./glEnum";
 import { FrameContext } from "./frameContext";
+import { createVertexArrayBuffer, createUniformBlockBuffer, getUniformsInfo } from "./util";
 
 class Action extends ActionBase {
     readonly #program;
-    readonly #vb;
     readonly #vao;
-    readonly #scaleUniform;
-    readonly #offsetUniform;
-    readonly #colorUniform;
+    readonly #rectUniforms;
 
     constructor(readonly view: View) {
         super(view);
         const { gl } = view;
-
         const program = this.#program = createShaderProgram(gl, { vertex: vs, fragment: fs });
-        const posAttrib = gl.getAttribLocation(program, "position");
-        console.assert(posAttrib >= 0);
-        this.#scaleUniform = gl.getUniformLocation(program, "scale");
-        this.#offsetUniform = gl.getUniformLocation(program, "offset");
-        this.#colorUniform = gl.getUniformLocation(program, "color");
-
-        this.#vb = gl.createBuffer()!;
-        gl.bindBuffer(GL.ARRAY_BUFFER, this.#vb);
-        gl.bufferData(GL.ARRAY_BUFFER, new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]), GL.STATIC_DRAW);
-        gl.bindBuffer(GL.ARRAY_BUFFER, null);
-
-        this.#vao = gl.createVertexArray()!;
-        gl.bindVertexArray(this.#vao);
-        gl.bindBuffer(GL.ARRAY_BUFFER, this.#vb);
-        gl.vertexAttribPointer(posAttrib, 2, GL.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(posAttrib);
-        gl.bindBuffer(GL.ARRAY_BUFFER, null);
-        gl.bindVertexArray(null);
+        const uniformsInfo = getUniformsInfo(gl, program);
+        this.#rectUniforms = createUniformBlockBuffer(gl, program, "RectUniforms", uniformsInfo);
+        this.#vao = createVertexArrayBuffer(gl, program, {
+            buffers: [
+                { data: new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]) }
+            ],
+            attributes: {
+                position: { numComponents: 2 }
+            }
+        });
     }
 
     override dispose() {
         const { gl } = this.view;
-        gl.deleteVertexArray(this.#vao);
-        gl.deleteBuffer(this.#vb);
+        this.#vao.dispose();
+        this.#rectUniforms.dispose();
         gl.deleteProgram(this.#program);
     }
 
     override execute(frameContext: FrameContext, params: FillRectAction.Params) {
         const { gl, view } = frameContext;
-        const { color, rect } = params;
-        const sx = rect.width / view.width * 2;
-        const sy = rect.height / view.height * 2;
-        const ox = rect.x / view.width;
-        const oy = rect.y / view.height;
+        const { rect } = params;
+        const color = params.color ?? [1, 1, 1, 1];
+        const scale = [rect.width / view.width, rect.height / view.height];
+        const offset = [rect.x / view.width, rect.y / view.height];
         gl.useProgram(this.#program);
-        gl.uniform2f(this.#scaleUniform, sx, sy);
-        gl.uniform2f(this.#offsetUniform, ox, oy);
-        gl.uniform4fv(this.#colorUniform, color ?? [1, 1, 1, 1]);
-        gl.bindVertexArray(this.#vao);
+        const uniforms = this.#rectUniforms;
+        const { blockIndex } = uniforms;
+        uniforms.set({ scale, offset, color });
+        gl.bindBufferBase(GL.UNIFORM_BUFFER, blockIndex, uniforms.buffer);
+        gl.bindVertexArray(this.#vao.array);
         gl.drawArrays(GL.TRIANGLE_STRIP, 0, 4);
+        gl.bindBufferBase(GL.UNIFORM_BUFFER, blockIndex, null);
     }
 }
 
@@ -77,4 +67,8 @@ export namespace FillRectAction {
             readonly height: number;
         }
     }
+    export interface Data extends Params {
+        readonly kind: "fill_rect";
+    }
+    export declare const data: Data;
 }

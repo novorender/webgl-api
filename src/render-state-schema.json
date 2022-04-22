@@ -1,0 +1,139 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "ClearAction.Data": {
+            "properties": {
+                "color": {
+                    "items": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "maxItems": 4,
+                    "minItems": 4,
+                    "type": "array"
+                },
+                "depth": {
+                    "type": "number"
+                },
+                "kind": {
+                    "enum": [
+                        "clear"
+                    ],
+                    "type": "string"
+                },
+                "stencil": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "DrawCubeAction.Data": {
+            "properties": {
+                "kind": {
+                    "enum": [
+                        "draw_cube"
+                    ],
+                    "type": "string"
+                },
+                "rotationX": {
+                    "type": "number"
+                },
+                "rotationY": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "FillRectAction.Data": {
+            "properties": {
+                "color": {
+                    "items": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "maxItems": 4,
+                    "minItems": 4,
+                    "type": "array"
+                },
+                "kind": {
+                    "enum": [
+                        "fill_rect"
+                    ],
+                    "type": "string"
+                },
+                "rect": {
+                    "properties": {
+                        "height": {
+                            "type": "number"
+                        },
+                        "width": {
+                            "type": "number"
+                        },
+                        "x": {
+                            "type": "number"
+                        },
+                        "y": {
+                            "type": "number"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
+        "RenderStateView": {
+            "properties": {
+                "height": {
+                    "type": "number"
+                },
+                "width": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "properties": {
+        "actions": {
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "#/definitions/FillRectAction.Data"
+                    },
+                    {
+                        "$ref": "#/definitions/ClearAction.Data"
+                    },
+                    {
+                        "$ref": "#/definitions/DrawCubeAction.Data"
+                    }
+                ]
+            },
+            "type": "array"
+        },
+        "view": {
+            "$ref": "#/definitions/RenderStateView"
+        }
+    },
+    "type": "object"
+}
+
