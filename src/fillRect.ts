@@ -2,7 +2,7 @@ import { RGBA } from "./types";
 import { View } from "./view";
 import vs from "./shaders/fillRect.vert";
 import fs from "./shaders/fillRect.frag";
-import { createShaderProgram } from "./shader";
+import { createShaderProgram } from "./util";
 import { ActionBase } from "./actionBase";
 import { GL } from "./glEnum";
 import { FrameContext } from "./frameContext";
@@ -14,7 +14,7 @@ class Action extends ActionBase {
     readonly #rectUniforms;
 
     constructor(readonly view: View) {
-        super(view);
+        super();
         const { gl } = view;
         const program = this.#program = createShaderProgram(gl, { vertex: vs, fragment: fs });
         const uniformsInfo = getUniformsInfo(gl, program);

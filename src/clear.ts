@@ -5,9 +5,8 @@ import { ActionBase } from "./actionBase";
 import { FrameContext } from "./frameContext";
 
 class Action extends ActionBase {
-    // readonly kind = "clear" as const;
     override execute(frameContext: FrameContext, params: ClearAction.Params) {
-        const { gl } = this.view;
+        const { gl } = frameContext;
         const { color, depth, stencil } = params;
         let mask = 0;
         if (color) {
@@ -30,7 +29,7 @@ class Action extends ActionBase {
 
 export namespace ClearAction {
     export function create(view: View): ActionBase {
-        return new Action(view);
+        return new Action();
     }
     export interface Params {
         readonly color?: RGBA;

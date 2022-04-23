@@ -1,8 +1,8 @@
-import { RGBA } from "./types";
+import { Mat4, RGBA, Vec3 } from "./types";
 import { View } from "./view";
 import vs from "./shaders/drawCube.vert";
 import fs from "./shaders/drawCube.frag";
-import { createShaderProgram } from "./shader";
+import { createShaderProgram, rotateX, rotateY } from "./util";
 import { ActionBase } from "./actionBase";
 import { GL } from "./glEnum";
 import { FrameContext } from "./frameContext";
@@ -37,15 +37,18 @@ class Action extends ActionBase {
     readonly #program;
     readonly #indices;
     readonly #vao;
-    readonly #cameraUniforms; // Should really be in view or somewhere else.
+    // readonly #cameraUniforms; // Should really be in view or somewhere else.
+    readonly #cameraBlockIndex;
     readonly #meshUniforms;
 
     constructor(readonly view: View) {
-        super(view);
+        super();
         const { gl } = view;
         const program = this.#program = createShaderProgram(gl, { vertex: vs, fragment: fs });
         const uniformsInfo = getUniformsInfo(gl, program);
-        this.#cameraUniforms = createUniformBlockBuffer(gl, program, "CameraUniforms", uniformsInfo);
+        // this.#cameraUniforms = createUniformBlockBuffer(gl, program, "CameraUniforms", uniformsInfo);
+        this.#cameraBlockIndex = gl.getUniformBlockIndex(program, "CameraUniforms");
+        gl.uniformBlockBinding(program, this.#cameraBlockIndex, this.#cameraBlockIndex);
         this.#meshUniforms = createUniformBlockBuffer(gl, program, "MeshUniforms", uniformsInfo);
         this.#vao = createVertexArrayBuffer(gl, program, {
             buffers: [
@@ -67,79 +70,46 @@ class Action extends ActionBase {
     override dispose() {
         const { gl } = this.view;
         this.#vao.dispose();
-        this.#cameraUniforms.dispose();
         this.#meshUniforms.dispose();
         gl.deleteBuffer(this.#indices);
         gl.deleteProgram(this.#program);
     }
 
     override execute(frameContext: FrameContext, params: DrawCubeAction.Params) {
-        const { gl, view } = frameContext;
+        const { gl } = frameContext;
 
-        function getProjection(angle: number, a: number, zMin: number, zMax: number) {
-            const ang = Math.tan((angle * .5) * Math.PI / 180);//angle*.5
-            return [
-                0.5 / ang, 0, 0, 0,
-                0, 0.5 * a / ang, 0, 0,
-                0, 0, -(zMax + zMin) / (zMax - zMin), -1,
-                0, 0, (-2 * zMax * zMin) / (zMax - zMin), 0
-            ];
+        function getModelMatrix() {
+            const modelMatrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+            rotateY(modelMatrix, (params.rotationY ?? 0) * Math.PI / 180);
+            rotateX(modelMatrix, (params.rotationX ?? 0) * Math.PI / 180);
+
+            if (params.position) {
+                const [x, y, z] = params.position;
+                modelMatrix[12] = x;
+                modelMatrix[13] = y;
+                modelMatrix[14] = z;
+            }
+            return modelMatrix;
         }
+        const modelMatrix = params.modelMatrix ?? getModelMatrix();
 
-        function rotateX(m: number[], angle: number) {
-            var c = Math.cos(angle);
-            var s = Math.sin(angle);
-            var mv1 = m[1], mv5 = m[5], mv9 = m[9];
 
-            m[1] = m[1] * c - m[2] * s;
-            m[5] = m[5] * c - m[6] * s;
-            m[9] = m[9] * c - m[10] * s;
-
-            m[2] = m[2] * c + mv1 * s;
-            m[6] = m[6] * c + mv5 * s;
-            m[10] = m[10] * c + mv9 * s;
-        }
-
-        function rotateY(m: number[], angle: number) {
-            var c = Math.cos(angle);
-            var s = Math.sin(angle);
-            var mv0 = m[0], mv4 = m[4], mv8 = m[8];
-
-            m[0] = c * m[0] + s * m[2];
-            m[4] = c * m[4] + s * m[6];
-            m[8] = c * m[8] + s * m[10];
-
-            m[2] = c * m[2] - s * mv0;
-            m[6] = c * m[6] - s * mv4;
-            m[10] = c * m[10] - s * mv8;
-        }
-
-        const projectionMatrix = getProjection(40, view.width / view.height, 1, 100);
-        const modelMatrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-        const viewMatrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-        viewMatrix[14] = viewMatrix[14] - 6;
-
-        rotateY(modelMatrix, (params.rotationY ?? 0) * Math.PI / 180);
-        rotateX(modelMatrix, (params.rotationX ?? 0) * Math.PI / 180);
+        const meshUniforms = this.#meshUniforms;
+        meshUniforms.set({ modelMatrix });
 
         gl.enable(gl.DEPTH_TEST);
 
         gl.useProgram(this.#program);
 
-        const cameraUniforms = this.#cameraUniforms;
-        cameraUniforms.set({ projectionMatrix, viewMatrix });
-
-        const meshUniforms = this.#meshUniforms;
-        meshUniforms.set({ modelMatrix });
-
-        gl.bindBufferBase(GL.UNIFORM_BUFFER, cameraUniforms.blockIndex, cameraUniforms.buffer);
+        gl.bindBufferBase(GL.UNIFORM_BUFFER, this.#cameraBlockIndex, frameContext.cameraUniformsBuffer);
         gl.bindBufferBase(GL.UNIFORM_BUFFER, meshUniforms.blockIndex, meshUniforms.buffer);
 
         gl.bindVertexArray(this.#vao.array);
         gl.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.#indices);
         gl.drawElements(GL.TRIANGLES, indices.length, GL.UNSIGNED_SHORT, 0);
+
+        gl.bindBufferBase(GL.UNIFORM_BUFFER, this.#cameraBlockIndex, null);
         gl.bindBufferBase(GL.UNIFORM_BUFFER, meshUniforms.blockIndex, null);
-        gl.bindBufferBase(GL.UNIFORM_BUFFER, cameraUniforms.blockIndex, null);
 
         gl.disable(gl.DEPTH_TEST);
     }
@@ -151,6 +121,8 @@ export namespace DrawCubeAction {
     }
     export interface Params {
         readonly kind: "draw_cube";
+        readonly modelMatrix?: Mat4;
+        readonly position?: Vec3;
         readonly rotationX?: number; // in degrees
         readonly rotationY?: number; // in degrees
     }

@@ -1,6 +1,165 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "definitions": {
+        "CameraPerspectiveAction.Data": {
+            "properties": {
+                "fov": {
+                    "type": "number"
+                },
+                "kind": {
+                    "enum": [
+                        "camera_perspective"
+                    ],
+                    "type": "string"
+                },
+                "position": {
+                    "items": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "maxItems": 3,
+                    "minItems": 3,
+                    "type": "array"
+                },
+                "projectionMatrix": {
+                    "items": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "maxItems": 16,
+                    "minItems": 16,
+                    "type": "array"
+                },
+                "rotation": {
+                    "items": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "maxItems": 4,
+                    "minItems": 4,
+                    "type": "array"
+                },
+                "viewMatrix": {
+                    "items": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "maxItems": 16,
+                    "minItems": 16,
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
         "ClearAction.Data": {
             "properties": {
                 "color": {
@@ -44,6 +203,22 @@
                         "draw_cube"
                     ],
                     "type": "string"
+                },
+                "position": {
+                    "items": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "maxItems": 3,
+                    "minItems": 3,
+                    "type": "array"
                 },
                 "rotationX": {
                     "type": "number"
@@ -118,13 +293,16 @@
             "items": {
                 "anyOf": [
                     {
-                        "$ref": "#/definitions/FillRectAction.Data"
+                        "$ref": "#/definitions/CameraPerspectiveAction.Data"
                     },
                     {
                         "$ref": "#/definitions/ClearAction.Data"
                     },
                     {
                         "$ref": "#/definitions/DrawCubeAction.Data"
+                    },
+                    {
+                        "$ref": "#/definitions/FillRectAction.Data"
                     }
                 ]
             },

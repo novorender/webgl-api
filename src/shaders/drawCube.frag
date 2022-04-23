@@ -4,7 +4,8 @@ precision highp float;
 in vec3 vertexColor;
 out vec4 fragColor;
 
-uniform CameraUniforms {
+layout(std140) uniform CameraUniforms {
+    mat4 dummyMatrix;
     mat4 projectionMatrix;
     mat4 viewMatrix;
 };

@@ -27,9 +27,28 @@
             ]
         },
         {
+            "kind": "camera_perspective",
+            "fov": 30,
+            "position": [
+                0,
+                0,
+                10
+            ]
+        },
+        {
             "kind": "draw_cube",
             "rotationX": 30,
             "rotationY": 30
+        },
+        {
+            "kind": "draw_cube",
+            "rotationX": 35,
+            "rotationY": 30,
+            "position": [
+                3,
+                0,
+                0
+            ]
         }
     ]
 }

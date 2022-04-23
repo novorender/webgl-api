@@ -4,7 +4,8 @@ in vec3 position;
 in vec3 color;
 out vec3 vertexColor;
 
-uniform CameraUniforms {
+layout(std140) uniform CameraUniforms {
+    mat4 dummyMatrix;
     mat4 projectionMatrix;
     mat4 viewMatrix;
 };

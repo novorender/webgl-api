@@ -1,3 +1,4 @@
+import { CameraPerspectiveAction } from "./camera";
 import { ClearAction } from "./clear";
 // import type { ClearAction } from "./clear";
 import { DrawCubeAction } from "./drawCube";
@@ -8,6 +9,7 @@ const actionNamespaces = {
     clear: ClearAction,
     fill_rect: FillRectAction,
     draw_cube: DrawCubeAction,
+    camera_perspective: CameraPerspectiveAction
 } as const;
 
 export function getActionTypes(view: View) {
@@ -35,6 +37,7 @@ export function getActionTypes(view: View) {
 type NT = typeof actionNamespaces[keyof typeof actionNamespaces];
 export type RenderActionData = NT["data"];
 export type ActionKind = RenderActionData["kind"];
+export type ActionTypes = ReturnType<typeof getActionTypes>;
 // type AT = ReturnType<typeof getActionTypes>;
 // export type ActionKind = keyof AT;
 // export type RenderActionData = PT<ActionKind>;
