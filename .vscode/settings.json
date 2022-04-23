@@ -14,5 +14,6 @@
         "webglcontextlost",
         "webglcontextrestored"
     ],
-    "cSpell.allowCompoundWords": false
+    "cSpell.allowCompoundWords": false,
+    "webgl-glsl-editor.inlayHints": false
 }

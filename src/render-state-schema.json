@@ -204,6 +204,152 @@
                     ],
                     "type": "string"
                 },
+                "modelMatrix": {
+                    "items": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "maxItems": 16,
+                    "minItems": 16,
+                    "type": "array"
+                },
+                "position": {
+                    "items": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "maxItems": 3,
+                    "minItems": 3,
+                    "type": "array"
+                },
+                "rotationX": {
+                    "type": "number"
+                },
+                "rotationY": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "DrawMeshAction.Data": {
+            "properties": {
+                "kind": {
+                    "enum": [
+                        "draw_mesh"
+                    ],
+                    "type": "string"
+                },
+                "mesh": {
+                    "type": "number"
+                },
+                "modelMatrix": {
+                    "items": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "maxItems": 16,
+                    "minItems": 16,
+                    "type": "array"
+                },
                 "position": {
                     "items": [
                         {
@@ -276,6 +422,89 @@
             },
             "type": "object"
         },
+        "RenderStateBufferResource": {
+            "properties": {
+                "arrayType": {
+                    "enum": [
+                        "Float32Array",
+                        "Uint16Array",
+                        "Uint32Array",
+                        "Uint8Array"
+                    ],
+                    "type": "string"
+                },
+                "data": {
+                    "items": {
+                        "type": "number"
+                    },
+                    "type": "array"
+                },
+                "type": {
+                    "enum": [
+                        "ARRAY_BUFFER",
+                        "ELEMENT_ARRAY_BUFFER"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "RenderStateMeshResource": {
+            "properties": {
+                "attributes": {
+                    "$ref": "#/definitions/{readonlynormal:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlyposition:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlycolor0:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlytex0:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};}"
+                },
+                "count": {
+                    "type": "number"
+                },
+                "indices": {
+                    "properties": {
+                        "buffer": {
+                            "type": "number"
+                        },
+                        "type": {
+                            "enum": [
+                                "UNSIGNED_BYTE",
+                                "UNSIGNED_INT",
+                                "UNSIGNED_SHORT"
+                            ],
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "primitiveType": {
+                    "enum": [
+                        "LINES",
+                        "LINE_LOOP",
+                        "LINE_STRIP",
+                        "POINTS",
+                        "TRIANGLES",
+                        "TRIANGLE_FAN",
+                        "TRIANGLE_STRIP"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "RenderStateResources": {
+            "properties": {
+                "buffers": {
+                    "items": {
+                        "$ref": "#/definitions/RenderStateBufferResource"
+                    },
+                    "type": "array"
+                },
+                "meshes": {
+                    "items": {
+                        "$ref": "#/definitions/RenderStateMeshResource"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
         "RenderStateView": {
             "properties": {
                 "height": {
@@ -283,6 +512,159 @@
                 },
                 "width": {
                     "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "{readonlynormal:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlyposition:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlycolor0:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlytex0:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};}": {
+            "properties": {
+                "color0": {
+                    "properties": {
+                        "buffer": {
+                            "type": "number"
+                        },
+                        "componentType": {
+                            "enum": [
+                                "BYTE",
+                                "FLOAT",
+                                "HALF_FLOAT",
+                                "SHORT",
+                                "UNSIGNED_BYTE",
+                                "UNSIGNED_SHORT"
+                            ],
+                            "type": "string"
+                        },
+                        "normalized": {
+                            "type": "boolean"
+                        },
+                        "numComponents": {
+                            "enum": [
+                                1,
+                                2,
+                                3,
+                                4
+                            ],
+                            "type": "number"
+                        },
+                        "offset": {
+                            "type": "number"
+                        },
+                        "stride": {
+                            "type": "number"
+                        }
+                    },
+                    "type": "object"
+                },
+                "normal": {
+                    "properties": {
+                        "buffer": {
+                            "type": "number"
+                        },
+                        "componentType": {
+                            "enum": [
+                                "BYTE",
+                                "FLOAT",
+                                "HALF_FLOAT",
+                                "SHORT",
+                                "UNSIGNED_BYTE",
+                                "UNSIGNED_SHORT"
+                            ],
+                            "type": "string"
+                        },
+                        "normalized": {
+                            "type": "boolean"
+                        },
+                        "numComponents": {
+                            "enum": [
+                                1,
+                                2,
+                                3,
+                                4
+                            ],
+                            "type": "number"
+                        },
+                        "offset": {
+                            "type": "number"
+                        },
+                        "stride": {
+                            "type": "number"
+                        }
+                    },
+                    "type": "object"
+                },
+                "position": {
+                    "properties": {
+                        "buffer": {
+                            "type": "number"
+                        },
+                        "componentType": {
+                            "enum": [
+                                "BYTE",
+                                "FLOAT",
+                                "HALF_FLOAT",
+                                "SHORT",
+                                "UNSIGNED_BYTE",
+                                "UNSIGNED_SHORT"
+                            ],
+                            "type": "string"
+                        },
+                        "normalized": {
+                            "type": "boolean"
+                        },
+                        "numComponents": {
+                            "enum": [
+                                1,
+                                2,
+                                3,
+                                4
+                            ],
+                            "type": "number"
+                        },
+                        "offset": {
+                            "type": "number"
+                        },
+                        "stride": {
+                            "type": "number"
+                        }
+                    },
+                    "type": "object"
+                },
+                "tex0": {
+                    "properties": {
+                        "buffer": {
+                            "type": "number"
+                        },
+                        "componentType": {
+                            "enum": [
+                                "BYTE",
+                                "FLOAT",
+                                "HALF_FLOAT",
+                                "SHORT",
+                                "UNSIGNED_BYTE",
+                                "UNSIGNED_SHORT"
+                            ],
+                            "type": "string"
+                        },
+                        "normalized": {
+                            "type": "boolean"
+                        },
+                        "numComponents": {
+                            "enum": [
+                                1,
+                                2,
+                                3,
+                                4
+                            ],
+                            "type": "number"
+                        },
+                        "offset": {
+                            "type": "number"
+                        },
+                        "stride": {
+                            "type": "number"
+                        }
+                    },
+                    "type": "object"
                 }
             },
             "type": "object"
@@ -302,11 +684,17 @@
                         "$ref": "#/definitions/DrawCubeAction.Data"
                     },
                     {
+                        "$ref": "#/definitions/DrawMeshAction.Data"
+                    },
+                    {
                         "$ref": "#/definitions/FillRectAction.Data"
                     }
                 ]
             },
             "type": "array"
+        },
+        "resources": {
+            "$ref": "#/definitions/RenderStateResources"
         },
         "view": {
             "$ref": "#/definitions/RenderStateView"

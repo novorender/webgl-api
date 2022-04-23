@@ -1,6 +1,7 @@
 import { GL } from "./glEnum";
-import { ActionTypes, RenderActionData } from "./actions";
-import { RenderStateView } from "./state";
+import type { ActionTypes, RenderActionData } from "./actions";
+import type { RenderStateView } from "./state";
+import type { FrameContextResources } from "./resource";
 
 export class FrameContext {
     cameraUniformsBuffer: WebGLBuffer | null = null; // can change multiple times during the course of rendering a frame
@@ -11,6 +12,7 @@ export class FrameContext {
         readonly view: RenderStateView,
         readonly activeTextureUnits: number,
         readonly actionTypes: ActionTypes,
+        readonly resources: FrameContextResources,
     ) {
     }
 

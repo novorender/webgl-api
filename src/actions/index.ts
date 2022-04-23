@@ -1,18 +1,19 @@
 import { CameraPerspectiveAction } from "./camera";
 import { ClearAction } from "./clear";
-// import type { ClearAction } from "./clear";
 import { DrawCubeAction } from "./drawCube";
+import { DrawMeshAction } from "./drawMesh";
 import { FillRectAction } from "./fillRect";
-import { View } from "./view";
+import type { ActionCtorArgs } from "./actionBase";
 
 const actionNamespaces = {
     clear: ClearAction,
     fill_rect: FillRectAction,
     draw_cube: DrawCubeAction,
+    draw_mesh: DrawMeshAction,
     camera_perspective: CameraPerspectiveAction
 } as const;
 
-export function getActionTypes(view: View) {
+export function getActionTypes(args: ActionCtorArgs) {
     // create action types lazily through getters
     const actionTypes = {};
     for (const [key, value] of Object.entries(actionNamespaces)) {
@@ -22,7 +23,7 @@ export function getActionTypes(view: View) {
             get() {
                 const privateKey = `#${key}`;
                 if (!this[privateKey]) {
-                    this[privateKey] = value.create(view);
+                    this[privateKey] = value.create(args);
                 }
                 return this[privateKey];
             },
@@ -33,12 +34,7 @@ export function getActionTypes(view: View) {
     return actionTypes as AT;
 }
 
-
 type NT = typeof actionNamespaces[keyof typeof actionNamespaces];
 export type RenderActionData = NT["data"];
 export type ActionKind = RenderActionData["kind"];
 export type ActionTypes = ReturnType<typeof getActionTypes>;
-// type AT = ReturnType<typeof getActionTypes>;
-// export type ActionKind = keyof AT;
-// export type RenderActionData = PT<ActionKind>;
-// export type RenderActionData = { readonly kind: ActionKind };

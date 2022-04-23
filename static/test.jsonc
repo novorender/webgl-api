@@ -1,5 +1,230 @@
 {
     "$schema": "../src/render-state-schema.json",
+    "resources": {
+        "buffers": [
+            // #0: positions
+            {
+                "type": "ARRAY_BUFFER",
+                "arrayType": "Float32Array",
+                "data": [
+                    -1,
+                    -1,
+                    -1,
+                    1,
+                    -1,
+                    -1,
+                    1,
+                    1,
+                    -1,
+                    -1,
+                    1,
+                    -1,
+                    -1,
+                    -1,
+                    1,
+                    1,
+                    -1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    -1,
+                    1,
+                    1,
+                    -1,
+                    -1,
+                    -1,
+                    -1,
+                    1,
+                    -1,
+                    -1,
+                    1,
+                    1,
+                    -1,
+                    -1,
+                    1,
+                    1,
+                    -1,
+                    -1,
+                    1,
+                    1,
+                    -1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    -1,
+                    1,
+                    -1,
+                    -1,
+                    -1,
+                    -1,
+                    -1,
+                    1,
+                    1,
+                    -1,
+                    1,
+                    1,
+                    -1,
+                    -1,
+                    -1,
+                    1,
+                    -1,
+                    -1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    -1
+                ]
+            },
+            // #1: colors
+            {
+                "type": "ARRAY_BUFFER",
+                "arrayType": "Float32Array",
+                "data": [
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    1,
+                    1,
+                    0,
+                    1,
+                    1,
+                    0,
+                    1,
+                    1,
+                    0,
+                    1,
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    1,
+                    1,
+                    0,
+                    1,
+                    1,
+                    0,
+                    1,
+                    1,
+                    0,
+                    1,
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    1,
+                    1,
+                    0,
+                    1,
+                    1,
+                    0,
+                    1,
+                    1,
+                    0,
+                    1,
+                    1,
+                    0,
+                    1
+                ]
+            },
+            // #2: indices
+            {
+                "type": "ELEMENT_ARRAY_BUFFER",
+                "arrayType": "Uint8Array",
+                "data": [
+                    0,
+                    1,
+                    2,
+                    0,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    4,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    8,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    12,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    16,
+                    18,
+                    19,
+                    20,
+                    21,
+                    22,
+                    20,
+                    22,
+                    23
+                ]
+            }
+        ],
+        "meshes": [
+            {
+                "count": 36,
+                "primitiveType": "TRIANGLES",
+                "attributes": {
+                    "position": {
+                        "buffer": 0,
+                        "numComponents": 3
+                    },
+                    "color0": {
+                        "buffer": 1,
+                        "numComponents": 3
+                    }
+                },
+                "indices": {
+                    "buffer": 2,
+                    "type": "UNSIGNED_BYTE"
+                }
+            }
+        ]
+    },
     "actions": [
         {
             "kind": "clear",
@@ -11,21 +236,21 @@
             ],
             "depth": 1
         },
-        {
-            "kind": "fill_rect",
-            "rect": {
-                "x": 100,
-                "y": 100,
-                "width": 200,
-                "height": 200
-            },
-            "color": [
-                1,
-                1,
-                0,
-                1
-            ]
-        },
+        // {
+        //     "kind": "fill_rect",
+        //     "rect": {
+        //         "x": 100,
+        //         "y": 100,
+        //         "width": 200,
+        //         "height": 200
+        //     },
+        //     "color": [
+        //         1,
+        //         1,
+        //         0,
+        //         1
+        //     ]
+        // },
         {
             "kind": "camera_perspective",
             "fov": 30,
@@ -35,20 +260,26 @@
                 10
             ]
         },
+        // {
+        //     "kind": "draw_cube",
+        //     "rotationX": 30,
+        //     "rotationY": 30
+        // },
         {
-            "kind": "draw_cube",
+            "kind": "draw_mesh",
+            "mesh": 0,
             "rotationX": 30,
             "rotationY": 30
-        },
-        {
-            "kind": "draw_cube",
-            "rotationX": 35,
-            "rotationY": 30,
-            "position": [
-                3,
-                0,
-                0
-            ]
         }
+        // {
+        //     "kind": "draw_cube",
+        //     "rotationX": 35,
+        //     "rotationY": 30,
+        //     "position": [
+        //         3,
+        //         0,
+        //         0
+        //     ]
+        // }
     ]
 }

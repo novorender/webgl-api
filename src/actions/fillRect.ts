@@ -1,38 +1,34 @@
-import { RGBA } from "./types";
-import { View } from "./view";
+import { GL } from "../glEnum";
+import type { RGBA } from "../types";
+import type { FrameContext } from "../frameContext";
+import { createBuffer, createShaderProgram, createVertexArrayBuffer, createUniformBlockBuffer, getUniformsInfo } from "../util";
+import { ActionBase, ActionCtorArgs } from "./actionBase";
 import vs from "./shaders/fillRect.vert";
 import fs from "./shaders/fillRect.frag";
-import { createShaderProgram } from "./util";
-import { ActionBase } from "./actionBase";
-import { GL } from "./glEnum";
-import { FrameContext } from "./frameContext";
-import { createVertexArrayBuffer, createUniformBlockBuffer, getUniformsInfo } from "./util";
 
 class Action extends ActionBase {
     readonly #program;
     readonly #vao;
+    readonly #positionBuffer;
     readonly #rectUniforms;
 
-    constructor(readonly view: View) {
-        super();
-        const { gl } = view;
+    constructor(args: ActionCtorArgs) {
+        super(args);
+        const { gl } = args;
         const program = this.#program = createShaderProgram(gl, { vertex: vs, fragment: fs });
         const uniformsInfo = getUniformsInfo(gl, program);
         this.#rectUniforms = createUniformBlockBuffer(gl, program, "RectUniforms", uniformsInfo);
-        this.#vao = createVertexArrayBuffer(gl, program, {
-            buffers: [
-                { data: new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]) }
-            ],
-            attributes: {
-                position: { numComponents: 2 }
-            }
-        });
+        this.#positionBuffer = createBuffer(gl, GL.ARRAY_BUFFER, new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]), GL.STATIC_DRAW);
+        this.#vao = createVertexArrayBuffer(gl, [
+            { index: gl.getAttribLocation(program, "position"), numComponents: 2, buffer: this.#positionBuffer }
+        ]);
     }
 
     override dispose() {
-        const { gl } = this.view;
-        this.#vao.dispose();
+        const { gl } = this.args;
         this.#rectUniforms.dispose();
+        gl.deleteVertexArray(this.#vao);
+        gl.deleteBuffer(this.#positionBuffer);
         gl.deleteProgram(this.#program);
     }
 
@@ -47,15 +43,15 @@ class Action extends ActionBase {
         const { blockIndex } = uniforms;
         uniforms.set({ scale, offset, color });
         gl.bindBufferBase(GL.UNIFORM_BUFFER, blockIndex, uniforms.buffer);
-        gl.bindVertexArray(this.#vao.array);
+        gl.bindVertexArray(this.#vao);
         gl.drawArrays(GL.TRIANGLE_STRIP, 0, 4);
         gl.bindBufferBase(GL.UNIFORM_BUFFER, blockIndex, null);
     }
 }
 
 export namespace FillRectAction {
-    export function create(view: View): ActionBase {
-        return new Action(view);
+    export function create(args: ActionCtorArgs): ActionBase {
+        return new Action(args);
     }
     export interface Params {
         readonly color?: RGBA;

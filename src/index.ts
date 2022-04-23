@@ -1,6 +1,6 @@
 import { View } from "./view";
 import { createGLContext, stripJsonComments } from "./util";
-import { RenderState } from "./state";
+import type { RenderState } from "./state";
 
 export function createView(canvas: HTMLCanvasElement) {
     const gl = createGLContext(canvas);

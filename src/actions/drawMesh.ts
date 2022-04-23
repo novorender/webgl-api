@@ -1,12 +1,11 @@
-import { Mat4, RGBA, Vec3 } from "./types";
-import { View } from "./view";
-import vs from "./shaders/drawCube.vert";
-import fs from "./shaders/drawCube.frag";
-import { createShaderProgram, rotateX, rotateY } from "./util";
-import { ActionBase } from "./actionBase";
-import { GL } from "./glEnum";
-import { FrameContext } from "./frameContext";
-import { createUniformBlockBuffer, createVertexArrayBuffer, getUniformsInfo } from "./util";
+import { GL } from "../glEnum";
+import type { Mat4, RGBA, Vec3 } from "../types";
+import type { FrameContext } from "../frameContext";
+import { createShaderProgram, rotateX, rotateY, createUniformBlockBuffer, getUniformsInfo } from "../util";
+import { meshResourceVertexAttributeBindings, MeshResourceVertexAttributes } from "../resource";
+import { ActionBase, ActionCtorArgs } from "./actionBase";
+import vs from "./shaders/drawMesh.vert";
+import fs from "./shaders/drawMesh.frag";
 
 const vertices = [
     -1, -1, -1, 1, -1, -1, 1, 1, -1, -1, 1, -1,
@@ -35,47 +34,26 @@ const indices = [
 
 class Action extends ActionBase {
     readonly #program;
-    readonly #indices;
-    readonly #vao;
-    // readonly #cameraUniforms; // Should really be in view or somewhere else.
     readonly #cameraBlockIndex;
     readonly #meshUniforms;
 
-    constructor(readonly view: View) {
-        super();
-        const { gl } = view;
-        const program = this.#program = createShaderProgram(gl, { vertex: vs, fragment: fs });
+    constructor(args: ActionCtorArgs) {
+        super(args);
+        const { gl } = args;
+        const program = this.#program = createShaderProgram(gl, { vertex: vs, fragment: fs }, meshResourceVertexAttributeBindings);
         const uniformsInfo = getUniformsInfo(gl, program);
-        // this.#cameraUniforms = createUniformBlockBuffer(gl, program, "CameraUniforms", uniformsInfo);
         this.#cameraBlockIndex = gl.getUniformBlockIndex(program, "CameraUniforms");
         gl.uniformBlockBinding(program, this.#cameraBlockIndex, this.#cameraBlockIndex);
         this.#meshUniforms = createUniformBlockBuffer(gl, program, "MeshUniforms", uniformsInfo);
-        this.#vao = createVertexArrayBuffer(gl, program, {
-            buffers: [
-                { data: new Float32Array(vertices) },
-                { data: new Float32Array(colors) },
-            ],
-            attributes: {
-                position: { numComponents: 3, buffer: 0 },
-                color: { numComponents: 3, buffer: 1 },
-            }
-        });
-
-        this.#indices = gl.createBuffer()!;
-        gl.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.#indices);
-        gl.bufferData(GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), GL.STATIC_DRAW);
-        gl.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, null);
     }
 
     override dispose() {
-        const { gl } = this.view;
-        this.#vao.dispose();
+        const { gl } = this.args;
         this.#meshUniforms.dispose();
-        gl.deleteBuffer(this.#indices);
         gl.deleteProgram(this.#program);
     }
 
-    override execute(frameContext: FrameContext, params: DrawCubeAction.Params) {
+    override execute(frameContext: FrameContext, params: DrawMeshAction.Params) {
         const { gl } = frameContext;
 
         function getModelMatrix() {
@@ -93,7 +71,6 @@ class Action extends ActionBase {
         }
         const modelMatrix = params.modelMatrix ?? getModelMatrix();
 
-
         const meshUniforms = this.#meshUniforms;
         meshUniforms.set({ modelMatrix });
 
@@ -104,9 +81,19 @@ class Action extends ActionBase {
         gl.bindBufferBase(GL.UNIFORM_BUFFER, this.#cameraBlockIndex, frameContext.cameraUniformsBuffer);
         gl.bindBufferBase(GL.UNIFORM_BUFFER, meshUniforms.blockIndex, meshUniforms.buffer);
 
-        gl.bindVertexArray(this.#vao.array);
-        gl.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.#indices);
-        gl.drawElements(GL.TRIANGLES, indices.length, GL.UNSIGNED_SHORT, 0);
+        const meshResource = frameContext.resources.meshes[params.mesh];
+
+        gl.bindVertexArray(meshResource.vao);
+        gl.vertexAttrib4f(MeshResourceVertexAttributes.color0, 1, 1, 1, 1); // default attribute value
+
+        const { count, primitiveType, indices } = meshResource;
+
+        if (indices) {
+            gl.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, indices.buffer);
+            gl.drawElements(primitiveType, count, indices.type, 0);
+        } else {
+            gl.drawArrays(primitiveType, 0, count);
+        }
 
         gl.bindBufferBase(GL.UNIFORM_BUFFER, this.#cameraBlockIndex, null);
         gl.bindBufferBase(GL.UNIFORM_BUFFER, meshUniforms.blockIndex, null);
@@ -115,19 +102,22 @@ class Action extends ActionBase {
     }
 }
 
-export namespace DrawCubeAction {
-    export function create(view: View): ActionBase {
-        return new Action(view);
+export namespace DrawMeshAction {
+    export function create(args: ActionCtorArgs): ActionBase {
+        return new Action(args);
     }
     export interface Params {
-        readonly kind: "draw_cube";
+        readonly mesh: number; // index into resources/meshes
+        // TODO: Add material?
+
         readonly modelMatrix?: Mat4;
         readonly position?: Vec3;
         readonly rotationX?: number; // in degrees
         readonly rotationY?: number; // in degrees
     }
     export interface Data extends Params {
-        readonly kind: "draw_cube";
+        readonly kind: "draw_mesh";
     }
     export declare const data: Data;
 }
+

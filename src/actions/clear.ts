@@ -1,10 +1,13 @@
-import { View } from "./view";
-import { GL } from "./glEnum";
-import { RGBA, UnitFloat, UInt8 } from "./types";
-import { ActionBase } from "./actionBase";
-import { FrameContext } from "./frameContext";
+import { GL } from "../glEnum";
+import type { RGBA, UnitFloat, UInt8 } from "../types";
+import type { FrameContext } from "../frameContext";
+import { ActionBase, ActionCtorArgs } from "./actionBase";
 
 class Action extends ActionBase {
+    constructor(args: ActionCtorArgs) {
+        super(args);
+    }
+
     override execute(frameContext: FrameContext, params: ClearAction.Params) {
         const { gl } = frameContext;
         const { color, depth, stencil } = params;
@@ -28,8 +31,8 @@ class Action extends ActionBase {
 }
 
 export namespace ClearAction {
-    export function create(view: View): ActionBase {
-        return new Action();
+    export function create(args: ActionCtorArgs): ActionBase {
+        return new Action(args);
     }
     export interface Params {
         readonly color?: RGBA;

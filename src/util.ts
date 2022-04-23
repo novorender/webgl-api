@@ -1,5 +1,5 @@
 import { GL } from "./glEnum";
-import { Mat4 } from "./types";
+import type { Mat4 } from "./types";
 
 export function exhaustiveCheck(value: never) {
     throw new Error(`Unknown kind: ${value}!`);
@@ -67,63 +67,28 @@ export type IndexBufferType = GL.UNSIGNED_BYTE | GL.UNSIGNED_SHORT | GL.UNSIGNED
 export type AttributeType = GL.BYTE | GL.UNSIGNED_BYTE | GL.SHORT | GL.UNSIGNED_SHORT | GL.FLOAT | GL.HALF_FLOAT;
 
 export interface AttributeParams {
+    readonly index: number; // shader attribute location index
+    readonly buffer: WebGLBuffer;
     // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/vertexAttribPointer
     readonly numComponents: 1 | 2 | 3 | 4;
     readonly componentType?: GL.BYTE | GL.UNSIGNED_BYTE | GL.SHORT | GL.UNSIGNED_SHORT | GL.FLOAT | GL.HALF_FLOAT; // default: FLOAT
     readonly normalized?: boolean; // default: false
     readonly stride?: number; // default: 0
     readonly offset?: number; // default: 0
-    readonly buffer?: number; // default 0
 }
 
-export interface VertexBufferParams {
-    readonly data: ArrayBuffer | SharedArrayBuffer | ArrayBufferView;
-    readonly usage?: GL.STATIC_DRAW | GL.DYNAMIC_DRAW | GL.STREAM_DRAW | GL.STATIC_READ | GL.DYNAMIC_READ | GL.STREAM_READ | GL.STATIC_COPY | GL.DYNAMIC_COPY | GL.STREAM_COPY; // default: STATIC_DRAW
-}
-
-export interface VertexAttributeParams {
-    readonly buffers: readonly VertexBufferParams[];
-    readonly attributes: { readonly [name: string]: AttributeParams };
-}
-
-export class VertexArrayObject {
-    constructor(
-        private readonly gl: WebGL2RenderingContext,
-        readonly array: WebGLVertexArrayObject,
-        private readonly buffers: WebGLBuffer[],
-    ) {
-    }
-
-    dispose(): void {
-        const { gl, buffers } = this;
-        gl.deleteVertexArray(this.array);
-        for (const buffer of buffers) {
-            gl.deleteBuffer(buffer);
-        }
-    }
-}
-
-export function createVertexArrayBuffer(gl: WebGL2RenderingContext, program: WebGLProgram, params: VertexAttributeParams): VertexArrayObject {
-    const buffers = params.buffers.map(bufferParams => {
-        const buf = gl.createBuffer()!;
-        gl.bindBuffer(GL.ARRAY_BUFFER, buf);
-        gl.bufferData(GL.ARRAY_BUFFER, bufferParams.data, bufferParams.usage ?? GL.STATIC_DRAW);
-        gl.bindBuffer(GL.ARRAY_BUFFER, null);
-        return buf;
-    });
-    console.assert(buffers.length > 0);
-
+export function createVertexArrayBuffer(gl: WebGL2RenderingContext, attributes: readonly AttributeParams[]): WebGLVertexArrayObject {
     const vao = gl.createVertexArray()!;
     gl.bindVertexArray(vao);
-    for (const [attribName, attribParams] of Object.entries(params.attributes)) {
-        const attribIndex = gl.getAttribLocation(program, attribName);
-        gl.bindBuffer(GL.ARRAY_BUFFER, buffers[attribParams.buffer ?? 0]);
+    for (const attribParams of attributes) {
+        const attribIndex = attribParams.index;
+        gl.bindBuffer(GL.ARRAY_BUFFER, attribParams.buffer);
         gl.vertexAttribPointer(attribIndex, attribParams.numComponents, attribParams.componentType ?? GL.FLOAT, attribParams.normalized ?? false, attribParams.stride ?? 0, attribParams.offset ?? 0);
         gl.enableVertexAttribArray(attribIndex);
     };
     gl.bindBuffer(GL.ARRAY_BUFFER, null);
     gl.bindVertexArray(null);
-    return new VertexArrayObject(gl, vao, buffers);
+    return vao;
 }
 
 export type UniformType =
@@ -192,14 +157,17 @@ export interface UniformBlock {
 
 export type BufferTarget = GL.ARRAY_BUFFER | GL.ELEMENT_ARRAY_BUFFER | GL.COPY_READ_BUFFER | GL.COPY_WRITE_BUFFER | GL.TRANSFORM_FEEDBACK_BUFFER | GL.UNIFORM_BUFFER | GL.PIXEL_PACK_BUFFER | GL.PIXEL_UNPACK_BUFFER;
 export type BufferUsage = GL.STATIC_DRAW | GL.DYNAMIC_DRAW | GL.STREAM_DRAW | GL.STATIC_READ | GL.DYNAMIC_READ | GL.STREAM_READ | GL.STATIC_COPY | GL.DYNAMIC_COPY | GL.STREAM_COPY;
+export type PrimitiveType = GL.POINTS | GL.LINE_STRIP | GL.LINE_LOOP | GL.LINES | GL.TRIANGLE_STRIP | GL.TRIANGLE_FAN | GL.TRIANGLES;
 
-export function createBuffer(gl: WebGL2RenderingContext, target: BufferTarget, size: number, usage: BufferUsage) {
+export function createBuffer(gl: WebGL2RenderingContext, target: BufferTarget, byteSize: number, usage: BufferUsage): WebGLBuffer;
+export function createBuffer(gl: WebGL2RenderingContext, target: BufferTarget, srcData: BufferSource, usage: BufferUsage): WebGLBuffer;
+export function createBuffer(gl: WebGL2RenderingContext, target: BufferTarget, sizeOrData: number | BufferSource, usage: BufferUsage) {
     const buffer = gl.createBuffer();
     if (!buffer) {
         throw new Error("Unable to create buffer!");
     }
     gl.bindBuffer(target, buffer);
-    gl.bufferData(target, size, GL.DYNAMIC_DRAW);
+    gl.bufferData(target, sizeOrData as any, GL.DYNAMIC_DRAW);
     gl.bindBuffer(target, null);
     return buffer;
 }
@@ -265,7 +233,7 @@ function compileShader(gl: WebGLRenderingContext, type: ShaderType, source: stri
     return shader;
 }
 
-export function createShaderProgram(gl: WebGLRenderingContext, shaders: { readonly vertex: string; readonly fragment: string; }): WebGLProgram {
+export function createShaderProgram(gl: WebGLRenderingContext, shaders: { readonly vertex: string; readonly fragment: string; }, attributeBindings?: { readonly [key: string]: number }): WebGLProgram {
     const vertexShader = compileShader(gl, "VERTEX_SHADER", shaders.vertex);
     const fragmentShader = compileShader(gl, "FRAGMENT_SHADER", shaders.fragment);
     const program = gl.createProgram();
@@ -274,6 +242,15 @@ export function createShaderProgram(gl: WebGLRenderingContext, shaders: { readon
 
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
+
+    if (attributeBindings) {
+        // do optional dynamic remapping of attributes before linking
+        // this can also be done in glsl by explicit layout(location = ?)
+        for (const [name, index] of Object.entries(attributeBindings)) {
+            gl.bindAttribLocation(program, index, name);
+        }
+    }
+
     // TODO: Consider doing linking in a separate stage, so as to take advantage of parallel shader compilation. (https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices#Compile_Shaders_and_Link_Programs_in_parallel)
     gl.linkProgram(program);
 

@@ -1,9 +1,8 @@
-import { GL } from "./glEnum";
-import { View } from "./view";
-import { ActionBase } from "./actionBase";
-import { FrameContext } from "./frameContext";
-import { createBuffer, getProjectionMatrix } from "./util";
-import { Mat4, Quat, Vec3 } from "./types";
+import { GL } from "../glEnum";
+import type { FrameContext } from "../frameContext";
+import type { Mat4, Quat, Vec3 } from "../types";
+import { createBuffer, getProjectionMatrix } from "../util";
+import { ActionBase, ActionCtorArgs } from "./actionBase";
 
 
 /*
@@ -28,16 +27,16 @@ export namespace CameraPerspectiveAction {
         readonly #cameraUniforms;
         readonly #cameraUniformsBuffer;
 
-        constructor(readonly view: View) {
-            super();
-            const { gl } = view;
+        constructor(args: ActionCtorArgs) {
+            super(args);
+            const { gl } = args;
             const data = new ArrayBuffer(cameraUniformBufferByteSize);
             this.#cameraUniforms = new Float32Array(data);
             this.#cameraUniformsBuffer = createBuffer(gl, GL.UNIFORM_BUFFER, cameraUniformBufferByteSize, GL.DYNAMIC_DRAW);;
         }
 
         override dispose(): void {
-            const { gl } = this.view;
+            const { gl } = this.args;
             gl.deleteBuffer(this.#cameraUniformsBuffer);
         }
 
@@ -58,8 +57,8 @@ export namespace CameraPerspectiveAction {
         }
     }
 
-    export function create(view: View): ActionBase {
-        return new Action(view);
+    export function create(args: ActionCtorArgs): ActionBase {
+        return new Action(args);
     }
     export interface Params {
         readonly fov?: number; // vertical field of view in degrees. default = 30
