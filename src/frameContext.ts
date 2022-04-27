@@ -1,6 +1,6 @@
 import { GL } from "./glEnum";
 import type { ActionTypes, RenderActionData } from "./actions";
-import type { RenderStateView } from "./state";
+import type { RenderState } from "./state";
 import type { FrameContextResources } from "./resource";
 
 export class FrameContext {
@@ -9,7 +9,7 @@ export class FrameContext {
     constructor(
         readonly canvas: HTMLCanvasElement,
         readonly gl: WebGL2RenderingContext,
-        readonly view: RenderStateView,
+        readonly view: RenderState.View,
         readonly activeTextureUnits: number,
         readonly actionTypes: ActionTypes,
         readonly resources: FrameContextResources,

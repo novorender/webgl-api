@@ -1,5 +1,3 @@
-#version 300 es
-
 // layout(location = 0) in vec3 position;
 // layout(location = 2) in vec3 color0;
 in vec3 position;

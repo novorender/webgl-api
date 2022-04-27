@@ -3,8 +3,8 @@ import type { RGBA } from "../types";
 import type { FrameContext } from "../frameContext";
 import { createBuffer, createShaderProgram, createVertexArrayBuffer, createUniformBlockBuffer, getUniformsInfo } from "../util";
 import { ActionBase, ActionCtorArgs } from "./actionBase";
-import vs from "./shaders/fillRect.vert";
-import fs from "./shaders/fillRect.frag";
+import vs from "../shaders/fillRect.vert";
+import fs from "../shaders/fillRect.frag";
 
 class Action extends ActionBase {
     readonly #program;

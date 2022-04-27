@@ -4,8 +4,8 @@ import type { FrameContext } from "../frameContext";
 import { createBuffer, createShaderProgram, rotateX, rotateY } from "../util";
 import { createUniformBlockBuffer, createVertexArrayBuffer, getUniformsInfo } from "../util";
 import { ActionBase, ActionCtorArgs } from "./actionBase";
-import vs from "./shaders/drawCube.vert";
-import fs from "./shaders/drawCube.frag";
+import vs from "../shaders/drawCube.vert";
+import fs from "../shaders/drawCube.frag";
 
 const vertices = [
     -1, -1, -1, 1, -1, -1, 1, 1, -1, -1, 1, -1,

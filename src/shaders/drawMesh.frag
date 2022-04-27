@@ -1,6 +1,3 @@
-#version 300 es
-precision highp float;
-
 in vec3 vertexColor;
 out vec4 fragColor;
 

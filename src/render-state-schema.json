@@ -422,23 +422,8 @@
             },
             "type": "object"
         },
-        "RenderStateBufferResource": {
+        "RenderState.BufferResource": {
             "properties": {
-                "arrayType": {
-                    "enum": [
-                        "Float32Array",
-                        "Uint16Array",
-                        "Uint32Array",
-                        "Uint8Array"
-                    ],
-                    "type": "string"
-                },
-                "data": {
-                    "items": {
-                        "type": "number"
-                    },
-                    "type": "array"
-                },
                 "type": {
                     "enum": [
                         "ARRAY_BUFFER",
@@ -449,7 +434,7 @@
             },
             "type": "object"
         },
-        "RenderStateMeshResource": {
+        "RenderState.MeshResource": {
             "properties": {
                 "attributes": {
                     "$ref": "#/definitions/{readonlynormal:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlyposition:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlycolor0:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlytex0:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};}"
@@ -488,24 +473,54 @@
             },
             "type": "object"
         },
-        "RenderStateResources": {
+        "RenderState.ProgramResource<\"drawMesh\">": {
             "properties": {
+                "flags": {
+                    "items": {
+                        "enum": [
+                            "ANOTHER_FLAG",
+                            "SOME_FLAG"
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "shader": {
+                    "enum": [
+                        "drawMesh"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.Resources": {
+            "properties": {
+                "binaryUrl": {
+                    "type": "string"
+                },
                 "buffers": {
                     "items": {
-                        "$ref": "#/definitions/RenderStateBufferResource"
+                        "$ref": "#/definitions/RenderState.BufferResource"
                     },
                     "type": "array"
                 },
                 "meshes": {
                     "items": {
-                        "$ref": "#/definitions/RenderStateMeshResource"
+                        "$ref": "#/definitions/RenderState.MeshResource"
+                    },
+                    "type": "array"
+                },
+                "programs": {
+                    "items": {
+                        "$ref": "#/definitions/RenderState.ProgramResource<\"drawMesh\">"
                     },
                     "type": "array"
                 }
             },
             "type": "object"
         },
-        "RenderStateView": {
+        "RenderState.View": {
             "properties": {
                 "height": {
                     "type": "number"
@@ -693,11 +708,14 @@
             },
             "type": "array"
         },
+        "binaryUrl": {
+            "type": "string"
+        },
         "resources": {
-            "$ref": "#/definitions/RenderStateResources"
+            "$ref": "#/definitions/RenderState.Resources"
         },
         "view": {
-            "$ref": "#/definitions/RenderStateView"
+            "$ref": "#/definitions/RenderState.View"
         }
     },
     "type": "object"

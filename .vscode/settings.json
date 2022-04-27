@@ -4,6 +4,7 @@
         "codepaths",
         "Framebuffers",
         "glsl",
+        "highp",
         "novorender",
         "PUNCHTHROUGH",
         "pvrtc",
@@ -15,5 +16,9 @@
         "webglcontextrestored"
     ],
     "cSpell.allowCompoundWords": false,
-    "webgl-glsl-editor.inlayHints": false
+    "webgl-glsl-editor.codeInjection": true,
+    "webgl-glsl-editor.codeInjectionSource": [
+        "#version 300 es",
+        "precision highp float;"
+    ],
 }

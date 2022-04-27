@@ -12,6 +12,13 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "type": "npm",
+            "script": "generate_binary",
+            "problemMatcher": [],
+            "label": "npm: generate_binary",
+            "detail": "ts-node-esm src/generateBinary.ts"
         }
     ]
 }

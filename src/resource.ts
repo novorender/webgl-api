@@ -1,6 +1,7 @@
 import { GL } from "./glEnum";
-import type { RenderStateResources } from "./state";
-import { BufferTarget, createBuffer, PrimitiveType, IndexBufferType, createVertexArrayBuffer } from "./util";
+import { createProgram } from "./programs";
+import type { RenderState } from "./state";
+import { BufferTarget, createBuffer, PrimitiveType, IndexBufferType, createVertexArrayBuffer, createShaderProgram } from "./util";
 
 // fixed vertex attribute layout of all mesh resources
 export enum MeshResourceVertexAttributes {
@@ -12,31 +13,36 @@ export enum MeshResourceVertexAttributes {
 
 export const meshResourceVertexAttributeBindings = (function () {
     const n = Object.keys(MeshResourceVertexAttributes).length / 2;
-    const attributes: any = {};
+    const attributes: string[] = [];
     for (let i = 0; i < n; i++) {
-        attributes[MeshResourceVertexAttributes[i]] = i;
+        attributes[i] = MeshResourceVertexAttributes[i];
     }
-    return attributes as { readonly [key: string]: number };
+    return attributes as readonly string[];
 }());
 
-function getArrayType(name: "Float32Array" | "Uint8Array" | "Uint16Array" | "Uint32Array") {
-    switch (name) {
-        case "Float32Array": return Float32Array;
-        case "Uint8Array": return Uint8Array;
-        case "Uint16Array": return Uint16Array;
-        case "Uint32Array": return Uint32Array;
-        default:
-            const _exhaustiveCheck: never = name;
-            return _exhaustiveCheck;
-    }
+function isRenderStateBufferResourceURL(resource: RenderState.BufferResource): resource is RenderState.BufferResourceBinary {
+    return "byteLength" in resource;
 }
 
-export function createFrameStateResources(gl: WebGL2RenderingContext, resources?: RenderStateResources) {
+function isRenderStateBufferResourceArray(resource: RenderState.BufferResource): resource is RenderState.BufferResourceArray {
+    return "array" in resource;
+}
+
+export function createFrameStateResources(gl: WebGL2RenderingContext, resources?: RenderState.Resources, binary?: ArrayBuffer) {
     const buffers = ((resources?.buffers) ?? []).map(bufferParams => {
-        const arrayCtor = getArrayType(bufferParams.arrayType ?? "Float32Array");
-        const data = new arrayCtor(bufferParams.data);
+        let data: BufferSource | undefined;
+        if (isRenderStateBufferResourceURL(bufferParams)) {
+            if (binary) {
+                data = new Uint8Array(binary, bufferParams.byteOffset, bufferParams.byteLength);
+            } else {
+                throw new Error("No resource binary specified!");
+            }
+        } else if (isRenderStateBufferResourceArray(bufferParams)) {
+            const arrayCtor = self[bufferParams.arrayType ?? "Float32Array"];
+            data = new arrayCtor(bufferParams.array);
+        }
         const type = gl[bufferParams.type] as BufferTarget;
-        const buffer = createBuffer(gl, type, data, GL.STATIC_DRAW);
+        const buffer = data ? createBuffer(gl, type, data, GL.STATIC_DRAW) : null;
         return buffer;
     });
 
@@ -60,7 +66,13 @@ export function createFrameStateResources(gl: WebGL2RenderingContext, resources?
         return { vao, count, primitiveType, indices } as const;
     });
 
-    return { buffers, meshes } as const;
+    const programs = ((resources?.programs) ?? []).map(programParams => {
+        const { shader, flags } = programParams;
+        const program = createProgram(gl, shader, flags);
+        return program;
+    });
+
+    return { buffers, meshes, programs } as const;
 }
 
 export type FrameContextResources = ReturnType<typeof createFrameStateResources>;

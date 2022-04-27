@@ -68,7 +68,7 @@ export type AttributeType = GL.BYTE | GL.UNSIGNED_BYTE | GL.SHORT | GL.UNSIGNED_
 
 export interface AttributeParams {
     readonly index: number; // shader attribute location index
-    readonly buffer: WebGLBuffer;
+    readonly buffer: WebGLBuffer | null;
     // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/vertexAttribPointer
     readonly numComponents: 1 | 2 | 3 | 4;
     readonly componentType?: GL.BYTE | GL.UNSIGNED_BYTE | GL.SHORT | GL.UNSIGNED_SHORT | GL.FLOAT | GL.HALF_FLOAT; // default: FLOAT
@@ -233,9 +233,13 @@ function compileShader(gl: WebGLRenderingContext, type: ShaderType, source: stri
     return shader;
 }
 
-export function createShaderProgram(gl: WebGLRenderingContext, shaders: { readonly vertex: string; readonly fragment: string; }, attributeBindings?: { readonly [key: string]: number }): WebGLProgram {
-    const vertexShader = compileShader(gl, "VERTEX_SHADER", shaders.vertex);
-    const fragmentShader = compileShader(gl, "FRAGMENT_SHADER", shaders.fragment);
+export function createShaderProgram(gl: WebGLRenderingContext, shaders: { readonly vertex: string; readonly fragment: string; }, attributeBindings?: readonly string[], flags?: readonly string[]): WebGLProgram {
+    const header = "#version 300 es\nprecision highp float;\n";
+    const defines = flags?.map(flag => `#define ${flag}\n`)?.join() ?? "";
+    const vs = header + defines + shaders.vertex;
+    const fs = header + defines + shaders.fragment;
+    const vertexShader = compileShader(gl, "VERTEX_SHADER", vs);
+    const fragmentShader = compileShader(gl, "FRAGMENT_SHADER", fs);
     const program = gl.createProgram();
     if (!program)
         throw new Error("Could not create WebGL shader program!");
@@ -244,10 +248,9 @@ export function createShaderProgram(gl: WebGLRenderingContext, shaders: { readon
     gl.attachShader(program, fragmentShader);
 
     if (attributeBindings) {
-        // do optional dynamic remapping of attributes before linking
-        // this can also be done in glsl by explicit layout(location = ?)
-        for (const [name, index] of Object.entries(attributeBindings)) {
-            gl.bindAttribLocation(program, index, name);
+        // Do optional dynamic remapping of attributes before linking. This can also be done in glsl by explicit layout(location = <index>)
+        for (let i = 0; i < attributeBindings.length; i++) {
+            gl.bindAttribLocation(program, i, attributeBindings[i]);
         }
     }
 

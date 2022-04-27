@@ -23,24 +23,34 @@ export function createView(canvas: HTMLCanvasElement) {
     return new View(canvas, gl);
 }
 
-export async function downloadRenderState(url: URL): Promise<RenderState> {
+export async function downloadRenderState(url: URL) {
     const response = await fetch(url.toString());
     if (!response.ok) {
         throw new Error(`HTTP Error: ${response.status}: ${response.statusText} (${url})`);
     }
     const jsonc = await response.text();
     const renderState = parseRenderState(jsonc);
-    return renderState;
+    let binary: ArrayBuffer | undefined;
+    const binaryUrl = renderState?.resources?.binaryUrl;
+    if (binaryUrl) {
+        const response = await fetch(new URL(binaryUrl, url).toString());
+        if (!response.ok) {
+            throw new Error(`HTTP Error: ${response.status}: ${response.statusText} (${url})`);
+        }
+        binary = await response.arrayBuffer();
+    }
+
+    return { renderState, binary } as const;
 }
 
-export function parseRenderState(jsonc: string): RenderState {
+export function parseRenderState(jsonc: string): RenderState.Scene {
     const json = stripJsonComments(jsonc);
     const renderState = JSON.parse(json);
     return validateRenderState(renderState);
 }
 
-export function validateRenderState(renderState: any): RenderState {
+export function validateRenderState(renderState: any): RenderState.Scene {
     // TODO: add validation!
     // use json schema? https://github.com/YousefED/typescript-json-schema
-    return renderState as RenderState;
+    return renderState as RenderState.Scene;
 }
