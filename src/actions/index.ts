@@ -1,16 +1,10 @@
-import { CameraPerspectiveAction } from "./camera";
 import { ClearAction } from "./clear";
-import { DrawCubeAction } from "./drawCube";
 import { DrawMeshAction } from "./drawMesh";
-import { FillRectAction } from "./fillRect";
 import type { ActionCtorArgs } from "./actionBase";
 
 const actionNamespaces = {
     clear: ClearAction,
-    fill_rect: FillRectAction,
-    draw_cube: DrawCubeAction,
     draw_mesh: DrawMeshAction,
-    camera_perspective: CameraPerspectiveAction
 } as const;
 
 export function getActionTypes(args: ActionCtorArgs) {

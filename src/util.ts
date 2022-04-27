@@ -5,7 +5,7 @@ export function exhaustiveCheck(value: never) {
     throw new Error(`Unknown kind: ${value}!`);
 }
 
-export function getProjectionMatrix(fov: number, aspect: number, minZ: number, maxZ: number): Mat4 {
+export function makeProjectionMatrix(fov: number, aspect: number, minZ: number, maxZ: number): Mat4 {
     const halfAngleTan = Math.tan((fov * .5) * Math.PI / 180);
     return [
         0.5 / halfAngleTan, 0, 0, 0,
@@ -43,7 +43,12 @@ export function rotateY(m: number[], angle: number) {
     m[10] = c * m[10] - s * mv8;
 }
 
-
+export const identityMatrix: Mat4 = [
+    1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1,
+];
 
 export function createGLContext(canvas: HTMLCanvasElement) {
     // TODO: Add options (for creating context)
@@ -144,14 +149,14 @@ function getUniformBlockInfo(gl: WebGL2RenderingContext, program: WebGLProgram, 
     return { blockIndex, usedByVertexShader, usedByFragmentShader, size, uniformIndices, used } as const;
 }
 
-export interface UniformParams {
+export interface UniformValues {
     readonly [name: string]: boolean | number | readonly number[];
 }
 
 export interface UniformBlock {
     readonly buffer: WebGLBuffer;
     readonly blockIndex: number;
-    set(uniforms: UniformParams): void;
+    set(uniforms: UniformValues): void;
     dispose(): void;
 }
 
@@ -172,6 +177,40 @@ export function createBuffer(gl: WebGL2RenderingContext, target: BufferTarget, s
     return buffer;
 }
 
+export function createUniformBlock(gl: WebGL2RenderingContext, program: WebGLProgram, blockName: string, uniformInfos: readonly UniformInfo[]) {
+    const blockIndex = gl.getUniformBlockIndex(program, blockName);
+    const blockUniforms = uniformInfos.filter(u => u.blockIndex == blockIndex);
+    console.assert(blockIndex >= 0);
+    const blockInfo = getUniformBlockInfo(gl, program, blockIndex);
+    gl.uniformBlockBinding(program, blockIndex, blockIndex);
+
+    const data = new ArrayBuffer(blockInfo.size);
+    const f32 = new Float32Array(data);
+
+    function set(uniforms: UniformValues) {
+        for (const uniformInfo of blockUniforms) {
+            const uniformValue = uniforms[uniformInfo.name];
+            if (uniformValue !== undefined) {
+                switch (uniformInfo.type) {
+                    case GL.FLOAT_VEC2:
+                    case GL.FLOAT_VEC3:
+                    case GL.FLOAT_VEC4:
+                    case GL.FLOAT_MAT2:
+                    case GL.FLOAT_MAT3:
+                    case GL.FLOAT_MAT4:
+                        f32.set(uniformValue as number[], uniformInfo.offset / f32.BYTES_PER_ELEMENT);
+                        break;
+                    default:
+                        throw new Error("Unsupported uniform type!");
+                }
+            }
+        }
+    }
+
+    return { data, set };
+}
+
+
 export function createUniformBlockBuffer(gl: WebGL2RenderingContext, program: WebGLProgram, blockName: string, uniformInfos: readonly UniformInfo[]) {
     const blockIndex = gl.getUniformBlockIndex(program, blockName);
     const blockUniforms = uniformInfos.filter(u => u.blockIndex == blockIndex);
@@ -183,7 +222,7 @@ export function createUniformBlockBuffer(gl: WebGL2RenderingContext, program: We
     const data = new ArrayBuffer(blockInfo.size);
     const f32 = new Float32Array(data);
 
-    function set(uniforms: UniformParams) {
+    function set(uniforms: UniformValues) {
         for (const uniformInfo of blockUniforms) {
             const uniformValue = uniforms[uniformInfo.name];
             if (uniformValue !== undefined) {
@@ -233,7 +272,7 @@ function compileShader(gl: WebGLRenderingContext, type: ShaderType, source: stri
     return shader;
 }
 
-export function createShaderProgram(gl: WebGLRenderingContext, shaders: { readonly vertex: string; readonly fragment: string; }, attributeBindings?: readonly string[], flags?: readonly string[]): WebGLProgram {
+export function createShaderProgram(gl: WebGL2RenderingContext, shaders: { readonly vertex: string; readonly fragment: string; }, attributeBindings?: readonly string[], flags?: readonly string[]): WebGLProgram {
     const header = "#version 300 es\nprecision highp float;\n";
     const defines = flags?.map(flag => `#define ${flag}\n`)?.join() ?? "";
     const vs = header + defines + shaders.vertex;
@@ -247,15 +286,25 @@ export function createShaderProgram(gl: WebGLRenderingContext, shaders: { readon
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
 
-    if (attributeBindings) {
-        // Do optional dynamic remapping of attributes before linking. This can also be done in glsl by explicit layout(location = <index>)
-        for (let i = 0; i < attributeBindings.length; i++) {
-            gl.bindAttribLocation(program, i, attributeBindings[i]);
-        }
-    }
+    // if (attributeBindings) {
+    //     // Do optional dynamic remapping of attributes before linking. This can also be done in glsl by explicit layout(location = <index>)
+    //     for (let i = 0; i < attributeBindings.length; i++) {
+    //         gl.bindAttribLocation(program, i, attributeBindings[i]);
+    //     }
+    // }
 
     // TODO: Consider doing linking in a separate stage, so as to take advantage of parallel shader compilation. (https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices#Compile_Shaders_and_Link_Programs_in_parallel)
     gl.linkProgram(program);
+
+    if (attributeBindings) {
+        for (let i = 0; i < attributeBindings.length; i++) {
+            const name = attributeBindings[i];
+            const loc = gl.getAttribLocation(program, name);
+            console.assert(loc == i || loc == -1);
+            // console.log(`${name}:${loc}`);
+        }
+    }
+
 
     gl.detachShader(program, vertexShader);
     gl.detachShader(program, fragmentShader);
@@ -267,6 +316,58 @@ export function createShaderProgram(gl: WebGLRenderingContext, shaders: { readon
 
     return program;
 }
+
+export function getLimits(gl: WebGL2RenderingContext) {
+    const names = [
+        "MAX_TEXTURE_SIZE",
+        "MAX_VIEWPORT_DIMS",
+        "MAX_TEXTURE_IMAGE_UNITS",
+        "MAX_VERTEX_UNIFORM_VECTORS",
+        "MAX_VARYING_VECTORS",
+        "MAX_COMBINED_TEXTURE_IMAGE_UNITS",
+        "MAX_VERTEX_TEXTURE_IMAGE_UNITS",
+        "MAX_TEXTURE_IMAGE_UNITS",
+        "MAX_FRAGMENT_UNIFORM_VECTORS",
+        "MAX_CUBE_MAP_TEXTURE_SIZE",
+        "MAX_RENDERBUFFER_SIZE",
+        "MAX_3D_TEXTURE_SIZE",
+        "MAX_ELEMENTS_VERTICES",
+        "MAX_ELEMENTS_INDICES",
+        "MAX_TEXTURE_LOD_BIAS",
+        "MAX_FRAGMENT_UNIFORM_COMPONENTS",
+        "MAX_VERTEX_UNIFORM_COMPONENTS",
+        "MAX_ARRAY_TEXTURE_LAYERS",
+        "MIN_PROGRAM_TEXEL_OFFSET",
+        "MAX_PROGRAM_TEXEL_OFFSET",
+        "MAX_VARYING_COMPONENTS",
+        "MAX_VERTEX_OUTPUT_COMPONENTS",
+        "MAX_FRAGMENT_INPUT_COMPONENTS",
+        "MAX_SERVER_WAIT_TIMEOUT",
+        "MAX_ELEMENT_INDEX",
+        "MAX_DRAW_BUFFERS",
+        "MAX_COLOR_ATTACHMENTS",
+        "MAX_SAMPLES",
+        "MAX_TRANSFORM_FEEDBACK_SEPARATE_COMPONENTS",
+        "MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS",
+        "MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS",
+        "MAX_VERTEX_UNIFORM_BLOCKS",
+        "MAX_FRAGMENT_UNIFORM_BLOCKS",
+        "MAX_COMBINED_UNIFORM_BLOCKS",
+        "MAX_UNIFORM_BUFFER_BINDINGS",
+        "MAX_UNIFORM_BLOCK_SIZE",
+        "MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS",
+        "MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS",
+    ] as const;
+
+    type Limits = { [P in typeof names[number]]: number };
+    const limits = {} as Limits;
+    for (const name of names) {
+        limits[name] = gl.getParameter(gl[name]) as number;
+    }
+    return limits as Readonly<Limits>;
+}
+export type LimitsGL = ReturnType<typeof getLimits>;
+
 
 
 // code adapted from https://github.com/sindresorhus/strip-json-comments

@@ -1,6 +1,9 @@
-import type { FrameContext } from "../frameContext";
+// import type { FrameContext } from "lib/frameContext";
+import type { FrameContext } from "/frameContext";
 
-export type ActionCtorArgs = { readonly gl: WebGL2RenderingContext };
+export interface ActionCtorArgs {
+    readonly gl: WebGL2RenderingContext;
+};
 
 export abstract class ActionBase {
     constructor(readonly args: ActionCtorArgs) { }

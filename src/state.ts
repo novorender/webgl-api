@@ -1,7 +1,7 @@
 import type { RenderActionData } from "./actions";
-import type { FlagNames, ShaderName } from "./programs";
-import type { MeshResourceVertexAttributes } from "./resource";
-// import { AttributeParams } from "./util";
+import type { MeshResourceVertexAttributes } from "./attributes";
+import type { FlagNames, ShaderNames } from "./programs";
+import type { Mat4, RGBA } from "./types";
 
 export namespace RenderState {
     export type VertexSemantic = keyof typeof MeshResourceVertexAttributes;
@@ -20,26 +20,51 @@ export namespace RenderState {
 
     export interface Resources {
         readonly binaryUrl?: string;
+        readonly programs: readonly ProgramResource[];
         readonly buffers: readonly BufferResource[];
         readonly meshes: readonly MeshResource[];
-        readonly programs: readonly ProgramResource[];
-        // TODO: Add materials?
         // TODO: Add textures
     }
 
-    export interface BufferResource {
-        readonly type: "ARRAY_BUFFER" | "ELEMENT_ARRAY_BUFFER";
-    }
-
-    export interface BufferResourceBinary extends BufferResource {
+    export interface BufferResourceBinary {
+        readonly type: "ARRAY_BUFFER" | "ELEMENT_ARRAY_BUFFER" | "UNIFORM_BUFFER";
         readonly byteOffset: number;
         readonly byteLength: number;
     }
 
-    export interface BufferResourceArray extends BufferResource {
+    export interface BufferResourceArray {
+        readonly type: "ARRAY_BUFFER" | "ELEMENT_ARRAY_BUFFER" | "UNIFORM_BUFFER";
         readonly arrayType?: "Float32Array" | "Uint8Array" | "Uint16Array" | "Uint32Array"; // default Float32Array
         readonly array: readonly number[];
     }
+
+    export interface BufferResourceUniformBlockInstance {
+        readonly type: "UNIFORM_BUFFER";
+        readonly instance: {
+            modelMatrix?: Mat4; // default = identity matrix
+        }
+    }
+
+    export interface BufferResourceUniformBlockMaterial {
+        readonly type: "UNIFORM_BUFFER";
+        readonly material: {
+            baseColor?: RGBA; // default = [1,1,1,1]
+        }
+    }
+
+    export interface BufferResourceUniformBlockCamera {
+        readonly type: "UNIFORM_BUFFER";
+        readonly camera: {
+            readonly viewMatrix?: Mat4; // default = identity matrix
+            readonly projectionMatrix?: { // we don't want a complete matrix here, since we want to inject aspect ratio from view width/height.
+                readonly fov?: number; // vertical field of view in degrees. default = 30
+                readonly near?: number; // default = 0.1
+                readonly far?: number; // default = 1000
+            }
+        }
+    }
+
+    export type BufferResource = BufferResourceBinary | BufferResourceArray | BufferResourceUniformBlockCamera | BufferResourceUniformBlockMaterial | BufferResourceUniformBlockInstance;
 
     export interface MeshResource {
         readonly primitiveType?: "POINTS" | "LINE_STRIP" | "LINE_LOOP" | "LINES" | "TRIANGLE_STRIP" | "TRIANGLE_FAN" | "TRIANGLES"; // default is "TRIANGLES"
@@ -63,7 +88,7 @@ export namespace RenderState {
         };
     }
 
-    export interface ProgramResource<T extends ShaderName = ShaderName> {
+    export interface ProgramResource<T extends ShaderNames = ShaderNames> {
         readonly shader: T;
         readonly flags?: readonly FlagNames<T>[]; // shader #ifdef's
         // uniform defaults?
@@ -77,10 +102,10 @@ export namespace RenderState {
     }
 
     export interface MeshInstance {
-        readonly mesh: number;
-        readonly material: number;
-        // TODO: Add per-instance uniforms, e.g. model-world transform
-        // TODO: Add per-instance material overrides?
+        readonly mesh: number; // index into resources.meshes
+        readonly camera: number; // index into resources.buffers
+        readonly material: number; // index into resources.buffers
+        readonly instance: number; // index into resources.buffers
     }
 
 }

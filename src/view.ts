@@ -3,15 +3,15 @@ import type { RenderState } from "./state";
 import { getActionTypes } from "./actions";
 import { FrameContext } from "./frameContext";
 import { createFrameStateResources } from "./resource";
-
+import { getLimits } from "./util";
 
 export class View {
     readonly #actionTypes;
-    readonly #activeTextureUnits;
+    readonly #limits;
 
     constructor(readonly canvas: HTMLCanvasElement, readonly gl: WebGL2RenderingContext) {
         this.#actionTypes = getActionTypes({ gl });
-        this.#activeTextureUnits = gl.getParameter(GL.MAX_TEXTURE_IMAGE_UNITS) as number;
+        this.#limits = getLimits(gl);
     }
 
     dispose() {
@@ -26,7 +26,8 @@ export class View {
     #createFrameContext(state: RenderState.Scene, binary?: ArrayBuffer) {
         const { gl } = this;
         const view = state.view ?? { width: this.canvas.clientWidth * devicePixelRatio, height: this.canvas.clientHeight * devicePixelRatio };
-        const resources = createFrameStateResources(gl, state.resources, binary);
-        return new FrameContext(this.canvas, this.gl, view, this.#activeTextureUnits, this.#actionTypes, resources);
+        const viewAspect = view.width / view.height;
+        const resources = createFrameStateResources(gl, viewAspect, state.resources, binary);
+        return new FrameContext(this.canvas, this.gl, view, this.#limits, this.#actionTypes, resources);
     }
 } 

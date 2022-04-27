@@ -21,6 +21,7 @@ module.exports = {
         alias: {
             ["@novorender/webgl-api"]: path.resolve(__dirname, "./src/"),
         },
+        roots: [path.resolve(__dirname, "./src/")]
     },
     output: {
         filename: "bundle.js",

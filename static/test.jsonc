@@ -2,24 +2,10 @@
     "$schema": "../src/render-state-schema.json",
     "resources": {
         "binaryUrl": "test.bin",
-        "buffers": [
-            // #0: positions
+        "programs": [
             {
-                "type": "ARRAY_BUFFER",
-                "byteOffset": 0,
-                "byteLength": 288
-            },
-            // #1: colors
-            {
-                "type": "ARRAY_BUFFER",
-                "byteOffset": 288,
-                "byteLength": 288
-            },
-            // #2: indices
-            {
-                "type": "ELEMENT_ARRAY_BUFFER",
-                "byteOffset": 576,
-                "byteLength": 36
+                "shader": "drawMesh",
+                "flags": []
             }
         ],
         "meshes": [
@@ -42,10 +28,87 @@
                 }
             }
         ],
-        "programs": [
+        "buffers": [
+            // #0: positions
             {
-                "shader": "drawMesh",
-                "flags": []
+                "type": "ARRAY_BUFFER",
+                "byteOffset": 0,
+                "byteLength": 288
+            },
+            // #1: colors
+            {
+                "type": "ARRAY_BUFFER",
+                "byteOffset": 288,
+                "byteLength": 288
+            },
+            // #2: indices
+            {
+                "type": "ELEMENT_ARRAY_BUFFER",
+                "byteOffset": 576,
+                "byteLength": 36
+            },
+            // #3: camera uniform block
+            {
+                "type": "UNIFORM_BUFFER",
+                "camera": {
+                    "projectionMatrix": {
+                        "fov": 40
+                    },
+                    "viewMatrix": [
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        0,
+                        0,
+                        -5,
+                        1
+                    ]
+                }
+            },
+            // #4: material uniform block
+            {
+                "type": "UNIFORM_BUFFER",
+                "material": {
+                    "baseColor": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            // #5: instance uniform block
+            {
+                "type": "UNIFORM_BUFFER",
+                "instance": {
+                    "modelMatrix": [ // https://www.andre-gaschler.com/rotationconverter/
+                        0.8660254,
+                        0.2500000,
+                        -0.4330127,
+                        0.0,
+                        0.0000000,
+                        0.8660254,
+                        0.5000000,
+                        0.0,
+                        0.5000000,
+                        -0.4330127,
+                        0.7500000,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ]
+                }
             }
         ]
     },
@@ -60,50 +123,13 @@
             ],
             "depth": 1
         },
-        // {
-        //     "kind": "fill_rect",
-        //     "rect": {
-        //         "x": 100,
-        //         "y": 100,
-        //         "width": 200,
-        //         "height": 200
-        //     },
-        //     "color": [
-        //         1,
-        //         1,
-        //         0,
-        //         1
-        //     ]
-        // },
-        {
-            "kind": "camera_perspective",
-            "fov": 30,
-            "position": [
-                0,
-                0,
-                10
-            ]
-        },
-        // {
-        //     "kind": "draw_cube",
-        //     "rotationX": 30,
-        //     "rotationY": 30
-        // },
         {
             "kind": "draw_mesh",
             "mesh": 0,
-            "rotationX": 30,
-            "rotationY": 30
+            "program": 0,
+            "cameraUniforms": 3,
+            "materialUniforms": 4,
+            "instanceUniforms": 5
         }
-        // {
-        //     "kind": "draw_cube",
-        //     "rotationX": 35,
-        //     "rotationY": 30,
-        //     "position": [
-        //         3,
-        //         0,
-        //         0
-        //     ]
-        // }
     ]
 }

@@ -1,165 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "definitions": {
-        "CameraPerspectiveAction.Data": {
-            "properties": {
-                "fov": {
-                    "type": "number"
-                },
-                "kind": {
-                    "enum": [
-                        "camera_perspective"
-                    ],
-                    "type": "string"
-                },
-                "position": {
-                    "items": [
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        }
-                    ],
-                    "maxItems": 3,
-                    "minItems": 3,
-                    "type": "array"
-                },
-                "projectionMatrix": {
-                    "items": [
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        }
-                    ],
-                    "maxItems": 16,
-                    "minItems": 16,
-                    "type": "array"
-                },
-                "rotation": {
-                    "items": [
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        }
-                    ],
-                    "maxItems": 4,
-                    "minItems": 4,
-                    "type": "array"
-                },
-                "viewMatrix": {
-                    "items": [
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        }
-                    ],
-                    "maxItems": 16,
-                    "minItems": 16,
-                    "type": "array"
-                }
-            },
-            "type": "object"
-        },
         "ClearAction.Data": {
             "properties": {
                 "color": {
@@ -196,238 +37,264 @@
             },
             "type": "object"
         },
-        "DrawCubeAction.Data": {
-            "properties": {
-                "kind": {
-                    "enum": [
-                        "draw_cube"
-                    ],
-                    "type": "string"
-                },
-                "modelMatrix": {
-                    "items": [
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        }
-                    ],
-                    "maxItems": 16,
-                    "minItems": 16,
-                    "type": "array"
-                },
-                "position": {
-                    "items": [
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        }
-                    ],
-                    "maxItems": 3,
-                    "minItems": 3,
-                    "type": "array"
-                },
-                "rotationX": {
-                    "type": "number"
-                },
-                "rotationY": {
-                    "type": "number"
-                }
-            },
-            "type": "object"
-        },
         "DrawMeshAction.Data": {
             "properties": {
+                "cameraUniforms": {
+                    "type": "number"
+                },
+                "instanceUniforms": {
+                    "type": "number"
+                },
                 "kind": {
                     "enum": [
                         "draw_mesh"
                     ],
                     "type": "string"
                 },
+                "materialUniforms": {
+                    "type": "number"
+                },
                 "mesh": {
                     "type": "number"
                 },
-                "modelMatrix": {
-                    "items": [
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        }
-                    ],
-                    "maxItems": 16,
-                    "minItems": 16,
-                    "type": "array"
-                },
-                "position": {
-                    "items": [
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        }
-                    ],
-                    "maxItems": 3,
-                    "minItems": 3,
-                    "type": "array"
-                },
-                "rotationX": {
-                    "type": "number"
-                },
-                "rotationY": {
+                "program": {
                     "type": "number"
                 }
             },
             "type": "object"
         },
-        "FillRectAction.Data": {
+        "RenderState.BufferResourceArray": {
             "properties": {
-                "color": {
-                    "items": [
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        }
-                    ],
-                    "maxItems": 4,
-                    "minItems": 4,
+                "array": {
+                    "items": {
+                        "type": "number"
+                    },
                     "type": "array"
                 },
-                "kind": {
+                "arrayType": {
                     "enum": [
-                        "fill_rect"
+                        "Float32Array",
+                        "Uint16Array",
+                        "Uint32Array",
+                        "Uint8Array"
                     ],
                     "type": "string"
                 },
-                "rect": {
-                    "properties": {
-                        "height": {
-                            "type": "number"
-                        },
-                        "width": {
-                            "type": "number"
-                        },
-                        "x": {
-                            "type": "number"
-                        },
-                        "y": {
-                            "type": "number"
-                        }
-                    },
-                    "type": "object"
+                "type": {
+                    "enum": [
+                        "ARRAY_BUFFER",
+                        "ELEMENT_ARRAY_BUFFER",
+                        "UNIFORM_BUFFER"
+                    ],
+                    "type": "string"
                 }
             },
             "type": "object"
         },
-        "RenderState.BufferResource": {
+        "RenderState.BufferResourceBinary": {
             "properties": {
+                "byteLength": {
+                    "type": "number"
+                },
+                "byteOffset": {
+                    "type": "number"
+                },
                 "type": {
                     "enum": [
                         "ARRAY_BUFFER",
-                        "ELEMENT_ARRAY_BUFFER"
+                        "ELEMENT_ARRAY_BUFFER",
+                        "UNIFORM_BUFFER"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.BufferResourceUniformBlockCamera": {
+            "properties": {
+                "camera": {
+                    "properties": {
+                        "projectionMatrix": {
+                            "properties": {
+                                "far": {
+                                    "type": "number"
+                                },
+                                "fov": {
+                                    "type": "number"
+                                },
+                                "near": {
+                                    "type": "number"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "viewMatrix": {
+                            "items": [
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                }
+                            ],
+                            "maxItems": 16,
+                            "minItems": 16,
+                            "type": "array"
+                        }
+                    },
+                    "type": "object"
+                },
+                "type": {
+                    "enum": [
+                        "UNIFORM_BUFFER"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.BufferResourceUniformBlockInstance": {
+            "properties": {
+                "instance": {
+                    "properties": {
+                        "modelMatrix": {
+                            "items": [
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                }
+                            ],
+                            "maxItems": 16,
+                            "minItems": 16,
+                            "type": "array"
+                        }
+                    },
+                    "type": "object"
+                },
+                "type": {
+                    "enum": [
+                        "UNIFORM_BUFFER"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.BufferResourceUniformBlockMaterial": {
+            "properties": {
+                "material": {
+                    "properties": {
+                        "baseColor": {
+                            "items": [
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                }
+                            ],
+                            "maxItems": 4,
+                            "minItems": 4,
+                            "type": "array"
+                        }
+                    },
+                    "type": "object"
+                },
+                "type": {
+                    "enum": [
+                        "UNIFORM_BUFFER"
                     ],
                     "type": "string"
                 }
@@ -437,7 +304,7 @@
         "RenderState.MeshResource": {
             "properties": {
                 "attributes": {
-                    "$ref": "#/definitions/{readonlynormal:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlyposition:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlycolor0:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlytex0:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};}"
+                    "$ref": "#/definitions/{readonlynormal:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlyposition:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlycolor0:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlytex0:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlytex1:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};}"
                 },
                 "count": {
                     "type": "number"
@@ -501,7 +368,23 @@
                 },
                 "buffers": {
                     "items": {
-                        "$ref": "#/definitions/RenderState.BufferResource"
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/RenderState.BufferResourceBinary"
+                            },
+                            {
+                                "$ref": "#/definitions/RenderState.BufferResourceArray"
+                            },
+                            {
+                                "$ref": "#/definitions/RenderState.BufferResourceUniformBlockInstance"
+                            },
+                            {
+                                "$ref": "#/definitions/RenderState.BufferResourceUniformBlockMaterial"
+                            },
+                            {
+                                "$ref": "#/definitions/RenderState.BufferResourceUniformBlockCamera"
+                            }
+                        ]
                     },
                     "type": "array"
                 },
@@ -531,7 +414,7 @@
             },
             "type": "object"
         },
-        "{readonlynormal:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlyposition:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlycolor0:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlytex0:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};}": {
+        "{readonlynormal:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlyposition:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlycolor0:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlytex0:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlytex1:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"UNSIGNED_SHORT\"|\"BYTE\"|\"SHORT\"|\"FLOAT\"|\"HALF_FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};}": {
             "properties": {
                 "color0": {
                     "properties": {
@@ -680,6 +563,43 @@
                         }
                     },
                     "type": "object"
+                },
+                "tex1": {
+                    "properties": {
+                        "buffer": {
+                            "type": "number"
+                        },
+                        "componentType": {
+                            "enum": [
+                                "BYTE",
+                                "FLOAT",
+                                "HALF_FLOAT",
+                                "SHORT",
+                                "UNSIGNED_BYTE",
+                                "UNSIGNED_SHORT"
+                            ],
+                            "type": "string"
+                        },
+                        "normalized": {
+                            "type": "boolean"
+                        },
+                        "numComponents": {
+                            "enum": [
+                                1,
+                                2,
+                                3,
+                                4
+                            ],
+                            "type": "number"
+                        },
+                        "offset": {
+                            "type": "number"
+                        },
+                        "stride": {
+                            "type": "number"
+                        }
+                    },
+                    "type": "object"
                 }
             },
             "type": "object"
@@ -690,19 +610,10 @@
             "items": {
                 "anyOf": [
                     {
-                        "$ref": "#/definitions/CameraPerspectiveAction.Data"
-                    },
-                    {
                         "$ref": "#/definitions/ClearAction.Data"
                     },
                     {
-                        "$ref": "#/definitions/DrawCubeAction.Data"
-                    },
-                    {
                         "$ref": "#/definitions/DrawMeshAction.Data"
-                    },
-                    {
-                        "$ref": "#/definitions/FillRectAction.Data"
                     }
                 ]
             },

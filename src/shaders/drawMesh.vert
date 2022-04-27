@@ -1,8 +1,7 @@
-// layout(location = 0) in vec3 position;
-// layout(location = 2) in vec3 color0;
-in vec3 position;
-in vec3 color0;
-out vec3 vertexColor;
+layout(location = 0) in vec4 position;
+layout(location = 2) in vec4 color0;
+
+out vec4 vertexColor;
 
 layout(std140) uniform CameraUniforms {
     mat4 dummyMatrix;
@@ -10,11 +9,15 @@ layout(std140) uniform CameraUniforms {
     mat4 viewMatrix;
 };
 
-uniform MeshUniforms {
+layout(std140) uniform MaterialUniforms {
+    vec4 baseColor;
+};
+
+layout(std140) uniform InstanceUniforms {
     mat4 modelMatrix;
 };
 
 void main() {
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.);
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * position;
     vertexColor = color0;
 }
