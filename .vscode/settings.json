@@ -1,6 +1,8 @@
 {
     "cSpell.words": [
+        "ASTC",
         "BPPV",
+        "BPTC",
         "codepaths",
         "Framebuffers",
         "glsl",
@@ -10,7 +12,12 @@
         "pvrtc",
         "renderable",
         "renderbuffers",
+        "RGBA",
+        "RGTC",
+        "SRGB",
+        "texel",
         "tsbuildinfo",
+        "UNORM",
         "webgl",
         "webglcontextlost",
         "webglcontextrestored"

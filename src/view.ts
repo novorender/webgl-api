@@ -18,16 +18,16 @@ export class View {
     }
 
     // TODO: make async?
-    render(state: RenderState.Scene, binary?: ArrayBuffer) {
-        const frameContext = this.#createFrameContext(state, binary);
+    async render(state: RenderState.Scene, blobs: readonly ArrayBuffer[]) {
+        const frameContext = await this.#createFrameContext(state, blobs);
         return frameContext.render(state.actions);
     }
 
-    #createFrameContext(state: RenderState.Scene, binary?: ArrayBuffer) {
+    async #createFrameContext(state: RenderState.Scene, blobs: readonly ArrayBuffer[]) {
         const { gl } = this;
         const view = state.view ?? { width: this.canvas.clientWidth * devicePixelRatio, height: this.canvas.clientHeight * devicePixelRatio };
         const viewAspect = view.width / view.height;
-        const resources = createFrameStateResources(gl, viewAspect, state.resources, binary);
+        const resources = await createFrameStateResources(gl, viewAspect, state.resources, blobs);
         return new FrameContext(this.canvas, this.gl, view, this.#limits, this.#actionTypes, resources);
     }
 } 

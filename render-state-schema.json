@@ -1,0 +1,1574 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "ClearAction.Data": {
+            "properties": {
+                "color": {
+                    "items": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "maxItems": 4,
+                    "minItems": 4,
+                    "type": "array"
+                },
+                "depth": {
+                    "type": "number"
+                },
+                "kind": {
+                    "enum": [
+                        "clear"
+                    ],
+                    "type": "string"
+                },
+                "stencil": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "CompressedTextureFormatString": {
+            "enum": [
+                "COMPRESSED_R11_EAC",
+                "COMPRESSED_RED_GREEN_RGTC2_EXT",
+                "COMPRESSED_RED_RGTC1_EXT",
+                "COMPRESSED_RG11_EAC",
+                "COMPRESSED_RGB8_ETC2",
+                "COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2",
+                "COMPRESSED_RGBA8_ETC2_EAC",
+                "COMPRESSED_RGBA_ASTC_10x10_KHR",
+                "COMPRESSED_RGBA_ASTC_10x5_KHR",
+                "COMPRESSED_RGBA_ASTC_10x6_KHR",
+                "COMPRESSED_RGBA_ASTC_12x10_KHR",
+                "COMPRESSED_RGBA_ASTC_12x12_KHR",
+                "COMPRESSED_RGBA_ASTC_4x4_KHR",
+                "COMPRESSED_RGBA_ASTC_5x4_KHR",
+                "COMPRESSED_RGBA_ASTC_5x5_KHR",
+                "COMPRESSED_RGBA_ASTC_6x5_KHR",
+                "COMPRESSED_RGBA_ASTC_6x6_KHR",
+                "COMPRESSED_RGBA_ASTC_8x5_KHR",
+                "COMPRESSED_RGBA_ASTC_8x6_KHR",
+                "COMPRESSED_RGBA_ASTC_8x8_KHR",
+                "COMPRESSED_RGBA_BPTC_UNORM_EXT",
+                "COMPRESSED_RGBA_PVRTC_2BPPV1_IMG",
+                "COMPRESSED_RGBA_PVRTC_4BPPV1_IMG",
+                "COMPRESSED_RGBA_S3TC_DXT1_EXT",
+                "COMPRESSED_RGBA_S3TC_DXT3_EXT",
+                "COMPRESSED_RGBA_S3TC_DXT5_EXT",
+                "COMPRESSED_RGB_BPTC_SIGNED_FLOAT_EXT",
+                "COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT",
+                "COMPRESSED_RGB_ETC1_WEBGL",
+                "COMPRESSED_RGB_PVRTC_2BPPV1_IMG",
+                "COMPRESSED_RGB_PVRTC_4BPPV1_IMG",
+                "COMPRESSED_RGB_S3TC_DXT1_EXT",
+                "COMPRESSED_SIGNED_R11_EAC",
+                "COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT",
+                "COMPRESSED_SIGNED_RED_RGTC1_EXT",
+                "COMPRESSED_SIGNED_RG11_EAC",
+                "COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR",
+                "COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR",
+                "COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR",
+                "COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR",
+                "COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR",
+                "COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR",
+                "COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR",
+                "COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR",
+                "COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR",
+                "COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR",
+                "COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR",
+                "COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR",
+                "COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR",
+                "COMPRESSED_SRGB8_ALPHA8_ETC2_EAC",
+                "COMPRESSED_SRGB8_ETC2",
+                "COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2",
+                "COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT",
+                "COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT",
+                "COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT",
+                "COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT",
+                "COMPRESSED_SRGB_S3TC_DXT1_EXT"
+            ],
+            "type": "string"
+        },
+        "DrawMeshAction.Data": {
+            "properties": {
+                "baseColorSampler": {
+                    "type": "number"
+                },
+                "baseColorTexture": {
+                    "type": "number"
+                },
+                "cameraUniforms": {
+                    "type": "number"
+                },
+                "instanceUniforms": {
+                    "type": "number"
+                },
+                "kind": {
+                    "enum": [
+                        "draw_mesh"
+                    ],
+                    "type": "string"
+                },
+                "materialUniforms": {
+                    "type": "number"
+                },
+                "mesh": {
+                    "type": "number"
+                },
+                "program": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "Exclude": {
+            "enum": [
+                "BYTE",
+                "FLOAT",
+                "HALF_FLOAT",
+                "INT",
+                "SHORT",
+                "UNSIGNED_BYTE",
+                "UNSIGNED_INT",
+                "UNSIGNED_INT_10F_11F_11F_REV",
+                "UNSIGNED_INT_24_8",
+                "UNSIGNED_INT_2_10_10_10_REV",
+                "UNSIGNED_INT_5_9_9_9_REV",
+                "UNSIGNED_SHORT",
+                "UNSIGNED_SHORT_4_4_4_4",
+                "UNSIGNED_SHORT_5_5_5_1",
+                "UNSIGNED_SHORT_5_6_5"
+            ],
+            "type": "string"
+        },
+        "RenderState.BlobRef": {
+            "properties": {
+                "blobIndex": {
+                    "type": "number"
+                },
+                "byteLength": {
+                    "type": "number"
+                },
+                "byteOffset": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.BufferResourceArray": {
+            "properties": {
+                "array": {
+                    "items": {
+                        "type": "number"
+                    },
+                    "type": "array"
+                },
+                "arrayType": {
+                    "enum": [
+                        "Float32Array",
+                        "Uint16Array",
+                        "Uint32Array",
+                        "Uint8Array"
+                    ],
+                    "type": "string"
+                },
+                "type": {
+                    "enum": [
+                        "ARRAY_BUFFER",
+                        "ELEMENT_ARRAY_BUFFER",
+                        "UNIFORM_BUFFER"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.BufferResourceBinary": {
+            "properties": {
+                "blobIndex": {
+                    "type": "number"
+                },
+                "byteLength": {
+                    "type": "number"
+                },
+                "byteOffset": {
+                    "type": "number"
+                },
+                "type": {
+                    "enum": [
+                        "ARRAY_BUFFER",
+                        "ELEMENT_ARRAY_BUFFER",
+                        "UNIFORM_BUFFER"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.BufferResourceUniformBlockCamera": {
+            "properties": {
+                "camera": {
+                    "properties": {
+                        "projectionMatrix": {
+                            "properties": {
+                                "far": {
+                                    "type": "number"
+                                },
+                                "fov": {
+                                    "type": "number"
+                                },
+                                "near": {
+                                    "type": "number"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "viewMatrix": {
+                            "items": [
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                }
+                            ],
+                            "maxItems": 16,
+                            "minItems": 16,
+                            "type": "array"
+                        }
+                    },
+                    "type": "object"
+                },
+                "type": {
+                    "enum": [
+                        "UNIFORM_BUFFER"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.BufferResourceUniformBlockInstance": {
+            "properties": {
+                "instance": {
+                    "properties": {
+                        "modelMatrix": {
+                            "items": [
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                }
+                            ],
+                            "maxItems": 16,
+                            "minItems": 16,
+                            "type": "array"
+                        }
+                    },
+                    "type": "object"
+                },
+                "type": {
+                    "enum": [
+                        "UNIFORM_BUFFER"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.BufferResourceUniformBlockMaterial": {
+            "properties": {
+                "material": {
+                    "properties": {
+                        "baseColor": {
+                            "items": [
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                }
+                            ],
+                            "maxItems": 4,
+                            "minItems": 4,
+                            "type": "array"
+                        },
+                        "baseColorTexture": {
+                            "type": "number"
+                        }
+                    },
+                    "type": "object"
+                },
+                "type": {
+                    "enum": [
+                        "UNIFORM_BUFFER"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.Compressed": {
+            "properties": {
+                "internalFormat": {
+                    "$ref": "#/definitions/CompressedTextureFormatString"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.GenMipMap": {
+            "properties": {
+                "generateMipMaps": {
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.MeshResource": {
+            "properties": {
+                "attributes": {
+                    "$ref": "#/definitions/{readonlynormal:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"BYTE\"|\"UNSIGNED_SHORT\"|\"SHORT\"|\"HALF_FLOAT\"|\"FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlyposition:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"BYTE\"|\"UNSIGNED_SHORT\"|\"SHORT\"|\"HALF_FLOAT\"|\"FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlycolor0:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"BYTE\"|\"UNSIGNED_SHORT\"|\"SHORT\"|\"HALF_FLOAT\"|\"FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlytex0:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"BYTE\"|\"UNSIGNED_SHORT\"|\"SHORT\"|\"HALF_FLOAT\"|\"FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlytex1:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"BYTE\"|\"UNSIGNED_SHORT\"|\"SHORT\"|\"HALF_FLOAT\"|\"FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};}"
+                },
+                "count": {
+                    "type": "number"
+                },
+                "indices": {
+                    "properties": {
+                        "buffer": {
+                            "type": "number"
+                        },
+                        "type": {
+                            "enum": [
+                                "UNSIGNED_BYTE",
+                                "UNSIGNED_INT",
+                                "UNSIGNED_SHORT"
+                            ],
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "primitiveType": {
+                    "enum": [
+                        "LINES",
+                        "LINE_LOOP",
+                        "LINE_STRIP",
+                        "POINTS",
+                        "TRIANGLES",
+                        "TRIANGLE_FAN",
+                        "TRIANGLE_STRIP"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.ProgramResource<\"drawMesh\">": {
+            "properties": {
+                "flags": {
+                    "items": {
+                        "enum": [
+                            "ANOTHER_FLAG",
+                            "SOME_FLAG"
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "shader": {
+                    "enum": [
+                        "drawMesh"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.Resources": {
+            "properties": {
+                "blobs": {
+                    "items": {
+                        "properties": {
+                            "url": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "type": "array"
+                },
+                "buffers": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/RenderState.BufferResourceBinary"
+                            },
+                            {
+                                "$ref": "#/definitions/RenderState.BufferResourceArray"
+                            },
+                            {
+                                "$ref": "#/definitions/RenderState.BufferResourceUniformBlockInstance"
+                            },
+                            {
+                                "$ref": "#/definitions/RenderState.BufferResourceUniformBlockMaterial"
+                            },
+                            {
+                                "$ref": "#/definitions/RenderState.BufferResourceUniformBlockCamera"
+                            }
+                        ]
+                    },
+                    "type": "array"
+                },
+                "meshes": {
+                    "items": {
+                        "$ref": "#/definitions/RenderState.MeshResource"
+                    },
+                    "type": "array"
+                },
+                "programs": {
+                    "items": {
+                        "$ref": "#/definitions/RenderState.ProgramResource<\"drawMesh\">"
+                    },
+                    "type": "array"
+                },
+                "samplers": {
+                    "items": {
+                        "$ref": "#/definitions/RenderState.SamplerResource"
+                    },
+                    "type": "array"
+                },
+                "textures": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/RenderState.Uncompressed"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.TextureResource2DMipMapped"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/RenderState.Uncompressed"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.TextureResourceCubeMipMapped"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/RenderState.Uncompressed"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.TextureResource3DMipMapped"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/RenderState.Uncompressed"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.TextureResource2DArrayMipMapped"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/RenderState.Uncompressed"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.GenMipMap"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.TextureResource2D"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/RenderState.Uncompressed"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.GenMipMap"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.TextureResourceCube"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/RenderState.Uncompressed"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.GenMipMap"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.TextureResource3D"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/RenderState.Uncompressed"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.GenMipMap"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.TextureResource2DArray"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/RenderState.Compressed"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.TextureResource2D"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/RenderState.Compressed"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.TextureResource2DMipMapped"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/RenderState.Compressed"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.TextureResourceCube"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/RenderState.Compressed"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.TextureResourceCubeMipMapped"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/RenderState.Compressed"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.TextureResource3D"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/RenderState.Compressed"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.TextureResource3DMipMapped"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/RenderState.Compressed"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.TextureResource2DArray"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/RenderState.Compressed"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.TextureResource2DArrayMipMapped"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.SamplerResource": {
+            "properties": {
+                "compareFunction": {
+                    "enum": [
+                        "ALWAYS",
+                        "EQUAL",
+                        "GEQUAL",
+                        "GREATER",
+                        "LEQUAL",
+                        "LESS",
+                        "NEVER",
+                        "NOTEQUAL"
+                    ],
+                    "type": "string"
+                },
+                "compareMode": {
+                    "enum": [
+                        "COMPARE_REF_TO_TEXTURE",
+                        "NONE"
+                    ],
+                    "type": "string"
+                },
+                "magnificationFilter": {
+                    "enum": [
+                        "LINEAR",
+                        "NEAREST"
+                    ],
+                    "type": "string"
+                },
+                "maxLOD": {
+                    "type": "number"
+                },
+                "minLOD": {
+                    "type": "number"
+                },
+                "minificationFilter": {
+                    "enum": [
+                        "LINEAR",
+                        "LINEAR_MIPMAP_LINEAR",
+                        "LINEAR_MIPMAP_NEAREST",
+                        "NEAREST",
+                        "NEAREST_MIPMAP_LINEAR",
+                        "NEAREST_MIPMAP_NEAREST"
+                    ],
+                    "type": "string"
+                },
+                "wrap": {
+                    "anyOf": [
+                        {
+                            "items": [
+                                {
+                                    "enum": [
+                                        "CLAMP_TO_EDGE",
+                                        "MIRRORED_REPEAT",
+                                        "REPEAT"
+                                    ],
+                                    "type": "string"
+                                },
+                                {
+                                    "enum": [
+                                        "CLAMP_TO_EDGE",
+                                        "MIRRORED_REPEAT",
+                                        "REPEAT"
+                                    ],
+                                    "type": "string"
+                                }
+                            ],
+                            "maxItems": 2,
+                            "minItems": 2,
+                            "type": "array"
+                        },
+                        {
+                            "items": [
+                                {
+                                    "enum": [
+                                        "CLAMP_TO_EDGE",
+                                        "MIRRORED_REPEAT",
+                                        "REPEAT"
+                                    ],
+                                    "type": "string"
+                                },
+                                {
+                                    "enum": [
+                                        "CLAMP_TO_EDGE",
+                                        "MIRRORED_REPEAT",
+                                        "REPEAT"
+                                    ],
+                                    "type": "string"
+                                },
+                                {
+                                    "enum": [
+                                        "CLAMP_TO_EDGE",
+                                        "MIRRORED_REPEAT",
+                                        "REPEAT"
+                                    ],
+                                    "type": "string"
+                                }
+                            ],
+                            "maxItems": 3,
+                            "minItems": 3,
+                            "type": "array"
+                        }
+                    ]
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.TextureResource2D": {
+            "properties": {
+                "height": {
+                    "type": "number"
+                },
+                "image": {
+                    "$ref": "#/definitions/RenderState.BlobRef"
+                },
+                "target": {
+                    "enum": [
+                        "TEXTURE_2D"
+                    ],
+                    "type": "string"
+                },
+                "width": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.TextureResource2DArray": {
+            "properties": {
+                "depth": {
+                    "type": "number"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "image": {
+                    "$ref": "#/definitions/RenderState.BlobRef"
+                },
+                "target": {
+                    "enum": [
+                        "TEXTURE_2D_ARRAY"
+                    ],
+                    "type": "string"
+                },
+                "width": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.TextureResource2DArrayMipMapped": {
+            "properties": {
+                "depth": {
+                    "enum": [
+                        1,
+                        1024,
+                        128,
+                        16,
+                        16384,
+                        2,
+                        2048,
+                        256,
+                        32,
+                        32758,
+                        4,
+                        4096,
+                        512,
+                        64,
+                        65536,
+                        8,
+                        8192
+                    ],
+                    "type": "number"
+                },
+                "height": {
+                    "enum": [
+                        1,
+                        1024,
+                        128,
+                        16,
+                        16384,
+                        2,
+                        2048,
+                        256,
+                        32,
+                        32758,
+                        4,
+                        4096,
+                        512,
+                        64,
+                        65536,
+                        8,
+                        8192
+                    ],
+                    "type": "number"
+                },
+                "mipMaps": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/RenderState.BlobRef"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "type": "array"
+                },
+                "target": {
+                    "enum": [
+                        "TEXTURE_2D_ARRAY"
+                    ],
+                    "type": "string"
+                },
+                "width": {
+                    "enum": [
+                        1,
+                        1024,
+                        128,
+                        16,
+                        16384,
+                        2,
+                        2048,
+                        256,
+                        32,
+                        32758,
+                        4,
+                        4096,
+                        512,
+                        64,
+                        65536,
+                        8,
+                        8192
+                    ],
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.TextureResource2DMipMapped": {
+            "properties": {
+                "height": {
+                    "enum": [
+                        1,
+                        1024,
+                        128,
+                        16,
+                        16384,
+                        2,
+                        2048,
+                        256,
+                        32,
+                        32758,
+                        4,
+                        4096,
+                        512,
+                        64,
+                        65536,
+                        8,
+                        8192
+                    ],
+                    "type": "number"
+                },
+                "mipMaps": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/RenderState.BlobRef"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "type": "array"
+                },
+                "target": {
+                    "enum": [
+                        "TEXTURE_2D"
+                    ],
+                    "type": "string"
+                },
+                "width": {
+                    "enum": [
+                        1,
+                        1024,
+                        128,
+                        16,
+                        16384,
+                        2,
+                        2048,
+                        256,
+                        32,
+                        32758,
+                        4,
+                        4096,
+                        512,
+                        64,
+                        65536,
+                        8,
+                        8192
+                    ],
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.TextureResource3D": {
+            "properties": {
+                "depth": {
+                    "type": "number"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "image": {
+                    "$ref": "#/definitions/RenderState.BlobRef"
+                },
+                "target": {
+                    "enum": [
+                        "TEXTURE_3D"
+                    ],
+                    "type": "string"
+                },
+                "width": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.TextureResource3DMipMapped": {
+            "properties": {
+                "depth": {
+                    "enum": [
+                        1,
+                        1024,
+                        128,
+                        16,
+                        16384,
+                        2,
+                        2048,
+                        256,
+                        32,
+                        32758,
+                        4,
+                        4096,
+                        512,
+                        64,
+                        65536,
+                        8,
+                        8192
+                    ],
+                    "type": "number"
+                },
+                "height": {
+                    "enum": [
+                        1,
+                        1024,
+                        128,
+                        16,
+                        16384,
+                        2,
+                        2048,
+                        256,
+                        32,
+                        32758,
+                        4,
+                        4096,
+                        512,
+                        64,
+                        65536,
+                        8,
+                        8192
+                    ],
+                    "type": "number"
+                },
+                "mipMaps": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/RenderState.BlobRef"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "type": "array"
+                },
+                "target": {
+                    "enum": [
+                        "TEXTURE_2D"
+                    ],
+                    "type": "string"
+                },
+                "width": {
+                    "enum": [
+                        1,
+                        1024,
+                        128,
+                        16,
+                        16384,
+                        2,
+                        2048,
+                        256,
+                        32,
+                        32758,
+                        4,
+                        4096,
+                        512,
+                        64,
+                        65536,
+                        8,
+                        8192
+                    ],
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.TextureResourceCube": {
+            "properties": {
+                "height": {
+                    "type": "number"
+                },
+                "image": {
+                    "items": [
+                        {
+                            "$ref": "#/definitions/RenderState.BlobRef"
+                        },
+                        {
+                            "$ref": "#/definitions/RenderState.BlobRef"
+                        },
+                        {
+                            "$ref": "#/definitions/RenderState.BlobRef"
+                        },
+                        {
+                            "$ref": "#/definitions/RenderState.BlobRef"
+                        },
+                        {
+                            "$ref": "#/definitions/RenderState.BlobRef"
+                        },
+                        {
+                            "$ref": "#/definitions/RenderState.BlobRef"
+                        }
+                    ],
+                    "maxItems": 6,
+                    "minItems": 6,
+                    "type": "array"
+                },
+                "target": {
+                    "enum": [
+                        "TEXTURE_CUBE_MAP"
+                    ],
+                    "type": "string"
+                },
+                "width": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.TextureResourceCubeMipMapped": {
+            "properties": {
+                "height": {
+                    "enum": [
+                        1,
+                        1024,
+                        128,
+                        16,
+                        16384,
+                        2,
+                        2048,
+                        256,
+                        32,
+                        32758,
+                        4,
+                        4096,
+                        512,
+                        64,
+                        65536,
+                        8,
+                        8192
+                    ],
+                    "type": "number"
+                },
+                "mipMaps": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "items": [
+                                    {
+                                        "$ref": "#/definitions/RenderState.BlobRef"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.BlobRef"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.BlobRef"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.BlobRef"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.BlobRef"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.BlobRef"
+                                    }
+                                ],
+                                "maxItems": 6,
+                                "minItems": 6,
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "type": "array"
+                },
+                "target": {
+                    "enum": [
+                        "TEXTURE_CUBE_MAP"
+                    ],
+                    "type": "string"
+                },
+                "width": {
+                    "enum": [
+                        1,
+                        1024,
+                        128,
+                        16,
+                        16384,
+                        2,
+                        2048,
+                        256,
+                        32,
+                        32758,
+                        4,
+                        4096,
+                        512,
+                        64,
+                        65536,
+                        8,
+                        8192
+                    ],
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.Uncompressed": {
+            "properties": {
+                "internalFormat": {
+                    "$ref": "#/definitions/UncompressedTextureFormatString"
+                },
+                "type": {
+                    "$ref": "#/definitions/Exclude"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.View": {
+            "properties": {
+                "height": {
+                    "type": "number"
+                },
+                "width": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "UncompressedTextureFormatString": {
+            "enum": [
+                "ALPHA",
+                "LUMINANCE",
+                "LUMINANCE_ALPHA",
+                "R11F_G11F_B10F",
+                "R16F",
+                "R16I",
+                "R16UI",
+                "R32F",
+                "R32I",
+                "R32UI",
+                "R8",
+                "R8I",
+                "R8UI",
+                "R8_SNORM",
+                "RG16F",
+                "RG16I",
+                "RG16UI",
+                "RG32F",
+                "RG32I",
+                "RG32UI",
+                "RG8",
+                "RG8I",
+                "RG8UI",
+                "RG8_SNORM",
+                "RGB",
+                "RGB10_A2",
+                "RGB10_A2UI",
+                "RGB16F",
+                "RGB16I",
+                "RGB16UI",
+                "RGB32F",
+                "RGB32I",
+                "RGB32UI",
+                "RGB565",
+                "RGB5_A1",
+                "RGB8",
+                "RGB8I",
+                "RGB8UI",
+                "RGB8_SNORM",
+                "RGB9_E5",
+                "RGBA",
+                "RGBA16F",
+                "RGBA16I",
+                "RGBA16UI",
+                "RGBA32F",
+                "RGBA32I",
+                "RGBA32UI",
+                "RGBA4",
+                "RGBA8",
+                "RGBA8I",
+                "RGBA8UI",
+                "RGBA8_SNORM",
+                "SRGB8",
+                "SRGB8_ALPHA8"
+            ],
+            "type": "string"
+        },
+        "{readonlynormal:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"BYTE\"|\"UNSIGNED_SHORT\"|\"SHORT\"|\"HALF_FLOAT\"|\"FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlyposition:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"BYTE\"|\"UNSIGNED_SHORT\"|\"SHORT\"|\"HALF_FLOAT\"|\"FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlycolor0:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"BYTE\"|\"UNSIGNED_SHORT\"|\"SHORT\"|\"HALF_FLOAT\"|\"FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlytex0:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"BYTE\"|\"UNSIGNED_SHORT\"|\"SHORT\"|\"HALF_FLOAT\"|\"FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};readonlytex1:{readonlybuffer:number;readonlynumComponents:1|3|4|2;readonlycomponentType?:\"UNSIGNED_BYTE\"|\"BYTE\"|\"UNSIGNED_SHORT\"|\"SHORT\"|\"HALF_FLOAT\"|\"FLOAT\"|undefined;readonlynormalized?:boolean|undefined;readonlystride?:number|undefined;readonlyoffset?:number|undefined;};}": {
+            "properties": {
+                "color0": {
+                    "properties": {
+                        "buffer": {
+                            "type": "number"
+                        },
+                        "componentType": {
+                            "enum": [
+                                "BYTE",
+                                "FLOAT",
+                                "HALF_FLOAT",
+                                "SHORT",
+                                "UNSIGNED_BYTE",
+                                "UNSIGNED_SHORT"
+                            ],
+                            "type": "string"
+                        },
+                        "normalized": {
+                            "type": "boolean"
+                        },
+                        "numComponents": {
+                            "enum": [
+                                1,
+                                2,
+                                3,
+                                4
+                            ],
+                            "type": "number"
+                        },
+                        "offset": {
+                            "type": "number"
+                        },
+                        "stride": {
+                            "type": "number"
+                        }
+                    },
+                    "type": "object"
+                },
+                "normal": {
+                    "properties": {
+                        "buffer": {
+                            "type": "number"
+                        },
+                        "componentType": {
+                            "enum": [
+                                "BYTE",
+                                "FLOAT",
+                                "HALF_FLOAT",
+                                "SHORT",
+                                "UNSIGNED_BYTE",
+                                "UNSIGNED_SHORT"
+                            ],
+                            "type": "string"
+                        },
+                        "normalized": {
+                            "type": "boolean"
+                        },
+                        "numComponents": {
+                            "enum": [
+                                1,
+                                2,
+                                3,
+                                4
+                            ],
+                            "type": "number"
+                        },
+                        "offset": {
+                            "type": "number"
+                        },
+                        "stride": {
+                            "type": "number"
+                        }
+                    },
+                    "type": "object"
+                },
+                "position": {
+                    "properties": {
+                        "buffer": {
+                            "type": "number"
+                        },
+                        "componentType": {
+                            "enum": [
+                                "BYTE",
+                                "FLOAT",
+                                "HALF_FLOAT",
+                                "SHORT",
+                                "UNSIGNED_BYTE",
+                                "UNSIGNED_SHORT"
+                            ],
+                            "type": "string"
+                        },
+                        "normalized": {
+                            "type": "boolean"
+                        },
+                        "numComponents": {
+                            "enum": [
+                                1,
+                                2,
+                                3,
+                                4
+                            ],
+                            "type": "number"
+                        },
+                        "offset": {
+                            "type": "number"
+                        },
+                        "stride": {
+                            "type": "number"
+                        }
+                    },
+                    "type": "object"
+                },
+                "tex0": {
+                    "properties": {
+                        "buffer": {
+                            "type": "number"
+                        },
+                        "componentType": {
+                            "enum": [
+                                "BYTE",
+                                "FLOAT",
+                                "HALF_FLOAT",
+                                "SHORT",
+                                "UNSIGNED_BYTE",
+                                "UNSIGNED_SHORT"
+                            ],
+                            "type": "string"
+                        },
+                        "normalized": {
+                            "type": "boolean"
+                        },
+                        "numComponents": {
+                            "enum": [
+                                1,
+                                2,
+                                3,
+                                4
+                            ],
+                            "type": "number"
+                        },
+                        "offset": {
+                            "type": "number"
+                        },
+                        "stride": {
+                            "type": "number"
+                        }
+                    },
+                    "type": "object"
+                },
+                "tex1": {
+                    "properties": {
+                        "buffer": {
+                            "type": "number"
+                        },
+                        "componentType": {
+                            "enum": [
+                                "BYTE",
+                                "FLOAT",
+                                "HALF_FLOAT",
+                                "SHORT",
+                                "UNSIGNED_BYTE",
+                                "UNSIGNED_SHORT"
+                            ],
+                            "type": "string"
+                        },
+                        "normalized": {
+                            "type": "boolean"
+                        },
+                        "numComponents": {
+                            "enum": [
+                                1,
+                                2,
+                                3,
+                                4
+                            ],
+                            "type": "number"
+                        },
+                        "offset": {
+                            "type": "number"
+                        },
+                        "stride": {
+                            "type": "number"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "properties": {
+        "actions": {
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "#/definitions/ClearAction.Data"
+                    },
+                    {
+                        "$ref": "#/definitions/DrawMeshAction.Data"
+                    }
+                ]
+            },
+            "type": "array"
+        },
+        "binaryUrl": {
+            "type": "string"
+        },
+        "resources": {
+            "$ref": "#/definitions/RenderState.Resources"
+        },
+        "view": {
+            "$ref": "#/definitions/RenderState.View"
+        }
+    },
+    "type": "object"
+}
+

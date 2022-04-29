@@ -1,4 +1,5 @@
 in vec4 vertexColor;
+in vec2 texCoord;
 
 out vec4 fragColor;
 
@@ -16,6 +17,9 @@ layout(std140) uniform InstanceUniforms {
     mat4 modelMatrix;
 };
 
+uniform sampler2D baseColorSampler;
+
 void main() {
-    fragColor = vertexColor * baseColor;
+    vec4 texColor = texture(baseColorSampler, texCoord);
+    fragColor = vertexColor * baseColor * texColor;
 }

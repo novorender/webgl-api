@@ -1,5 +1,5 @@
 import { GL } from "./glEnum";
-import type { Mat4 } from "./types";
+import type { CompressedTextureFormatString, Mat4, TexelTypeString, UncompressedTextureFormatString, UniformType } from "./types";
 
 export function exhaustiveCheck(value: never) {
     throw new Error(`Unknown kind: ${value}!`);
@@ -68,9 +68,6 @@ export function createGLContext(canvas: HTMLCanvasElement) {
 }
 
 
-export type IndexBufferType = GL.UNSIGNED_BYTE | GL.UNSIGNED_SHORT | GL.UNSIGNED_INT;
-export type AttributeType = GL.BYTE | GL.UNSIGNED_BYTE | GL.SHORT | GL.UNSIGNED_SHORT | GL.FLOAT | GL.HALF_FLOAT;
-
 export interface AttributeParams {
     readonly index: number; // shader attribute location index
     readonly buffer: WebGLBuffer | null;
@@ -95,16 +92,6 @@ export function createVertexArrayBuffer(gl: WebGL2RenderingContext, attributes: 
     gl.bindVertexArray(null);
     return vao;
 }
-
-export type UniformType =
-    GL.FLOAT | GL.FLOAT_VEC2 | GL.FLOAT_VEC3 | GL.FLOAT_VEC4 |
-    GL.INT | GL.INT_VEC2 | GL.INT_VEC3 | GL.INT_VEC4 |
-    GL.UNSIGNED_INT | GL.UNSIGNED_INT_VEC2 | GL.UNSIGNED_INT_VEC3 | GL.UNSIGNED_INT_VEC4 |
-    GL.BOOL | GL.BOOL_VEC2 | GL.BOOL_VEC3 | GL.BOOL_VEC4 |
-    GL.FLOAT_MAT2 | GL.FLOAT_MAT3 | GL.FLOAT_MAT4 |
-    GL.FLOAT_MAT2x3 | GL.FLOAT_MAT2x4 | GL.FLOAT_MAT3x2 | GL.FLOAT_MAT3x4 | GL.FLOAT_MAT4x2 | GL.FLOAT_MAT4x3 |
-    GL.SAMPLER_2D | GL.SAMPLER_2D_ARRAY | GL.SAMPLER_2D_ARRAY_SHADOW | GL.SAMPLER_2D_ARRAY_SHADOW | GL.SAMPLER_3D | GL.SAMPLER_CUBE | GL.SAMPLER_CUBE_SHADOW;
-
 
 export interface UniformInfo {
     readonly name: string;
@@ -210,52 +197,6 @@ export function createUniformBlock(gl: WebGL2RenderingContext, program: WebGLPro
     return { data, set };
 }
 
-
-export function createUniformBlockBuffer(gl: WebGL2RenderingContext, program: WebGLProgram, blockName: string, uniformInfos: readonly UniformInfo[]) {
-    const blockIndex = gl.getUniformBlockIndex(program, blockName);
-    const blockUniforms = uniformInfos.filter(u => u.blockIndex == blockIndex);
-    console.assert(blockIndex >= 0);
-    const blockInfo = getUniformBlockInfo(gl, program, blockIndex);
-    gl.uniformBlockBinding(program, blockIndex, blockIndex);
-
-    const buffer = createBuffer(gl, GL.UNIFORM_BUFFER, blockInfo.size, GL.DYNAMIC_DRAW);
-    const data = new ArrayBuffer(blockInfo.size);
-    const f32 = new Float32Array(data);
-
-    function set(uniforms: UniformValues) {
-        for (const uniformInfo of blockUniforms) {
-            const uniformValue = uniforms[uniformInfo.name];
-            if (uniformValue !== undefined) {
-                switch (uniformInfo.type) {
-                    case GL.FLOAT_VEC2:
-                    case GL.FLOAT_VEC3:
-                    case GL.FLOAT_VEC4:
-                    case GL.FLOAT_MAT2:
-                    case GL.FLOAT_MAT3:
-                    case GL.FLOAT_MAT4:
-                        f32.set(uniformValue as number[], uniformInfo.offset / f32.BYTES_PER_ELEMENT);
-                        break;
-                    default:
-                        throw new Error("Unsupported uniform type!");
-                }
-            }
-        }
-        gl.bindBuffer(GL.UNIFORM_BUFFER, buffer);
-        gl.bufferSubData(GL.UNIFORM_BUFFER, 0, data);
-        gl.bindBuffer(GL.UNIFORM_BUFFER, null);
-    }
-
-    return {
-        buffer,
-        blockIndex,
-        set,
-        dispose: () => {
-            gl.deleteBuffer(buffer);
-        }
-    } as UniformBlock;
-}
-
-
 type ShaderType = "VERTEX_SHADER" | "FRAGMENT_SHADER";
 
 function compileShader(gl: WebGLRenderingContext, type: ShaderType, source: string): WebGLShader {
@@ -317,6 +258,14 @@ export function createShaderProgram(gl: WebGL2RenderingContext, shaders: { reado
     return program;
 }
 
+export function isFormatCompressed(internalFormatString: UncompressedTextureFormatString | CompressedTextureFormatString): internalFormatString is CompressedTextureFormatString {
+    return internalFormatString.startsWith("COMPRESSED_");
+}
+
+export function isPowerOf2(value: number) {
+    return (value & (value - 1)) == 0;
+}
+
 export function getLimits(gl: WebGL2RenderingContext) {
     const names = [
         "MAX_TEXTURE_SIZE",
@@ -367,7 +316,6 @@ export function getLimits(gl: WebGL2RenderingContext) {
     return limits as Readonly<Limits>;
 }
 export type LimitsGL = ReturnType<typeof getLimits>;
-
 
 
 // code adapted from https://github.com/sindresorhus/strip-json-comments

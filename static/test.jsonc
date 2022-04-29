@@ -1,53 +1,47 @@
 {
-    "$schema": "../src/render-state-schema.json",
+    "$schema": "../render-state-schema.json",
     "resources": {
-        "binaryUrl": "test.bin",
+        "blobs": [
+            {
+                "url": "test.bin"
+            }
+        ],
         "programs": [
             {
                 "shader": "drawMesh",
                 "flags": []
             }
         ],
-        "meshes": [
-            {
-                "count": 36,
-                "primitiveType": "TRIANGLES",
-                "attributes": {
-                    "position": {
-                        "buffer": 0,
-                        "numComponents": 3
-                    },
-                    "color0": {
-                        "buffer": 1,
-                        "numComponents": 3
-                    }
-                },
-                "indices": {
-                    "buffer": 2,
-                    "type": "UNSIGNED_BYTE"
-                }
-            }
-        ],
         "buffers": [
             // #0: positions
             {
                 "type": "ARRAY_BUFFER",
+                "blobIndex": 0,
                 "byteOffset": 0,
                 "byteLength": 288
             },
-            // #1: colors
+            // #1: tex0
             {
                 "type": "ARRAY_BUFFER",
+                "blobIndex": 0,
                 "byteOffset": 288,
+                "byteLength": 192
+            },
+            // #2: colors
+            {
+                "type": "ARRAY_BUFFER",
+                "blobIndex": 0,
+                "byteOffset": 480,
                 "byteLength": 288
             },
-            // #2: indices
+            // #3: indices
             {
                 "type": "ELEMENT_ARRAY_BUFFER",
-                "byteOffset": 576,
+                "blobIndex": 0,
+                "byteOffset": 768,
                 "byteLength": 36
             },
-            // #3: camera uniform block
+            // #4: camera uniform block
             {
                 "type": "UNIFORM_BUFFER",
                 "camera": {
@@ -74,7 +68,7 @@
                     ]
                 }
             },
-            // #4: material uniform block
+            // #5: material uniform block
             {
                 "type": "UNIFORM_BUFFER",
                 "material": {
@@ -86,7 +80,7 @@
                     ]
                 }
             },
-            // #5: instance uniform block
+            // #6: instance uniform block
             {
                 "type": "UNIFORM_BUFFER",
                 "instance": {
@@ -110,6 +104,51 @@
                     ]
                 }
             }
+        ],
+        "textures": [
+            {
+                "target": "TEXTURE_2D",
+                "width": 2,
+                "height": 2,
+                "internalFormat": "RGBA8",
+                "type": "UNSIGNED_BYTE",
+                "generateMipMaps": true,
+                "image": {
+                    "blobIndex": 0,
+                    "byteOffset": 804,
+                    "byteLength": 16
+                }
+            }
+        ],
+        "samplers": [
+            {
+                "magnificationFilter": "NEAREST",
+                "minificationFilter": "NEAREST"
+            }
+        ],
+        "meshes": [
+            {
+                "count": 36,
+                "primitiveType": "TRIANGLES",
+                "attributes": {
+                    "position": {
+                        "buffer": 0,
+                        "numComponents": 3
+                    },
+                    "tex0": {
+                        "buffer": 1,
+                        "numComponents": 2
+                    },
+                    "color0": {
+                        "buffer": 2,
+                        "numComponents": 3
+                    }
+                },
+                "indices": {
+                    "buffer": 3,
+                    "type": "UNSIGNED_BYTE"
+                }
+            }
         ]
     },
     "actions": [
@@ -127,9 +166,11 @@
             "kind": "draw_mesh",
             "mesh": 0,
             "program": 0,
-            "cameraUniforms": 3,
-            "materialUniforms": 4,
-            "instanceUniforms": 5
+            "cameraUniforms": 4,
+            "materialUniforms": 5,
+            "instanceUniforms": 6,
+            "baseColorTexture": 0,
+            "baseColorSampler": 0
         }
     ]
 }

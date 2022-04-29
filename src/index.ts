@@ -30,17 +30,16 @@ export async function downloadRenderState(url: URL) {
     }
     const jsonc = await response.text();
     const renderState = parseRenderState(jsonc);
-    let binary: ArrayBuffer | undefined;
-    const binaryUrl = renderState?.resources?.binaryUrl;
-    if (binaryUrl) {
-        const response = await fetch(new URL(binaryUrl, url).toString());
+    const blobPromises = (renderState?.resources?.blobs ?? []).map(async blobParams => {
+        const response = await fetch(new URL(blobParams.url, url).toString());
         if (!response.ok) {
             throw new Error(`HTTP Error: ${response.status}: ${response.statusText} (${url})`);
         }
-        binary = await response.arrayBuffer();
-    }
+        return await response.arrayBuffer();
+    });
+    const blobs = await Promise.all(blobPromises);
 
-    return { renderState, binary } as const;
+    return { renderState, blobs } as const;
 }
 
 export function parseRenderState(jsonc: string): RenderState.Scene {

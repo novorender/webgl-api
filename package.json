@@ -5,8 +5,8 @@
     "browser": "src/index.ts",
     "scripts": {
         "start": "webpack serve --mode development",
-        "build:schema": "typescript-json-schema tsconfig.json RenderState.Scene --include src/*.ts >src/render-state-schema.json",
-        "generate_binary": "src/node/generateBinary.mjs",
+        "build:schema": "typescript-json-schema tsconfig.json RenderState.Scene --include src/*.ts >render-state-schema.json",
+        "generate_binary": "node src/node/generateBinary.mjs",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
