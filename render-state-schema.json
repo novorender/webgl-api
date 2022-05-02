@@ -409,22 +409,6 @@
             },
             "type": "object"
         },
-        "RenderState.Compressed": {
-            "properties": {
-                "internalFormat": {
-                    "$ref": "#/definitions/CompressedTextureFormatString"
-                }
-            },
-            "type": "object"
-        },
-        "RenderState.GenMipMap": {
-            "properties": {
-                "generateMipMaps": {
-                    "type": "boolean"
-                }
-            },
-            "type": "object"
-        },
         "RenderState.MeshResource": {
             "properties": {
                 "attributes": {
@@ -542,176 +526,52 @@
                     "items": {
                         "anyOf": [
                             {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/definitions/RenderState.Uncompressed"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/RenderState.TextureResource2DMipMapped"
-                                    }
-                                ]
+                                "$ref": "#/definitions/RenderState.TextureResource2DUncompressed"
                             },
                             {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/definitions/RenderState.Uncompressed"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/RenderState.TextureResourceCubeMipMapped"
-                                    }
-                                ]
+                                "$ref": "#/definitions/RenderState.TextureResource2DCompressed"
                             },
                             {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/definitions/RenderState.Uncompressed"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/RenderState.TextureResource3DMipMapped"
-                                    }
-                                ]
+                                "$ref": "#/definitions/RenderState.TextureResource2DUncompressedMipMapped"
                             },
                             {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/definitions/RenderState.Uncompressed"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/RenderState.TextureResource2DArrayMipMapped"
-                                    }
-                                ]
+                                "$ref": "#/definitions/RenderState.TextureResource2DCompressedMipMapped"
                             },
                             {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/definitions/RenderState.Uncompressed"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/RenderState.GenMipMap"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/RenderState.TextureResource2D"
-                                    }
-                                ]
+                                "$ref": "#/definitions/RenderState.TextureResourceCubeUncompressed"
                             },
                             {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/definitions/RenderState.Uncompressed"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/RenderState.GenMipMap"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/RenderState.TextureResourceCube"
-                                    }
-                                ]
+                                "$ref": "#/definitions/RenderState.TextureResourceCubeCompressed"
                             },
                             {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/definitions/RenderState.Uncompressed"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/RenderState.GenMipMap"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/RenderState.TextureResource3D"
-                                    }
-                                ]
+                                "$ref": "#/definitions/RenderState.TextureResourceCubeUncompressedMipMapped"
                             },
                             {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/definitions/RenderState.Uncompressed"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/RenderState.GenMipMap"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/RenderState.TextureResource2DArray"
-                                    }
-                                ]
+                                "$ref": "#/definitions/RenderState.TextureResourceCubeCompressedMipMapped"
                             },
                             {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/definitions/RenderState.Compressed"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/RenderState.TextureResource2D"
-                                    }
-                                ]
+                                "$ref": "#/definitions/RenderState.TextureResource3DUncompressed"
                             },
                             {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/definitions/RenderState.Compressed"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/RenderState.TextureResource2DMipMapped"
-                                    }
-                                ]
+                                "$ref": "#/definitions/RenderState.TextureResource3DCompressed"
                             },
                             {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/definitions/RenderState.Compressed"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/RenderState.TextureResourceCube"
-                                    }
-                                ]
+                                "$ref": "#/definitions/RenderState.TextureResource3DUncompressedMipMapped"
                             },
                             {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/definitions/RenderState.Compressed"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/RenderState.TextureResourceCubeMipMapped"
-                                    }
-                                ]
+                                "$ref": "#/definitions/RenderState.TextureResource3DCompressedMipMapped"
                             },
                             {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/definitions/RenderState.Compressed"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/RenderState.TextureResource3D"
-                                    }
-                                ]
+                                "$ref": "#/definitions/RenderState.TextureResource2DArrayUncompressed"
                             },
                             {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/definitions/RenderState.Compressed"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/RenderState.TextureResource3DMipMapped"
-                                    }
-                                ]
+                                "$ref": "#/definitions/RenderState.TextureResource2DArrayCompressed"
                             },
                             {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/definitions/RenderState.Compressed"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/RenderState.TextureResource2DArray"
-                                    }
-                                ]
+                                "$ref": "#/definitions/RenderState.TextureResource2DArrayUncompressedMipMapped"
                             },
                             {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/definitions/RenderState.Compressed"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/RenderState.TextureResource2DArrayMipMapped"
-                                    }
-                                ]
+                                "$ref": "#/definitions/RenderState.TextureResource2DArrayCompressedMipMapped"
                             }
                         ]
                     },
@@ -827,27 +687,7 @@
             },
             "type": "object"
         },
-        "RenderState.TextureResource2D": {
-            "properties": {
-                "height": {
-                    "type": "number"
-                },
-                "image": {
-                    "$ref": "#/definitions/RenderState.BlobRef"
-                },
-                "target": {
-                    "enum": [
-                        "TEXTURE_2D"
-                    ],
-                    "type": "string"
-                },
-                "width": {
-                    "type": "number"
-                }
-            },
-            "type": "object"
-        },
-        "RenderState.TextureResource2DArray": {
+        "RenderState.TextureResource2DArrayCompressed": {
             "properties": {
                 "depth": {
                     "type": "number"
@@ -857,6 +697,9 @@
                 },
                 "image": {
                     "$ref": "#/definitions/RenderState.BlobRef"
+                },
+                "internalFormat": {
+                    "$ref": "#/definitions/CompressedTextureFormatString"
                 },
                 "target": {
                     "enum": [
@@ -870,7 +713,7 @@
             },
             "type": "object"
         },
-        "RenderState.TextureResource2DArrayMipMapped": {
+        "RenderState.TextureResource2DArrayCompressedMipMapped": {
             "properties": {
                 "depth": {
                     "enum": [
@@ -915,6 +758,9 @@
                         8192
                     ],
                     "type": "number"
+                },
+                "internalFormat": {
+                    "$ref": "#/definitions/CompressedTextureFormatString"
                 },
                 "mipMaps": {
                     "items": {
@@ -960,7 +806,158 @@
             },
             "type": "object"
         },
-        "RenderState.TextureResource2DMipMapped": {
+        "RenderState.TextureResource2DArrayUncompressed": {
+            "properties": {
+                "depth": {
+                    "type": "number"
+                },
+                "generateMipMaps": {
+                    "type": "boolean"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "image": {
+                    "$ref": "#/definitions/RenderState.BlobRef"
+                },
+                "internalFormat": {
+                    "$ref": "#/definitions/UncompressedTextureFormatString"
+                },
+                "target": {
+                    "enum": [
+                        "TEXTURE_2D_ARRAY"
+                    ],
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/Exclude"
+                },
+                "width": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.TextureResource2DArrayUncompressedMipMapped": {
+            "properties": {
+                "depth": {
+                    "enum": [
+                        1,
+                        1024,
+                        128,
+                        16,
+                        16384,
+                        2,
+                        2048,
+                        256,
+                        32,
+                        32758,
+                        4,
+                        4096,
+                        512,
+                        64,
+                        65536,
+                        8,
+                        8192
+                    ],
+                    "type": "number"
+                },
+                "height": {
+                    "enum": [
+                        1,
+                        1024,
+                        128,
+                        16,
+                        16384,
+                        2,
+                        2048,
+                        256,
+                        32,
+                        32758,
+                        4,
+                        4096,
+                        512,
+                        64,
+                        65536,
+                        8,
+                        8192
+                    ],
+                    "type": "number"
+                },
+                "internalFormat": {
+                    "$ref": "#/definitions/UncompressedTextureFormatString"
+                },
+                "mipMaps": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/RenderState.BlobRef"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "type": "array"
+                },
+                "target": {
+                    "enum": [
+                        "TEXTURE_2D_ARRAY"
+                    ],
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/Exclude"
+                },
+                "width": {
+                    "enum": [
+                        1,
+                        1024,
+                        128,
+                        16,
+                        16384,
+                        2,
+                        2048,
+                        256,
+                        32,
+                        32758,
+                        4,
+                        4096,
+                        512,
+                        64,
+                        65536,
+                        8,
+                        8192
+                    ],
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.TextureResource2DCompressed": {
+            "properties": {
+                "height": {
+                    "type": "number"
+                },
+                "image": {
+                    "$ref": "#/definitions/RenderState.BlobRef"
+                },
+                "internalFormat": {
+                    "$ref": "#/definitions/CompressedTextureFormatString"
+                },
+                "target": {
+                    "enum": [
+                        "TEXTURE_2D"
+                    ],
+                    "type": "string"
+                },
+                "width": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.TextureResource2DCompressedMipMapped": {
             "properties": {
                 "height": {
                     "enum": [
@@ -983,6 +980,9 @@
                         8192
                     ],
                     "type": "number"
+                },
+                "internalFormat": {
+                    "$ref": "#/definitions/CompressedTextureFormatString"
                 },
                 "mipMaps": {
                     "items": {
@@ -1028,7 +1028,113 @@
             },
             "type": "object"
         },
-        "RenderState.TextureResource3D": {
+        "RenderState.TextureResource2DUncompressed": {
+            "properties": {
+                "generateMipMaps": {
+                    "type": "boolean"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "image": {
+                    "$ref": "#/definitions/RenderState.BlobRef"
+                },
+                "internalFormat": {
+                    "$ref": "#/definitions/UncompressedTextureFormatString"
+                },
+                "target": {
+                    "enum": [
+                        "TEXTURE_2D"
+                    ],
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/Exclude"
+                },
+                "width": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.TextureResource2DUncompressedMipMapped": {
+            "properties": {
+                "generateMipMaps": {
+                    "type": "boolean"
+                },
+                "height": {
+                    "enum": [
+                        1,
+                        1024,
+                        128,
+                        16,
+                        16384,
+                        2,
+                        2048,
+                        256,
+                        32,
+                        32758,
+                        4,
+                        4096,
+                        512,
+                        64,
+                        65536,
+                        8,
+                        8192
+                    ],
+                    "type": "number"
+                },
+                "internalFormat": {
+                    "$ref": "#/definitions/UncompressedTextureFormatString"
+                },
+                "mipMaps": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/RenderState.BlobRef"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "type": "array"
+                },
+                "target": {
+                    "enum": [
+                        "TEXTURE_2D"
+                    ],
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/Exclude"
+                },
+                "width": {
+                    "enum": [
+                        1,
+                        1024,
+                        128,
+                        16,
+                        16384,
+                        2,
+                        2048,
+                        256,
+                        32,
+                        32758,
+                        4,
+                        4096,
+                        512,
+                        64,
+                        65536,
+                        8,
+                        8192
+                    ],
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.TextureResource3DCompressed": {
             "properties": {
                 "depth": {
                     "type": "number"
@@ -1038,6 +1144,9 @@
                 },
                 "image": {
                     "$ref": "#/definitions/RenderState.BlobRef"
+                },
+                "internalFormat": {
+                    "$ref": "#/definitions/CompressedTextureFormatString"
                 },
                 "target": {
                     "enum": [
@@ -1051,7 +1160,7 @@
             },
             "type": "object"
         },
-        "RenderState.TextureResource3DMipMapped": {
+        "RenderState.TextureResource3DCompressedMipMapped": {
             "properties": {
                 "depth": {
                     "enum": [
@@ -1097,6 +1206,9 @@
                     ],
                     "type": "number"
                 },
+                "internalFormat": {
+                    "$ref": "#/definitions/CompressedTextureFormatString"
+                },
                 "mipMaps": {
                     "items": {
                         "anyOf": [
@@ -1112,7 +1224,7 @@
                 },
                 "target": {
                     "enum": [
-                        "TEXTURE_2D"
+                        "TEXTURE_3D"
                     ],
                     "type": "string"
                 },
@@ -1141,7 +1253,135 @@
             },
             "type": "object"
         },
-        "RenderState.TextureResourceCube": {
+        "RenderState.TextureResource3DUncompressed": {
+            "properties": {
+                "depth": {
+                    "type": "number"
+                },
+                "generateMipMaps": {
+                    "type": "boolean"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "image": {
+                    "$ref": "#/definitions/RenderState.BlobRef"
+                },
+                "internalFormat": {
+                    "$ref": "#/definitions/UncompressedTextureFormatString"
+                },
+                "target": {
+                    "enum": [
+                        "TEXTURE_3D"
+                    ],
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/Exclude"
+                },
+                "width": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.TextureResource3DUncompressedMipMapped": {
+            "properties": {
+                "depth": {
+                    "enum": [
+                        1,
+                        1024,
+                        128,
+                        16,
+                        16384,
+                        2,
+                        2048,
+                        256,
+                        32,
+                        32758,
+                        4,
+                        4096,
+                        512,
+                        64,
+                        65536,
+                        8,
+                        8192
+                    ],
+                    "type": "number"
+                },
+                "height": {
+                    "enum": [
+                        1,
+                        1024,
+                        128,
+                        16,
+                        16384,
+                        2,
+                        2048,
+                        256,
+                        32,
+                        32758,
+                        4,
+                        4096,
+                        512,
+                        64,
+                        65536,
+                        8,
+                        8192
+                    ],
+                    "type": "number"
+                },
+                "internalFormat": {
+                    "$ref": "#/definitions/UncompressedTextureFormatString"
+                },
+                "mipMaps": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/RenderState.BlobRef"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "type": "array"
+                },
+                "target": {
+                    "enum": [
+                        "TEXTURE_3D"
+                    ],
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/Exclude"
+                },
+                "width": {
+                    "enum": [
+                        1,
+                        1024,
+                        128,
+                        16,
+                        16384,
+                        2,
+                        2048,
+                        256,
+                        32,
+                        32758,
+                        4,
+                        4096,
+                        512,
+                        64,
+                        65536,
+                        8,
+                        8192
+                    ],
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.TextureResourceCubeCompressed": {
             "properties": {
                 "height": {
                     "type": "number"
@@ -1171,6 +1411,9 @@
                     "minItems": 6,
                     "type": "array"
                 },
+                "internalFormat": {
+                    "$ref": "#/definitions/CompressedTextureFormatString"
+                },
                 "target": {
                     "enum": [
                         "TEXTURE_CUBE_MAP"
@@ -1183,7 +1426,7 @@
             },
             "type": "object"
         },
-        "RenderState.TextureResourceCubeMipMapped": {
+        "RenderState.TextureResourceCubeCompressedMipMapped": {
             "properties": {
                 "height": {
                     "enum": [
@@ -1206,6 +1449,9 @@
                         8192
                     ],
                     "type": "number"
+                },
+                "internalFormat": {
+                    "$ref": "#/definitions/CompressedTextureFormatString"
                 },
                 "mipMaps": {
                     "items": {
@@ -1273,13 +1519,149 @@
             },
             "type": "object"
         },
-        "RenderState.Uncompressed": {
+        "RenderState.TextureResourceCubeUncompressed": {
             "properties": {
+                "generateMipMaps": {
+                    "type": "boolean"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "image": {
+                    "items": [
+                        {
+                            "$ref": "#/definitions/RenderState.BlobRef"
+                        },
+                        {
+                            "$ref": "#/definitions/RenderState.BlobRef"
+                        },
+                        {
+                            "$ref": "#/definitions/RenderState.BlobRef"
+                        },
+                        {
+                            "$ref": "#/definitions/RenderState.BlobRef"
+                        },
+                        {
+                            "$ref": "#/definitions/RenderState.BlobRef"
+                        },
+                        {
+                            "$ref": "#/definitions/RenderState.BlobRef"
+                        }
+                    ],
+                    "maxItems": 6,
+                    "minItems": 6,
+                    "type": "array"
+                },
                 "internalFormat": {
                     "$ref": "#/definitions/UncompressedTextureFormatString"
                 },
+                "target": {
+                    "enum": [
+                        "TEXTURE_CUBE_MAP"
+                    ],
+                    "type": "string"
+                },
                 "type": {
                     "$ref": "#/definitions/Exclude"
+                },
+                "width": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "RenderState.TextureResourceCubeUncompressedMipMapped": {
+            "properties": {
+                "height": {
+                    "enum": [
+                        1,
+                        1024,
+                        128,
+                        16,
+                        16384,
+                        2,
+                        2048,
+                        256,
+                        32,
+                        32758,
+                        4,
+                        4096,
+                        512,
+                        64,
+                        65536,
+                        8,
+                        8192
+                    ],
+                    "type": "number"
+                },
+                "internalFormat": {
+                    "$ref": "#/definitions/UncompressedTextureFormatString"
+                },
+                "mipMaps": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "items": [
+                                    {
+                                        "$ref": "#/definitions/RenderState.BlobRef"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.BlobRef"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.BlobRef"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.BlobRef"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.BlobRef"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/RenderState.BlobRef"
+                                    }
+                                ],
+                                "maxItems": 6,
+                                "minItems": 6,
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "type": "array"
+                },
+                "target": {
+                    "enum": [
+                        "TEXTURE_CUBE_MAP"
+                    ],
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/Exclude"
+                },
+                "width": {
+                    "enum": [
+                        1,
+                        1024,
+                        128,
+                        16,
+                        16384,
+                        2,
+                        2048,
+                        256,
+                        32,
+                        32758,
+                        4,
+                        4096,
+                        512,
+                        64,
+                        65536,
+                        8,
+                        8192
+                    ],
+                    "type": "number"
                 }
             },
             "type": "object"

@@ -3,7 +3,6 @@ import type { FrameContext } from "/frameContext";
 import { ActionBase, ActionCtorArgs } from "./actionBase";
 import { UniformBlocks } from "/uniforms";
 import { setAttributeDefaults } from "/attributes";
-import { getUniformsInfo } from "/util";
 import { SamplerIndex, TextureIndex } from "/state";
 
 class Action extends ActionBase {
@@ -19,7 +18,6 @@ class Action extends ActionBase {
         gl.useProgram(resources.programs[params.program]);
 
         if (params.baseColorTexture !== undefined) {
-            // const uniforms = getUniformsInfo(gl, resources.programs[params.program]);
             const baseColorSamplerUniform = gl.getUniformLocation(resources.programs[params.program], "baseColorSampler"); // Can we store this in resources?
             gl.uniform1i(baseColorSamplerUniform, 0); // set texture binding index
             const baseColorTexture = resources.textures[params.baseColorTexture];
@@ -62,8 +60,8 @@ export namespace DrawMeshAction {
         readonly cameraUniforms: number; // index into resources/buffers
         readonly materialUniforms: number; // index into resources/buffers
         readonly instanceUniforms: number; // index into resources/buffers
-        readonly baseColorTexture: TextureIndex;
-        readonly baseColorSampler: SamplerIndex;
+        readonly baseColorTexture?: TextureIndex;
+        readonly baseColorSampler?: SamplerIndex;
     }
     export interface Data extends Params {
         readonly kind: "draw_mesh";
