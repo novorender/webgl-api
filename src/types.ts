@@ -15,6 +15,9 @@ export type AsyncReturnType<T extends (...args: any) => any> =
 export type RGB = readonly [red: number, green: number, blue: number];
 export type RGBA = readonly [red: number, green: number, blue: number, alpha: number];
 
+export type ColorAttachmentString = `COLOR_ATTACHMENT${0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15}`;
+
+
 export type UncompressedTextureFormatString =
     "ALPHA" | "RGB" | "RGBA" | "LUMINANCE" | "LUMINANCE_ALPHA" |
     "R8" | "R8_SNORM" | "RG8" | "RG8_SNORM" | "RGB8" | "RGB8_SNORM" |
@@ -88,6 +91,7 @@ export type MinFilter = GL.LINEAR | GL.NEAREST | GL.NEAREST_MIPMAP_NEAREST | GL.
 export type WrapMode = GL.REPEAT | GL.CLAMP_TO_EDGE | GL.MIRRORED_REPEAT;
 export type CompareFunc = GL.NEVER | GL.LESS | GL.EQUAL | GL.LEQUAL | GL.GREATER | GL.NOTEQUAL | GL.GEQUAL | GL.ALWAYS;
 export type TextureImageTarget = GL.TEXTURE_2D | GL.TEXTURE_3D | GL.TEXTURE_2D_ARRAY | GL.TEXTURE_CUBE_MAP_POSITIVE_X | GL.TEXTURE_CUBE_MAP_NEGATIVE_X | GL.TEXTURE_CUBE_MAP_POSITIVE_Y | GL.TEXTURE_CUBE_MAP_NEGATIVE_Y | GL.TEXTURE_CUBE_MAP_POSITIVE_Z | GL.TEXTURE_CUBE_MAP_NEGATIVE_Z;
+
 
 export type UniformType =
     GL.FLOAT | GL.FLOAT_VEC2 | GL.FLOAT_VEC3 | GL.FLOAT_VEC4 |

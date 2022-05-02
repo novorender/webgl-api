@@ -1,7 +1,7 @@
 import type { RenderActionData } from "./actions";
 import type { MeshResourceVertexAttributes } from "./attributes";
 import type { FlagNames, ShaderNames } from "./programs";
-import type { CompressedTextureFormatString, Mat4, RGBA, TexelTypeString, UncompressedTextureFormatString } from "./types";
+import type { ColorAttachmentString, CompressedTextureFormatString, Mat4, RGBA, TexelTypeString, UncompressedTextureFormatString } from "./types";
 
 export type ProgramIndex = number;
 export type BufferIndex = number;
@@ -108,6 +108,13 @@ export namespace RenderState {
             readonly type: "UNSIGNED_BYTE" | "UNSIGNED_SHORT" | "UNSIGNED_INT";
             readonly buffer: number;
         };
+    }
+
+
+    export interface FrameBufferResource {
+        readonly attachment: ColorAttachmentString | "DEPTH_ATTACHMENT" | "STENCIL_ATTACHMENT";
+        readonly textureTarget?: "TEXTURE_2D" | "TEXTURE_CUBE_MAP_POSITIVE_X" | "TEXTURE_CUBE_MAP_NEGATIVE_X" | "TEXTURE_CUBE_MAP_POSITIVE_Y" | "TEXTURE_CUBE_MAP_NEGATIVE_Y" | "TEXTURE_CUBE_MAP_POSITIVE_Z" | "TEXTURE_CUBE_MAP_NEGATIVE_Z"; // default: TEXTURE_2D
+        readonly texture: TextureIndex;
     }
 
 
