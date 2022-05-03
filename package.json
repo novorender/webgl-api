@@ -2,10 +2,9 @@
     "name": "webgl-api",
     "version": "1.0.0",
     "description": "A Web API for scalable 3D rendering in the cloud.",
-    "browser": "src/index.ts",
     "scripts": {
         "start": "webpack serve --mode development",
-        "build:schema": "typescript-json-schema tsconfig.json RenderState.Scene --include src/*.ts >render-state-schema.json",
+        "build:schema": "typescript-json-schema tsconfig.json RenderState.Scene --include src/webgl-api/*.ts >render-state-schema.json",
         "generate_binary": "node src/node/generateBinary.mjs",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
@@ -27,6 +26,7 @@
     "homepage": "https://github.com/novorender/webgl-api#readme",
     "devDependencies": {
         "ts-loader": "9.2.8",
+        "ts-node": "^10.7.0",
         "tslib": "2.4.0",
         "typescript": "4.6.3",
         "typescript-json-schema": "0.53.0",

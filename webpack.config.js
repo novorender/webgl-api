@@ -1,7 +1,7 @@
 const path = require("path");
 
 module.exports = {
-    entry: "./demo/src/index.ts",
+    entry: "./src/demo/index.ts",
     devtool: "source-map",
     module: {
         rules: [
@@ -19,7 +19,8 @@ module.exports = {
     resolve: {
         extensions: [".tsx", ".ts", ".js"],
         alias: {
-            ["@novorender/webgl-api"]: path.resolve(__dirname, "./src/"),
+            ["@novorender/webgl-api"]: path.resolve(__dirname, "./src/webgl-api"),
+            ["@novorender/webgl2-renderer"]: path.resolve(__dirname, "./src/webgl2-renderer"),
         },
         roots: [path.resolve(__dirname, "./src/")]
     },

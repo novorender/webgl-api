@@ -1,3 +1,5 @@
+import { WebGL2Renderer } from "./renderer";
+
 export function create(canvas: HTMLCanvasElement, options?: WebGLContextAttributes) {
     const gl = canvas.getContext("webgl2", options);
     if (!gl)
@@ -16,5 +18,5 @@ export function create(canvas: HTMLCanvasElement, options?: WebGLContextAttribut
             console.info("WebGL Context restored");
         }, false);
 
-    return gl;
+    return new WebGL2Renderer(gl);
 }

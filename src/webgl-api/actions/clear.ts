@@ -1,6 +1,6 @@
-import { GL } from "/glEnum";
-import type { RGBA, UnitFloat, UInt8 } from "/types";
-import type { FrameContext } from "/frameContext";
+import { GL } from "../glEnum";
+import type { RGBA, UnitFloat, UInt8 } from "../types";
+import type { FrameContext } from "../frameContext";
 import { ActionBase, ActionCtorArgs } from "./actionBase";
 
 class Action extends ActionBase {

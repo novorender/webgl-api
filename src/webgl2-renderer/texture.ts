@@ -1,5 +1,5 @@
 import type { BlobIndex, RendererContext } from "./renderer";
-import { GL } from "/glEnum";
+import { GL } from "./glEnum";
 
 export type TextureIndex = number;
 

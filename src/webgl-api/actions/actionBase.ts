@@ -1,5 +1,5 @@
 // import type { FrameContext } from "lib/frameContext";
-import type { FrameContext } from "/frameContext";
+import type { FrameContext } from "../frameContext";
 
 export interface ActionCtorArgs {
     readonly gl: WebGL2RenderingContext;

@@ -1,9 +1,9 @@
-import { GL } from "/glEnum";
-import type { FrameContext } from "/frameContext";
+import { GL } from "../glEnum";
+import type { FrameContext } from "../frameContext";
 import { ActionBase, ActionCtorArgs } from "./actionBase";
-import { UniformBlocks } from "/uniforms";
-import { setAttributeDefaults } from "/attributes";
-import { SamplerIndex, TextureIndex } from "/state";
+import { UniformBlocks } from "../uniforms";
+import { setAttributeDefaults } from "../attributes";
+import { SamplerIndex, TextureIndex } from "../state";
 
 class Action extends ActionBase {
 

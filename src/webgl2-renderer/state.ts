@@ -1,134 +1,250 @@
+import { LimitsGL } from "./context";
 import { FrameBufferIndex } from "./frameBuffer";
+import { ProgramIndex } from "./program";
 import type { RendererContext } from "./renderer";
-import { TextureIndex } from "./texture";
-import { VertexArrayIndex } from "./vao";
-import { GL } from "/glEnum";
-import { BufferIndex, SamplerIndex } from "/state";
+import type { TextureIndex } from "./texture";
+import type { VertexArrayIndex } from "./vao";
+import type { BufferIndex } from "./buffer";
+import type { SamplerIndex } from "./sampler";
 
-export type BlendEquation = "FUNC_ADD" | "FUNC_SUBTRACT" | "FUNC_REVERSE_SUBTRACT"; // | "MIN_EXT" | "MAX_EXT";
+export type BlendEquation = "FUNC_ADD" | "FUNC_SUBTRACT" | "FUNC_REVERSE_SUBTRACT" | "MIN" | "MAX";
 export type BlendFunction = "ZERO" | "ONE" | "SRC_COLOR" | "ONE_MINUS_SRC_COLOR" | "DST_COLOR" | "ONE_MINUS_DST_COLOR" | "SRC_ALPHA" | "ONE_MINUS_SRC_ALPHA" | "DST_ALPHA" | "ONE_MINUS_DST_ALPHA" | "CONSTANT_COLOR" | "ONE_MINUS_CONSTANT_COLOR" | "CONSTANT_ALPHA" | "ONE_MINUS_CONSTANT_ALPHA" | "SRC_ALPHA_SATURATE";
 export type CullMode = "FRONT" | "BACK" | "FRONT_AND_BACK";
 export type DepthFunc = "NEVER" | "LESS" | "EQUAL" | "LEQUAL" | "GREATER" | "NOTEQUAL" | "GEQUAL" | "ALWAYS";
 export type Winding = "CW" | "CCW";
 export type ColorAttachment = `COLOR_ATTACHMENT${0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15}`;
+export type RGBA = readonly [r: number, g: number, b: number, a: number];
+export type XYZW = readonly [x: number, y: number, z: number, w: number];
+type FilteredKeys<T, U> = { [P in keyof T]: T[P] extends U ? P : never }[keyof T];
 
-export interface StateParams {
-    readonly "BLEND": boolean; // false
-    readonly "BLEND_COLOR": readonly [red: number, green: number, blue: number, alpha: number]; // new Float32Array([0,0,0,0]) (r,g,b,a);
-    readonly "BLEND_DST_ALPHA": BlendFunction; // ZERO
-    readonly "BLEND_DST_RGB": BlendFunction; // ZERO 
-    readonly "BLEND_EQUATION_ALPHA": BlendEquation; // FUNC_ADD
-    readonly "BLEND_EQUATION_RGB": BlendEquation; // FUNC_ADD
-    readonly "BLEND_SRC_ALPHA": BlendFunction; // ONE
-    readonly "BLEND_SRC_RGB": BlendFunction; // ONE
-
-    readonly "CULL_FACE": boolean; // false
-    readonly "CULL_FACE_MODE": CullMode; // BACK
-    readonly "FRONT_FACE": Winding; // CCW
-
-    readonly "DEPTH_TEST": boolean; // false
-    readonly "DEPTH_FUNC": DepthFunc; // LESS
-    readonly "DEPTH_WRITEMASK": boolean; // true
-    readonly "DEPTH_RANGE": readonly [near: number, far: number]; // new Float32Array([0, 1]) (near, far)
-
-    readonly "DITHER": boolean; // true
-
-    readonly "POLYGON_OFFSET_FILL": boolean; // false
-    readonly "POLYGON_OFFSET_FACTOR": number; // 0
-    readonly "POLYGON_OFFSET_UNITS": number; // 0
-
-    readonly "SAMPLE_ALPHA_TO_COVERAGE": boolean; // false
-    readonly "SAMPLE_COVERAGE": boolean; // false
-    readonly "SAMPLE_COVERAGE_VALUE": number; // 1.0
-    readonly "SAMPLE_COVERAGE_INVERT": boolean; // false
-
-    readonly "STENCIL_TEST": boolean; // false
-    readonly "STENCIL_FUNC": DepthFunc; // ALWAYS
-    readonly "STENCIL_VALUE_MASK": number; // 0x7FFFFFFF
-    readonly "STENCIL_REF": number; // 0
-    readonly "STENCIL_BACK_FUNC": DepthFunc; // ALWAYS
-    readonly "STENCIL_BACK_VALUE_MASK": number; // 0x7FFFFFFF,
-    readonly "STENCIL_BACK_REF": number; // 0
-
-    readonly "VIEWPORT": readonly [x: number, y: number, width: number, height: number]; // Does this even belong here?
-
-    readonly "SCISSOR_TEST": boolean; // false
-    readonly "SCISSOR_BOX": [x: number, y: number, width: number, height: number];
-
-    readonly "RASTERIZER_DISCARD": boolean; // false
-
-    readonly ARRAY_BUFFER_BINDING: BufferIndex | null;
-    readonly ELEMENT_ARRAY_BUFFER_BINDING: BufferIndex | null;
-
-    readonly VERTEX_ARRAY_OBJECT: VertexArrayIndex | null;
-    readonly ATTRIBUTE_DEFAULTS: readonly [red: number, blue: number, green: number, alpha: number][]; // max length: MAX_VERTEX_ATTRIBS
-    readonly UNIFORM_BUFFERS: readonly BufferIndex[]; // max length: MAX_UNIFORM_BUFFER_BINDINGS
-    readonly TEXTURE_SAMPLER_UNIFORMS: readonly SamplerIndex[]; // max length: MAX_COMBINED_TEXTURE_IMAGE_UNITS
-    readonly TEXTURES: readonly (TextureIndex | null)[]; // max length: MAX_COMBINED_TEXTURE_IMAGE_UNITS
-
-    readonly FRAME_BUFFER: FrameBufferIndex | null;
-    readonly DRAW_BUFFERS: readonly (ColorAttachment | null)[]; // max length: MAX_DRAW_BUFFERS
+export interface AttributeDefault {
+    readonly type: "4f" | "I4i" | "I4ui";
+    readonly values: XYZW;
 }
 
-type FilteredKeys<T, U> = { [P in keyof T]: T[P] extends U ? P : never }[keyof T];
-type FlagKeys = FilteredKeys<StateParams, boolean>;
+export interface AttributeBinding {
+    readonly type: "4f" | "I4i" | "I4ui";
+    readonly values: XYZW;
+}
+
+
+type UniformTypeVector =
+    "1f" | "2f" | "3f" | "4f" |
+    "1i" | "2i" | "3i" | "4i" |
+    "1ui" | "2ui" | "3ui" | "4ui";
+
+type UniformTypeMatrix =
+    "Matrix2f" | "Matrix3f" | "Matrix4f" |
+    "Matrix2x3f" | "Matrix2x4f" |
+    "Matrix3x2f" | "Matrix3x4f" |
+    "Matrix4x2f" | "Matrix4x3f";
+
+type UniformType = UniformTypeVector | UniformTypeMatrix;
+
+export interface UniformBinding {
+    readonly type: UniformType;
+    readonly name: string;
+    readonly value: readonly number[];
+}
+
+export interface TextureBinding {
+    target: "TEXTURE_2D" | "TEXTURE_3D" | "TEXTURE_2D_ARRAY" | "TEXTURE_CUBE_MAP";
+    index: TextureIndex;
+}
+
+export type State = ReturnType<typeof createDefaultState>;
+export type StateParams = Partial<State>;
 
 // https://github.com/regl-project/regl
+
+function isUniformTypeMatrix(type: UniformType): type is UniformTypeMatrix {
+    return type.startsWith("Matrix");
+}
+
+const defaultConstants = {
+    blendEnable: false, // BLEND
+    blendColor: [0, 0, 0, 0] as RGBA, // BLEND_COLOR
+    blendDstAlpha: "ZERO" as BlendFunction, // BLEND_DST_ALPHA
+    blendDstRGB: "ZERO" as BlendFunction, // BLEND_DST_RGB
+    blendEquationAlpha: "FUNC_ADD" as BlendEquation, // BLEND_EQUATION_ALPHA
+    blendEquationRGB: "FUNC_ADD" as BlendEquation, // BLEND_EQUATION_RGB
+    blendSrcAlpha: "ONE" as BlendFunction, // BLEND_EQUATION_ALPHA
+    blendSrcRGB: "ONE" as BlendFunction, // BLEND_SRC_RGB
+
+    cullEnable: false, // CULL_FACE
+    cullMode: "BACK" as CullMode, // CULL_FACE_MODE
+    cullFrontFace: "CCW" as Winding, // FRONT_FACE
+
+    depthTest: false, // DEPTH_TEST
+    depthFunc: "LESS" as DepthFunc, // DEPTH_FUNC
+    depthWriteMask: true, // DEPTH_WRITEMASK
+    depthRange: [0, 1] as [near: number, far: number], // DEPTH_RANGE
+
+    ditherEnable: true, // DITHER
+
+    polygonOffsetFill: false, // POLYGON_OFFSET_FILL
+    polygonOffsetFactor: 0, // POLYGON_OFFSET_FACTOR
+    polygonOffsetUnits: 0, // POLYGON_OFFSET_UNITS
+
+    sampleAlphaToCoverage: false, // SAMPLE_ALPHA_TO_COVERAGE
+    sampleCoverage: false, // SAMPLE_COVERAGE
+    sampleCoverageValue: 1, // SAMPLE_COVERAGE_VALUE
+    sampleCoverageInvert: false, // SAMPLE_COVERAGE_INVERT
+
+    stencilTest: false, // STENCIL_TEST
+    stencilFunc: "ALWAYS" as DepthFunc, // STENCIL_FUNC
+    stencilValueMask: 0x7FFFFFFF, // STENCIL_VALUE_MASK
+    stencilRef: 0, // STENCIL_REF
+    stencilBackFunc: "ALWAYS" as DepthFunc, // STENCIL_BACK_FUNC
+    stencilBackValueMask: 0x7FFFFFFF, // STENCIL_BACK_VALUE_MASK
+    stencilBackRef: 0, // STENCIL_BACK_REF
+    viewport: { // VIEWPORT
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+    },
+
+    scissorTest: false, // SCISSOR_TEST
+    scissorBox: { // SCISSOR_BOX
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+    },
+
+    rasterizerDiscard: false, // RASTERIZER_DISCARD
+
+    arrayBuffer: null as BufferIndex | null, // ARRAY_BUFFER_BINDING
+    elementArrayBuffer: null as BufferIndex | null, // ELEMENT_ARRAY_BUFFER_BINDING
+    frameBuffer: null as FrameBufferIndex | null,
+    vertexArrayObject: null as VertexArrayIndex | null,
+
+    program: null as ProgramIndex | null,
+    uniforms: null as readonly UniformBinding[] | null,
+} as const;
+
+function createDefaultState(limits: LimitsGL) {
+    return {
+        ...defaultConstants,
+        drawBuffers: Array<ColorAttachment | null>(limits.MAX_DRAW_BUFFERS).fill(null),
+        attributeDefaults: Array<AttributeDefault | null>(limits.MAX_VERTEX_ATTRIBS).fill({ type: "4f", values: [0, 0, 0, 1] }),
+        uniformBuffers: Array<BufferIndex | null>(limits.MAX_VERTEX_ATTRIBS).fill(null),
+        textures: Array<TextureBinding | null>(limits.MAX_COMBINED_TEXTURE_IMAGE_UNITS).fill(null),
+        samplers: Array<SamplerIndex | null>(limits.MAX_COMBINED_TEXTURE_IMAGE_UNITS).fill(null),
+    } as const;
+}
+
 export function setState(context: RendererContext, params: StateParams) {
     const { gl } = context;
 
-    // TODO: Implement sync with context previous state and update state
-
-    function syncFlag(cap: FlagKeys) {
-        const enable = params[cap];
-        if (enable) {
-            gl.enable(gl[cap]);
-        } else {
-            gl.disable(gl[cap]);
+    function setFlag(cap: FilteredKeys<WebGL2RenderingContext, number>, key: keyof StateParams) {
+        const value = params[key];
+        if (value !== undefined) {
+            if (value) {
+                gl.enable(gl[cap]);
+            } else {
+                gl.disable(gl[cap]);
+            }
         }
-        return enable;
     }
 
-    function sync<T extends readonly (keyof StateParams)[]>(setter: (this: WebGLRenderingContext, ...values: any) => void, ...keys: T) {
-        for (const key of keys) {
-            const values = keys.map(key => params[key]);
+    function set(setter: (this: WebGLRenderingContext, ...values: any) => void, ...keys: readonly (keyof typeof defaultConstants)[]) {
+        if (keys.some(key => params[key] !== undefined)) {
+            const values = keys.map(key => params[key] ?? defaultConstants[key]);
             (<Function>setter).apply(gl, values);
         }
     }
 
-    syncFlag("BLEND");
-    sync((rgba: readonly [number, number, number, number]) => { gl.blendColor(...rgba); }, "BLEND_COLOR");
-    sync(gl.blendEquationSeparate, "BLEND_EQUATION_RGB", "BLEND_EQUATION_ALPHA");
-    sync(gl.blendFuncSeparate, "BLEND_SRC_RGB", "BLEND_DST_RGB", "BLEND_SRC_ALPHA", "BLEND_DST_ALPHA");
+    setFlag("BLEND", "blendEnable");
+    set((rgba: readonly [number, number, number, number]) => { gl.blendColor(...rgba); }, "blendColor");
+    set(gl.blendEquationSeparate, "blendEquationRGB", "blendEquationAlpha");
+    set(gl.blendFuncSeparate, "blendSrcRGB", "blendDstRGB", "blendSrcAlpha", "blendDstAlpha");
 
-    syncFlag("CULL_FACE");
-    sync(gl.cullFace, "CULL_FACE_MODE");
-    sync(gl.frontFace, "FRONT_FACE");
+    setFlag("CULL_FACE", "cullEnable");
+    set(gl.cullFace, "cullMode");
+    set(gl.frontFace, "cullFrontFace");
 
-    syncFlag("DEPTH_TEST");
-    sync(gl.depthFunc, "DEPTH_FUNC");
-    sync(gl.depthMask, "DEPTH_WRITEMASK");
-    sync((range: readonly [number, number]) => gl.depthRange(...range), "DEPTH_RANGE");
+    setFlag("DEPTH_TEST", "depthTest");
+    set(gl.depthFunc, "depthFunc");
+    set(gl.depthMask, "depthWriteMask");
+    set((range: readonly [number, number]) => gl.depthRange(...range), "depthRange");
 
-    syncFlag("DITHER");
+    setFlag("DITHER", "ditherEnable");
 
-    syncFlag("POLYGON_OFFSET_FILL");
-    sync(gl.polygonOffset, "POLYGON_OFFSET_FACTOR", "POLYGON_OFFSET_UNITS");
+    setFlag("POLYGON_OFFSET_FILL", "polygonOffsetFill");
+    set(gl.polygonOffset, "polygonOffsetFactor", "polygonOffsetUnits");
 
-    syncFlag("SAMPLE_ALPHA_TO_COVERAGE");
-    syncFlag("SAMPLE_COVERAGE");
-    sync(gl.sampleCoverage, "SAMPLE_COVERAGE_VALUE", "SAMPLE_COVERAGE_INVERT");
+    setFlag("SAMPLE_ALPHA_TO_COVERAGE", "sampleAlphaToCoverage");
+    setFlag("SAMPLE_COVERAGE", "sampleCoverage");
+    set(gl.sampleCoverage, "sampleCoverageValue", "sampleCoverageInvert");
 
-    syncFlag("STENCIL_TEST");
-    sync((func, ref, mask) => gl.stencilFuncSeparate(gl.FRONT, func, ref, mask), "STENCIL_FUNC", "STENCIL_REF", "STENCIL_VALUE_MASK");
-    sync((func, ref, mask) => gl.stencilFuncSeparate(gl.BACK, func, ref, mask), "STENCIL_BACK_FUNC", "STENCIL_BACK_REF", "STENCIL_BACK_VALUE_MASK");
+    setFlag("STENCIL_TEST", "stencilTest");
+    set((func, ref, mask) => gl.stencilFuncSeparate(gl.FRONT, func, ref, mask), "stencilFunc", "stencilRef", "stencilValueMask");
+    set((func, ref, mask) => gl.stencilFuncSeparate(gl.BACK, func, ref, mask), "stencilBackFunc", "stencilBackRef", "stencilBackValueMask");
 
-    sync((box: readonly [x: number, y: number, width: number, height: number]) => gl.viewport(...box), "VIEWPORT");
+    set((box: readonly [x: number, y: number, width: number, height: number]) => gl.viewport(...box), "viewport");
 
-    syncFlag("SCISSOR_TEST");
-    sync((box: readonly [x: number, y: number, width: number, height: number]) => gl.scissor(...box), "SCISSOR_BOX");
+    setFlag("SCISSOR_TEST", "scissorTest");
+    set((box: readonly [x: number, y: number, width: number, height: number]) => gl.scissor(...box), "scissorBox");
 
-    syncFlag("RASTERIZER_DISCARD");
+    setFlag("RASTERIZER_DISCARD", "rasterizerDiscard");
 
     // TODO: Implement arrays and remaining state
+    set(buffer => gl.bindBuffer(gl.ARRAY_BUFFER_BINDING, buffer), "arrayBuffer");
+    set(buffer => gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER_BINDING, buffer), "elementArrayBuffer");
+    set(buffer => gl.bindFramebuffer(gl.FRAMEBUFFER, buffer), "frameBuffer");
+
+    set(gl.bindVertexArray, "vertexArrayObject");
+
+    const { drawBuffers, attributeDefaults, uniformBuffers, textures, uniforms, samplers } = params;
+
+    if (drawBuffers) {
+        gl.drawBuffers(drawBuffers.map(b => gl[b ?? "NONE"]));
+    }
+
+    if (attributeDefaults) {
+        for (let i = 0; i < attributeDefaults.length; i++) {
+            const defaults = attributeDefaults[i];
+            if (defaults) {
+                const { type, values } = defaults;
+                gl[`vertexAttrib${type}v`](i, values);
+            }
+        }
+    }
+    if (uniformBuffers) {
+        for (let i = 0; i < uniformBuffers.length; i++) {
+            const index = uniformBuffers[i]
+            const buffer = index == null ? null : context.buffers[index];
+            gl.bindBufferBase(gl.UNIFORM_BUFFER, i, buffer);
+        }
+    }
+    if (textures) {
+        const texture0 = gl.TEXTURE0;
+        for (let i = 0; i < textures.length; i++) {
+            const tex = textures[i];
+            const texture = tex == null ? null : context.textures[tex.index];
+            gl.activeTexture(texture0 + i);
+            gl.bindTexture(gl[tex?.target ?? "TEXTURE_2D"], texture);
+        }
+    }
+
+    if (samplers) {
+        // TODO: implement!
+    }
+
+    const program = params.program ? context.programs[params.program] : null;
+    gl.useProgram(program);
+
+    if (uniforms && program) {
+        for (const { type, name, value } of uniforms) {
+            const location = gl.getUniformLocation(program, name); // TODO: cache this?
+            const n = `uniform${type}v` as const;
+            if (isUniformTypeMatrix(type)) {
+                gl[`uniform${type}v`](location, false, value);
+            } else {
+                gl[`uniform${type}v`](location, value);
+            }
+        }
+    }
 }
