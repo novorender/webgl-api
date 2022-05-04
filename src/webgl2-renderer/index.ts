@@ -20,3 +20,21 @@ export function create(canvas: HTMLCanvasElement, options?: WebGLContextAttribut
 
     return new WebGL2Renderer(gl);
 }
+
+export function resizeCanvasToDisplaySize(canvas: HTMLCanvasElement, scale: number = window.devicePixelRatio) {
+    // Lookup the size the browser is displaying the canvas in CSS pixels.
+    const { width, height } = canvas.getBoundingClientRect();
+    const displayWidth = Math.round(width * scale);
+    const displayHeight = Math.round(height * scale);
+
+    // Check if the canvas is not the same size.
+    const needResize = canvas.width != displayWidth || canvas.height != displayHeight;
+
+    if (needResize) {
+        // Make the canvas the same size
+        canvas.width = displayWidth;
+        canvas.height = displayHeight;
+    }
+
+    return needResize;
+}

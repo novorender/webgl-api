@@ -4,7 +4,7 @@ export type ProgramIndex = number;
 
 export interface ProgramParams {
     readonly shaders: { vertex: string, fragment: string };
-    readonly flags: readonly string[];
+    readonly flags?: readonly string[];
 }
 
 type ShaderType = "VERTEX_SHADER" | "FRAGMENT_SHADER";

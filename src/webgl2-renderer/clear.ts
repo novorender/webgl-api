@@ -1,8 +1,8 @@
 import type { RendererContext } from "./renderer";
 
 export interface ClearParamsColor {
-    readonly buffer: "COLOR";
-    readonly drawBuffer: number; // 0 - MAX_DRAW_BUFFERS
+    readonly buffer?: "COLOR";
+    readonly drawBuffer?: number; // 0 - MAX_DRAW_BUFFERS
     readonly color: readonly [red: number, green: number, blue: number, alpha: number];
     readonly type?: "Int" | "Uint" | "Float"; // default: Float
 }
@@ -42,19 +42,20 @@ export function clear(context: RendererContext, params: ClearParams) {
         case "DEPTH_STENCIL": {
             const depth = "depth" in params ? params.depth : 1.0;
             const stencil = "stencil" in params ? params.stencil : 0;
-            gl.clearBufferfi(gl[buffer], drawBuffer, depth, stencil);
+            gl.clearBufferfi(gl[buffer], 0, depth, stencil);
             break;
         }
-        case "COLOR": {
+        default: {
             const type = params.type ?? "Float";
+            const target = gl.COLOR;
             switch (type) {
-                case "Float": gl.clearBufferfv(gl[buffer], drawBuffer, params.color); break;
-                case "Int": gl.clearBufferiv(gl[buffer], drawBuffer, new Int32Array(params.color)); break;
-                case "Uint": gl.clearBufferuiv(gl[buffer], drawBuffer, new Uint32Array(params.color)); break;
+                case "Float": gl.clearBufferfv(target, drawBuffer ?? 0, params.color); break;
+                case "Int": gl.clearBufferiv(target, drawBuffer ?? 0, new Int32Array(params.color)); break;
+                case "Uint": gl.clearBufferuiv(target, drawBuffer ?? 0, new Uint32Array(params.color)); break;
                 default: exhaustiveColorCheck(type);
             }
             break;
         }
-        default: exhaustiveBufferCheck(buffer);
+        // default: exhaustiveBufferCheck(buffer);
     }
 }

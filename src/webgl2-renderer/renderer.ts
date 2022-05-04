@@ -7,6 +7,8 @@ import { createTexture, TextureIndex, TextureParams } from "./texture";
 import { createFrameBuffer, FrameBufferIndex, FrameBufferParams } from "./frameBuffer";
 import { clear, ClearParams } from "./clear";
 import { createContext } from "./context";
+import { setState, StateParams } from "./state";
+import { draw, DrawParams } from "./draw";
 export type { RendererContext } from "./context";
 
 export type BlobIndex = number;
@@ -98,6 +100,10 @@ export class WebGL2Renderer {
         frameBuffers[index] = null;
     }
 
+    state(params: StateParams) {
+        setState(this.#context, params);
+    }
+
     clear(params: ClearParams) {
         clear(this.#context, params);
     }
@@ -108,10 +114,7 @@ export class WebGL2Renderer {
     copy() {
     }
 
-    draw() {
-    }
-
-    state() {
-
+    draw(params: DrawParams) {
+        draw(this.#context, params);
     }
 }

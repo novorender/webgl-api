@@ -17,6 +17,13 @@ export type RGBA = readonly [r: number, g: number, b: number, a: number];
 export type XYZW = readonly [x: number, y: number, z: number, w: number];
 type FilteredKeys<T, U> = { [P in keyof T]: T[P] extends U ? P : never }[keyof T];
 
+export interface Rect {
+    readonly x?: number;
+    readonly y?: number;
+    readonly width: number;
+    readonly height: number;
+}
+
 export interface AttributeDefault {
     readonly type: "4f" | "I4i" | "I4ui";
     readonly values: XYZW;
@@ -103,15 +110,15 @@ const defaultConstants = {
         y: 0,
         width: 0,
         height: 0,
-    },
+    } as Rect,
 
-    scissorTest: false, // SCISSOR_TEST
+    scissorTest: false as boolean, // SCISSOR_TEST
     scissorBox: { // SCISSOR_BOX
         x: 0,
         y: 0,
         width: 0,
         height: 0,
-    },
+    } as Rect,
 
     rasterizerDiscard: false, // RASTERIZER_DISCARD
 
@@ -183,21 +190,28 @@ export function setState(context: RendererContext, params: StateParams) {
     set((func, ref, mask) => gl.stencilFuncSeparate(gl.FRONT, func, ref, mask), "stencilFunc", "stencilRef", "stencilValueMask");
     set((func, ref, mask) => gl.stencilFuncSeparate(gl.BACK, func, ref, mask), "stencilBackFunc", "stencilBackRef", "stencilBackValueMask");
 
-    set((box: readonly [x: number, y: number, width: number, height: number]) => gl.viewport(...box), "viewport");
+    set(rect => gl.viewport(rect.x ?? 0, rect.y ?? 0, rect.width, rect.height), "viewport");
 
     setFlag("SCISSOR_TEST", "scissorTest");
-    set((box: readonly [x: number, y: number, width: number, height: number]) => gl.scissor(...box), "scissorBox");
+    set(rect => gl.scissor(rect.x ?? 0, rect.y ?? 0, rect.width, rect.height), "scissorBox");
 
     setFlag("RASTERIZER_DISCARD", "rasterizerDiscard");
 
-    // TODO: Implement arrays and remaining state
-    set(buffer => gl.bindBuffer(gl.ARRAY_BUFFER_BINDING, buffer), "arrayBuffer");
-    set(buffer => gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER_BINDING, buffer), "elementArrayBuffer");
-    set(buffer => gl.bindFramebuffer(gl.FRAMEBUFFER, buffer), "frameBuffer");
+    const { arrayBuffer, elementArrayBuffer, frameBuffer, vertexArrayObject, drawBuffers, attributeDefaults, uniformBuffers, textures, uniforms, samplers } = params;
 
-    set(gl.bindVertexArray, "vertexArrayObject");
+    if (arrayBuffer !== undefined) {
+        const buffer = arrayBuffer == null ? null : context.buffers[arrayBuffer];
+        gl.bindBuffer(gl.ARRAY_BUFFER_BINDING, buffer);
+    }
 
-    const { drawBuffers, attributeDefaults, uniformBuffers, textures, uniforms, samplers } = params;
+    // set(buffer => gl.bindBuffer(gl.ARRAY_BUFFER_BINDING, buffer), "arrayBuffer");
+    // set(buffer => gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER_BINDING, buffer), "elementArrayBuffer");
+    // set(buffer => gl.bindFramebuffer(gl.FRAMEBUFFER, buffer), "frameBuffer");
+
+    if (vertexArrayObject !== undefined) {
+        const vao = vertexArrayObject == null ? null : context.vertexArrays[vertexArrayObject];
+        gl.bindVertexArray(vao);
+    }
 
     if (drawBuffers) {
         gl.drawBuffers(drawBuffers.map(b => gl[b ?? "NONE"]));
@@ -214,7 +228,7 @@ export function setState(context: RendererContext, params: StateParams) {
     }
     if (uniformBuffers) {
         for (let i = 0; i < uniformBuffers.length; i++) {
-            const index = uniformBuffers[i]
+            const index = uniformBuffers[i];
             const buffer = index == null ? null : context.buffers[index];
             gl.bindBufferBase(gl.UNIFORM_BUFFER, i, buffer);
         }
@@ -230,11 +244,17 @@ export function setState(context: RendererContext, params: StateParams) {
     }
 
     if (samplers) {
-        // TODO: implement!
+        for (let i = 0; i < samplers.length; i++) {
+            const index = samplers[i];
+            const sampler = index == null ? null : context.samplers[index];
+            gl.bindSampler(i, sampler);
+        }
     }
 
-    const program = params.program ? context.programs[params.program] : null;
-    gl.useProgram(program);
+    const program = params.program == null ? null : context.programs[params.program];
+    if (params.program !== undefined) {
+        gl.useProgram(program);
+    }
 
     if (uniforms && program) {
         for (const { type, name, value } of uniforms) {

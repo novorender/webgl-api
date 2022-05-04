@@ -6,14 +6,14 @@ export type BufferUsageString = "STATIC_DRAW" | "DYNAMIC_DRAW" | "STREAM_DRAW" |
 
 export interface BufferParamsSize {
     target: BufferTargetString;
-    usage: BufferUsageString;
     size: GLsizeiptr;
+    usage?: BufferUsageString; // default: "STATIC_DRAW"
 }
 
 export interface BufferParamsData {
     target: BufferTargetString;
-    usage: BufferUsageString;
     srcData: BlobIndex;
+    usage?: BufferUsageString; // default: "STATIC_DRAW"
 }
 
 export type BufferParams = BufferParamsSize | BufferParamsData;
@@ -21,7 +21,7 @@ export type BufferParams = BufferParamsSize | BufferParamsData;
 export function createBuffer(context: RendererContext, params: BufferParams): WebGLBuffer {
     const { gl, blobs } = context;
     const target = gl[params.target];
-    const usage = gl[params.usage];
+    const usage = gl[params.usage ?? "STATIC_DRAW"];
     const buffer = gl.createBuffer();
     if (!buffer)
         throw new Error("Could not create buffer!");

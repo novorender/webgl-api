@@ -30,8 +30,8 @@ export function createVertexArray(context: RendererContext, params: VertexArrayP
     for (const attribParams of attributes) {
         if (attribParams) {
             gl.bindBuffer(gl.ARRAY_BUFFER, buffers[attribParams.buffer]);
-            gl.vertexAttribPointer(attribIndex, attribParams.numComponents, gl[attribParams.componentType ?? "FLOAT"], attribParams.normalized ?? false, attribParams.stride ?? 0, attribParams.offset ?? 0);
             gl.enableVertexAttribArray(attribIndex);
+            gl.vertexAttribPointer(attribIndex, attribParams.numComponents, gl[attribParams.componentType ?? "FLOAT"], attribParams.normalized ?? false, attribParams.stride ?? 0, attribParams.offset ?? 0);
         }
         attribIndex++;
     };
