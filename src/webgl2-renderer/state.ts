@@ -204,9 +204,15 @@ export function setState(context: RendererContext, params: StateParams) {
         gl.bindBuffer(gl.ARRAY_BUFFER_BINDING, buffer);
     }
 
-    // set(buffer => gl.bindBuffer(gl.ARRAY_BUFFER_BINDING, buffer), "arrayBuffer");
-    // set(buffer => gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER_BINDING, buffer), "elementArrayBuffer");
-    // set(buffer => gl.bindFramebuffer(gl.FRAMEBUFFER, buffer), "frameBuffer");
+    if (elementArrayBuffer !== undefined) {
+        const buffer = elementArrayBuffer == null ? null : context.buffers[elementArrayBuffer];
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER_BINDING, buffer);
+    }
+
+    if (frameBuffer !== undefined) {
+        const buffer = frameBuffer == null ? null : context.frameBuffers[frameBuffer];
+        gl.bindFramebuffer(gl.FRAMEBUFFER, buffer);
+    }
 
     if (vertexArrayObject !== undefined) {
         const vao = vertexArrayObject == null ? null : context.vertexArrays[vertexArrayObject];
@@ -241,6 +247,7 @@ export function setState(context: RendererContext, params: StateParams) {
             gl.activeTexture(texture0 + i);
             gl.bindTexture(gl[tex?.target ?? "TEXTURE_2D"], texture);
         }
+        gl.activeTexture(texture0);
     }
 
     if (samplers) {

@@ -1,5 +1,6 @@
-import type { BlobIndex, RendererContext } from "./renderer";
+import type { RendererContext } from "./renderer";
 import { GL } from "./glEnum";
+import { getArrayBufferView, BinarySource } from "./binary";
 
 export type TextureIndex = number;
 
@@ -19,11 +20,13 @@ export function createTexture(context: RendererContext, params: TextureParams) {
     const target = gl[params.target];
     const depth = "depth" in params ? params.depth : undefined;
     const border = 0;
+    gl.activeTexture(GL.TEXTURE0);
     gl.bindTexture(target, texture);
+
     const { internalFormat, format, type, arrayType } = getFormatInfo(gl, params.internalFormat, "type" in params ? params.type : undefined);
 
-    function createImage(imgTarget: typeof gl[TextureImageTargetString], blob: BlobIndex, level: number, sizeX: number, sizeY: number, sizeZ = 0) {
-        const buffer = blobs[blob]!;
+    function createImage(imgTarget: typeof gl[TextureImageTargetString], data: BinarySource, level: number, sizeX: number, sizeY: number, sizeZ = 0) {
+        const buffer = getArrayBufferView(context, data);
         const pixels = new arrayType(buffer.buffer, buffer.byteOffset, buffer.byteLength);
         if (type) {
             if (sizeZ) {
@@ -40,8 +43,8 @@ export function createTexture(context: RendererContext, params: TextureParams) {
         }
     }
 
-    function createMipLevel(level: number, buffer: BlobIndex | readonly BlobIndex[]) {
-        function isArray(img: typeof buffer): img is readonly BlobIndex[] {
+    function createMipLevel(level: number, buffer: BinarySource | readonly BinarySource[]) {
+        function isArray(img: typeof buffer): img is readonly BinarySource[] {
             return Array.isArray(img);
         }
         const n = 1 << level;
@@ -162,8 +165,8 @@ export type CompressedTextureFormatString =
     // EXT_texture_compression_rgtc
     "COMPRESSED_RED_RGTC1_EXT" | "COMPRESSED_SIGNED_RED_RGTC1_EXT" | "COMPRESSED_RED_GREEN_RGTC2_EXT" | "COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT";
 
-type Pow2 = 1 | 2 | 4 | 8 | 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096 | 8192 | 16384 | 32758 | 65536;
-type CubeImages = readonly [posX: BlobIndex, negX: BlobIndex, posY: BlobIndex, negZ: BlobIndex, posZ: BlobIndex, negZ: BlobIndex];
+type Pow2 = 2 | 4 | 8 | 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096 | 8192 | 16384 | 32758 | 65536;
+type CubeImages = readonly [posX: BinarySource, negX: BinarySource, posY: BinarySource, negZ: BinarySource, posZ: BinarySource, negZ: BinarySource];
 
 interface Uncompressed {
     readonly internalFormat: UncompressedTextureFormatString;
@@ -192,22 +195,22 @@ interface Size3D<T extends number = number> {
 // 2D
 export interface TextureParams2DUncompressed extends Uncompressed, Size2D, GenMipMap {
     readonly target: "TEXTURE_2D";
-    readonly image: BlobIndex;
+    readonly image: BinarySource;
 };
 
 export interface TextureParams2DCompressed extends Compressed, Size2D {
     readonly target: "TEXTURE_2D";
-    readonly image: BlobIndex;
+    readonly image: BinarySource;
 };
 
 export interface TextureParams2DUncompressedMipMapped extends Uncompressed, Size2D<Pow2>, GenMipMap {
     readonly target: "TEXTURE_2D";
-    readonly mipMaps: readonly (BlobIndex | null)[];
+    readonly mipMaps: readonly (BinarySource | null)[];
 };
 
 export interface TextureParams2DCompressedMipMapped extends Compressed, Size2D<Pow2> {
     readonly target: "TEXTURE_2D";
-    readonly mipMaps: readonly (BlobIndex | null)[];
+    readonly mipMaps: readonly (BinarySource | null)[];
 };
 
 // Cube
@@ -234,43 +237,43 @@ export interface TextureParamsCubeCompressedMipMapped extends Compressed, Size2D
 // 3D
 export interface TextureParams3DUncompressed extends Uncompressed, Size3D, GenMipMap {
     readonly target: "TEXTURE_3D";
-    readonly image: BlobIndex;
+    readonly image: BinarySource;
 }
 
 export interface TextureParams3DCompressed extends Compressed, Size3D {
     readonly target: "TEXTURE_3D";
-    readonly image: BlobIndex;
+    readonly image: BinarySource;
 }
 
 export interface TextureParams3DUncompressedMipMapped extends Uncompressed, Size3D<Pow2> {
     readonly target: "TEXTURE_3D";
-    readonly mipMaps: readonly (BlobIndex | null)[];
+    readonly mipMaps: readonly (BinarySource | null)[];
 }
 
 export interface TextureParams3DCompressedMipMapped extends Compressed, Size3D<Pow2> {
     readonly target: "TEXTURE_3D";
-    readonly mipMaps: readonly (BlobIndex | null)[];
+    readonly mipMaps: readonly (BinarySource | null)[];
 }
 
 // 2D Array
 export interface TextureParams2DArrayUncompressed extends Uncompressed, Size3D, GenMipMap {
     readonly target: "TEXTURE_2D_ARRAY";
-    readonly image: BlobIndex;
+    readonly image: BinarySource;
 }
 
 export interface TextureParams2DArrayCompressed extends Compressed, Size3D {
     readonly target: "TEXTURE_2D_ARRAY";
-    readonly image: BlobIndex;
+    readonly image: BinarySource;
 }
 
 export interface TextureParams2DArrayUncompressedMipMapped extends Uncompressed, Size3D<Pow2> {
     readonly target: "TEXTURE_2D_ARRAY";
-    readonly mipMaps: readonly (BlobIndex | null)[];
+    readonly mipMaps: readonly (BinarySource | null)[];
 }
 
 export interface TextureParams2DArrayCompressedMipMapped extends Compressed, Size3D<Pow2> {
     readonly target: "TEXTURE_2D_ARRAY";
-    readonly mipMaps: readonly (BlobIndex | null)[];
+    readonly mipMaps: readonly (BinarySource | null)[];
 }
 
 function isPowerOf2(value: number) {

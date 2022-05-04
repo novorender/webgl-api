@@ -169,8 +169,8 @@
             "cameraUniforms": 4,
             "materialUniforms": 5,
             "instanceUniforms": 6,
-            "baseColorTexture": 0,
-            "baseColorSampler": 0
+            "baseColorTexture": 0
+            // "baseColorSampler": 0
         }
     ]
 }

@@ -1,4 +1,3 @@
-import { GL } from "./glEnum";
 import { createProgram, ProgramIndex, ProgramParams } from "./program";
 import { createBuffer, BufferIndex, BufferParams } from "./buffer";
 import { createVertexArray, VertexArrayIndex, VertexArrayParams } from "./vao";
