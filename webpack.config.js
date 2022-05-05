@@ -1,4 +1,6 @@
 const path = require("path");
+const ResolveTypeScriptPlugin = require("resolve-typescript-plugin");
+
 
 module.exports = {
     entry: "./src/demo/index.ts",
@@ -6,7 +8,7 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.tsx?$/,
+                test: /\.(t|j)sx?$/,
                 use: "ts-loader",
                 exclude: /node_modules/,
             },
@@ -22,7 +24,8 @@ module.exports = {
             ["@novorender/webgl-api"]: path.resolve(__dirname, "./src/webgl-api"),
             ["@novorender/webgl2-renderer"]: path.resolve(__dirname, "./src/webgl2-renderer"),
         },
-        roots: [path.resolve(__dirname, "./src/")]
+        roots: [path.resolve(__dirname, "./src/")],
+        plugins: [new ResolveTypeScriptPlugin()]
     },
     output: {
         filename: "bundle.js",

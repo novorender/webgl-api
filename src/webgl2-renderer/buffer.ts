@@ -1,5 +1,5 @@
-import { BinarySource, getArrayBufferView } from "./binary";
-import type { RendererContext } from "./renderer";
+import type { RendererContext } from "./renderer.js";
+import { BinarySource, getArrayBufferView } from "./binary.js";
 
 export type BufferIndex = number;
 export type BufferTargetString = "ARRAY_BUFFER" | "ELEMENT_ARRAY_BUFFER" | "COPY_READ_BUFFER" | "COPY_WRITE_BUFFER" | "TRANSFORM_FEEDBACK_BUFFER" | "UNIFORM_BUFFER" | "PIXEL_PACK_BUFFER" | "PIXEL_UNPACK_BUFFER";
@@ -30,7 +30,7 @@ export function createBuffer(context: RendererContext, params: BufferParams): We
     if ("size" in params) {
         gl.bufferData(target, params.size, usage);
     } else {
-        gl.bufferData(target, getArrayBufferView(context, params.srcData), usage);
+        gl.bufferData(target, getArrayBufferView(params.srcData), usage);
     }
     gl.bindBuffer(target, null);
     return buffer;

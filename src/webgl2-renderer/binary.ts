@@ -1,41 +1,38 @@
-import type { BlobIndex, RendererContext } from "./renderer";
-
-export interface BinaryBlob {
-    readonly blob: BlobIndex;
-}
+export type ArrayType = "Float32" | "Uint8" | "Uint16" | "Int16" | "Int32";
 
 export interface BinaryArray {
-    readonly type: "Float32" | "Uint8" | "Uint16" | "Int16" | "Int32";
+    readonly type: ArrayType;
     readonly array: readonly number[];
 }
 
 export interface BinaryBase64 {
-    readonly type: "Float32" | "Uint8" | "Uint16" | "Int16" | "Int32";
+    readonly type: ArrayType;
     readonly base64: string;
 }
 
-export type BinarySource = BinaryBlob | BinaryArray | BinaryBase64 | ArrayBufferView;
+export type BinarySource = BinaryArray | BinaryBase64 | ArrayBufferView;
 
-function isBlob(data: BinarySource): data is BinaryBlob {
-    return "blob" in data;
+function isArray(data: any): data is BinaryArray {
+    return typeof data == "object" && "array" in data;
 }
 
-function isArray(data: BinarySource): data is BinaryArray {
-    return "array" in data;
+function isBase64(data: any): data is BinaryBase64 {
+    return typeof data == "object" && "base64" in data;
 }
 
-function isBase64(data: BinarySource): data is BinaryBase64 {
-    return "base64" in data;
+export function isBinarySource(data: unknown): data is BinarySource {
+    return ArrayBuffer.isView(data) || isArray(data) || isBase64(data);
 }
 
-export function getArrayBufferView(context: RendererContext, data: BinarySource): ArrayBufferView {
+export function encodeArrayBufferViewAsBase64(data: ArrayBufferView): BinaryBase64 {
+    const type = data.constructor.name.slice(0, -5) as ArrayType;
+    const base64 = encode(data.buffer);
+    return { type, base64 } as const;
+}
+
+export function getArrayBufferView(data: BinarySource): ArrayBufferView {
     if (ArrayBuffer.isView(data)) {
         return data;
-    } else if (isBlob(data)) {
-        const blob = context.blobs[data.blob];
-        if (!blob)
-            throw new Error("Referencing undefined binary blob!");
-        return blob;
     } else if (isArray(data)) {
         return new self[`${data.type}Array`](data.array);
     } else if (isBase64(data)) {

@@ -1,4 +1,4 @@
-import type { RendererContext } from "./renderer";
+import type { RendererContext } from "./renderer.js";
 
 export type DrawMode = "POINTS" | "LINE_STRIP" | "LINE_LOOP" | "LINES" | "TRIANGLE_STRIP" | "TRIANGLE_FAN" | "TRIANGLES";
 

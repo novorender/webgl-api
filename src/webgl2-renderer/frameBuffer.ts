@@ -1,5 +1,5 @@
-import type { RendererContext } from "./renderer";
-import type { TextureImageTargetString, TextureIndex } from "./texture";
+import type { RendererContext } from "./renderer.js";
+import type { TextureImageTargetString, TextureIndex } from "./texture.js";
 
 export type FrameBufferIndex = number;
 

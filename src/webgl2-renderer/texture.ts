@@ -1,6 +1,6 @@
 import type { RendererContext } from "./renderer";
-import { GL } from "./glEnum";
-import { getArrayBufferView, BinarySource } from "./binary";
+import { GL } from "./glEnum.js";
+import { getArrayBufferView, BinarySource } from "./binary.js";
 
 export type TextureIndex = number;
 
@@ -11,7 +11,7 @@ export type TextureParams =
     TextureParams2DArrayUncompressed | TextureParams2DArrayCompressed | TextureParams2DArrayUncompressedMipMapped | TextureParams2DArrayCompressedMipMapped;
 
 export function createTexture(context: RendererContext, params: TextureParams) {
-    const { gl, blobs } = context;
+    const { gl } = context;
     const texture = gl.createTexture();
     if (!texture)
         throw new Error("Could not create texture!");
@@ -20,13 +20,13 @@ export function createTexture(context: RendererContext, params: TextureParams) {
     const target = gl[params.target];
     const depth = "depth" in params ? params.depth : undefined;
     const border = 0;
-    gl.activeTexture(GL.TEXTURE0);
+    gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(target, texture);
 
     const { internalFormat, format, type, arrayType } = getFormatInfo(gl, params.internalFormat, "type" in params ? params.type : undefined);
 
     function createImage(imgTarget: typeof gl[TextureImageTargetString], data: BinarySource, level: number, sizeX: number, sizeY: number, sizeZ = 0) {
-        const buffer = getArrayBufferView(context, data);
+        const buffer = getArrayBufferView(data);
         const pixels = new arrayType(buffer.buffer, buffer.byteOffset, buffer.byteLength);
         if (type) {
             if (sizeZ) {

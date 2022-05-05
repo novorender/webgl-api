@@ -11,7 +11,6 @@ export function createContext(gl: WebGL2RenderingContext) {
 
 function contextArrays() {
     return {
-        blobs: [] as (ArrayBufferView | null)[],
         programs: [] as (WebGLProgram | null)[],
         buffers: [] as (WebGLBuffer | null)[],
         vertexArrays: [] as (WebGLVertexArrayObject | null)[],

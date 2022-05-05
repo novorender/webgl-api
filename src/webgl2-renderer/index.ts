@@ -1,25 +1,8 @@
-import { WebGL2Renderer } from "./renderer";
+import type { WebGL2Renderer } from "./renderer.js";
+export interface Renderer extends Omit<WebGL2Renderer, "#context"> { }
+export { createWebGL2Renderer } from "./renderer.js";
+export { createJsonRenderer } from "./json.js";
 
-export function create(canvas: HTMLCanvasElement, options?: WebGLContextAttributes) {
-    const gl = canvas.getContext("webgl2", options);
-    if (!gl)
-        throw new Error("Unable to create WebGL 2 context!");
-
-    canvas.addEventListener("webglcontextlost", function (event) {
-        // event.preventDefault();
-        // TODO: Handle!
-        console.error("WebGL Context lost");
-    }, false);
-
-    canvas.addEventListener(
-        "webglcontextrestored", function (event) {
-            // event.preventDefault();
-            // TODO: Handle!
-            console.info("WebGL Context restored");
-        }, false);
-
-    return new WebGL2Renderer(gl);
-}
 
 export function resizeCanvasToDisplaySize(canvas: HTMLCanvasElement, scale: number = window.devicePixelRatio) {
     // Lookup the size the browser is displaying the canvas in CSS pixels.

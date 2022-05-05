@@ -1,4 +1,4 @@
-import type { RendererContext } from "./renderer";
+import type { RendererContext } from "./renderer.js";
 
 export interface ClearParamsColor {
     readonly buffer?: "COLOR";

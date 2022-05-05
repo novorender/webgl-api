@@ -1,5 +1,5 @@
-import type { RendererContext } from "./renderer";
-import { BufferIndex } from "./buffer";
+import type { RendererContext } from "./renderer.js";
+import type { BufferIndex } from "./buffer.js";
 
 export type VertexArrayIndex = number;
 

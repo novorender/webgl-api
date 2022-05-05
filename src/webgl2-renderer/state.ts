@@ -1,11 +1,11 @@
-import { LimitsGL } from "./context";
-import { FrameBufferIndex } from "./frameBuffer";
-import { ProgramIndex } from "./program";
-import type { RendererContext } from "./renderer";
-import type { TextureIndex } from "./texture";
-import type { VertexArrayIndex } from "./vao";
-import type { BufferIndex } from "./buffer";
-import type { SamplerIndex } from "./sampler";
+import type { LimitsGL } from "./context.js";
+import type { FrameBufferIndex } from "./frameBuffer.js";
+import type { ProgramIndex } from "./program.js";
+import type { RendererContext } from "./renderer.js";
+import type { TextureIndex } from "./texture.js";
+import type { VertexArrayIndex } from "./vao.js";
+import type { BufferIndex } from "./buffer.js";
+import type { SamplerIndex } from "./sampler.js";
 
 export type BlendEquation = "FUNC_ADD" | "FUNC_SUBTRACT" | "FUNC_REVERSE_SUBTRACT" | "MIN" | "MAX";
 export type BlendFunction = "ZERO" | "ONE" | "SRC_COLOR" | "ONE_MINUS_SRC_COLOR" | "DST_COLOR" | "ONE_MINUS_DST_COLOR" | "SRC_ALPHA" | "ONE_MINUS_SRC_ALPHA" | "DST_ALPHA" | "ONE_MINUS_DST_ALPHA" | "CONSTANT_COLOR" | "ONE_MINUS_CONSTANT_COLOR" | "CONSTANT_ALPHA" | "ONE_MINUS_CONSTANT_ALPHA" | "SRC_ALPHA_SATURATE";

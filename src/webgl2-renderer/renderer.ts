@@ -1,16 +1,36 @@
-import { createProgram, ProgramIndex, ProgramParams } from "./program";
-import { createBuffer, BufferIndex, BufferParams } from "./buffer";
-import { createVertexArray, VertexArrayIndex, VertexArrayParams } from "./vao";
-import { createSampler, SamplerIndex, SamplerParams } from "./sampler";
-import { createTexture, TextureIndex, TextureParams } from "./texture";
-import { createFrameBuffer, FrameBufferIndex, FrameBufferParams } from "./frameBuffer";
-import { clear, ClearParams } from "./clear";
-import { createContext } from "./context";
-import { setState, StateParams } from "./state";
-import { draw, DrawParams } from "./draw";
-export type { RendererContext } from "./context";
+import type { Renderer } from ".";
+import { createContext, RendererContext } from "./context.js";
+import { createProgram, ProgramIndex, ProgramParams } from "./program.js";
+import { createBuffer, BufferIndex, BufferParams } from "./buffer.js";
+import { createVertexArray, VertexArrayIndex, VertexArrayParams } from "./vao.js";
+import { createSampler, SamplerIndex, SamplerParams } from "./sampler.js";
+import { createTexture, TextureIndex, TextureParams } from "./texture.js";
+import { createFrameBuffer, FrameBufferIndex, FrameBufferParams } from "./frameBuffer.js";
+import { clear, ClearParams } from "./clear.js";
+import { setState, StateParams } from "./state.js";
+import { draw, DrawParams } from "./draw.js";
+export type { RendererContext };
 
-export type BlobIndex = number;
+export function createWebGL2Renderer(canvas: HTMLCanvasElement, options?: WebGLContextAttributes): Renderer {
+    const gl = canvas.getContext("webgl2", options);
+    if (!gl)
+        throw new Error("Unable to create WebGL 2 context!");
+
+    canvas.addEventListener("webglcontextlost", function (event) {
+        // event.preventDefault();
+        // TODO: Handle!
+        console.error("WebGL Context lost");
+    }, false);
+
+    canvas.addEventListener(
+        "webglcontextrestored", function (event) {
+            // event.preventDefault();
+            // TODO: Handle!
+            console.info("WebGL Context restored");
+        }, false);
+
+    return new WebGL2Renderer(gl);
+}
 
 export class WebGL2Renderer {
     readonly #context; // we dont want anything GL specific to leak outside
@@ -19,48 +39,13 @@ export class WebGL2Renderer {
         this.#context = createContext(gl);
     }
 
-    addBlob(blob: ArrayBufferView): BlobIndex {
-        console.assert(ArrayBuffer.isView(blob));
-        const { blobs } = this.#context;
-        const index = blobs.length;
-        blobs.push(blob);
-        return index;
-    }
-
-    deleteBlob(blobIndex: BlobIndex) {
-        // we can disable this when recording
-        const { blobs } = this.#context;
-        blobs[blobIndex] = null;
+    dispose() {
+        // TODO: #implement
     }
 
     createProgram(index: ProgramIndex, params: ProgramParams) {
         const { programs } = this.#context;
         programs[index] = createProgram(this.#context, params);
-    }
-
-    createBuffer(index: BufferIndex, params: BufferParams) {
-        const { buffers } = this.#context;
-        buffers[index] = createBuffer(this.#context, params);
-    }
-
-    createVertexArray(index: VertexArrayIndex, params: VertexArrayParams) {
-        const { vertexArrays } = this.#context;
-        vertexArrays[index] = createVertexArray(this.#context, params);
-    }
-
-    createSampler(index: SamplerIndex, params: SamplerParams) {
-        const { samplers } = this.#context;
-        samplers[index] = createSampler(this.#context, params);
-    }
-
-    createTexture(index: TextureIndex, params: TextureParams) {
-        const { textures } = this.#context;
-        textures[index] = createTexture(this.#context, params);
-    }
-
-    createFrameBuffer(index: FrameBufferIndex, params: FrameBufferParams) {
-        const { frameBuffers } = this.#context;
-        frameBuffers[index] = createFrameBuffer(this.#context, params);
     }
 
     deleteProgram(index: ProgramIndex) {
@@ -69,10 +54,20 @@ export class WebGL2Renderer {
         programs[index] = null;
     }
 
+    createBuffer(index: BufferIndex, params: BufferParams) {
+        const { buffers } = this.#context;
+        buffers[index] = createBuffer(this.#context, params);
+    }
+
     deleteBuffer(index: BufferIndex) {
         const { gl, buffers } = this.#context;
         gl.deleteBuffer(buffers[index]);
         buffers[index] = null;
+    }
+
+    createVertexArray(index: VertexArrayIndex, params: VertexArrayParams) {
+        const { vertexArrays } = this.#context;
+        vertexArrays[index] = createVertexArray(this.#context, params);
     }
 
     deleteVertexArray(index: VertexArrayIndex) {
@@ -81,16 +76,31 @@ export class WebGL2Renderer {
         vertexArrays[index] = null;
     }
 
+    createSampler(index: SamplerIndex, params: SamplerParams) {
+        const { samplers } = this.#context;
+        samplers[index] = createSampler(this.#context, params);
+    }
+
     deleteSampler(index: SamplerIndex) {
         const { gl, samplers } = this.#context;
         gl.deleteSampler(samplers[index]);
         samplers[index] = null;
     }
 
+    createTexture(index: TextureIndex, params: TextureParams) {
+        const { textures } = this.#context;
+        textures[index] = createTexture(this.#context, params);
+    }
+
     deleteTexture(index: TextureIndex) {
         const { gl, textures } = this.#context;
         gl.deleteTexture(textures[index]);
         textures[index] = null;
+    }
+
+    createFrameBuffer(index: FrameBufferIndex, params: FrameBufferParams) {
+        const { frameBuffers } = this.#context;
+        frameBuffers[index] = createFrameBuffer(this.#context, params);
     }
 
     deleteFrameBuffer(index: FrameBufferIndex) {
