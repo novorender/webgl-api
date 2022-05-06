@@ -5,10 +5,12 @@ import { createBuffer, BufferIndex, BufferParams } from "./buffer.js";
 import { createVertexArray, VertexArrayIndex, VertexArrayParams } from "./vao.js";
 import { createSampler, SamplerIndex, SamplerParams } from "./sampler.js";
 import { createTexture, TextureIndex, TextureParams } from "./texture.js";
+import { createRenderBuffer, RenderBufferIndex, RenderBufferParams } from "./renderBuffer.js";
 import { createFrameBuffer, FrameBufferIndex, FrameBufferParams } from "./frameBuffer.js";
 import { clear, ClearParams } from "./clear.js";
 import { setState, StateParams } from "./state.js";
 import { draw, DrawParams } from "./draw.js";
+import { blit, BlitParams } from "./blit.js";
 export type { RendererContext };
 
 export function createWebGL2Renderer(canvas: HTMLCanvasElement, options?: WebGLContextAttributes): Renderer {
@@ -41,6 +43,14 @@ export class WebGL2Renderer {
 
     dispose() {
         // TODO: #implement
+    }
+
+    get width() {
+        return this.#context.gl.drawingBufferWidth;
+    }
+
+    get height() {
+        return this.#context.gl.drawingBufferHeight;
     }
 
     createProgram(index: ProgramIndex, params: ProgramParams) {
@@ -98,6 +108,17 @@ export class WebGL2Renderer {
         textures[index] = null;
     }
 
+    createRenderBuffer(index: RenderBufferIndex, params: RenderBufferParams) {
+        const { renderBuffers } = this.#context;
+        renderBuffers[index] = createRenderBuffer(this.#context, params);
+    }
+
+    deleteRenderBuffer(index: RenderBufferIndex) {
+        const { gl, renderBuffers } = this.#context;
+        gl.deleteRenderbuffer(renderBuffers[index]);
+        renderBuffers[index] = null;
+    }
+
     createFrameBuffer(index: FrameBufferIndex, params: FrameBufferParams) {
         const { frameBuffers } = this.#context;
         frameBuffers[index] = createFrameBuffer(this.#context, params);
@@ -117,7 +138,8 @@ export class WebGL2Renderer {
         clear(this.#context, params);
     }
 
-    blit() {
+    blit(params: BlitParams) {
+        blit(this.#context, params);
     }
 
     copy() {

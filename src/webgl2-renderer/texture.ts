@@ -25,9 +25,9 @@ export function createTexture(context: RendererContext, params: TextureParams) {
 
     const { internalFormat, format, type, arrayType } = getFormatInfo(gl, params.internalFormat, "type" in params ? params.type : undefined);
 
-    function createImage(imgTarget: typeof gl[TextureImageTargetString], data: BinarySource, level: number, sizeX: number, sizeY: number, sizeZ = 0) {
-        const buffer = getArrayBufferView(data);
-        const pixels = new arrayType(buffer.buffer, buffer.byteOffset, buffer.byteLength);
+    function createImage(imgTarget: typeof gl[TextureImageTargetString], data: BinarySource | null, level: number, sizeX: number, sizeY: number, sizeZ = 0) {
+        const buffer = data === null ? null : getArrayBufferView(data);
+        const pixels = buffer === null ? null : new arrayType(buffer.buffer, buffer.byteOffset, buffer.byteLength);
         if (type) {
             if (sizeZ) {
                 gl.texImage3D(imgTarget, level, internalFormat, sizeX, sizeY, sizeZ, border, format as number, type, pixels);
@@ -35,40 +35,41 @@ export function createTexture(context: RendererContext, params: TextureParams) {
                 gl.texImage2D(imgTarget, level, internalFormat, sizeX, sizeY, border, format as number, type, pixels);
             }
         } else {
+            console.assert(pixels);
             if (sizeZ) {
-                gl.compressedTexImage3D(imgTarget, level, internalFormat, sizeX, sizeY, sizeZ, border, pixels);
+                gl.compressedTexImage3D(imgTarget, level, internalFormat, sizeX, sizeY, sizeZ, border, pixels!);
             } else {
-                gl.compressedTexImage2D(imgTarget, level, internalFormat, sizeX, sizeY, border, pixels);
+                gl.compressedTexImage2D(imgTarget, level, internalFormat, sizeX, sizeY, border, pixels!);
             }
         }
     }
 
-    function createMipLevel(level: number, buffer: BinarySource | readonly BinarySource[]) {
-        function isArray(img: typeof buffer): img is readonly BinarySource[] {
+    function createMipLevel(level: number, image: BinarySource | readonly BinarySource[] | null) {
+        function isArray(img: typeof image): img is readonly BinarySource[] {
             return Array.isArray(img);
         }
         const n = 1 << level;
-        if (isArray(buffer)) {
+        if (isArray(image)) {
             console.assert(target == gl.TEXTURE_CUBE_MAP);
-            const cubeImages = buffer[level];
+            const cubeImages = image[level];
             if (cubeImages) {
                 let side = gl.TEXTURE_CUBE_MAP_POSITIVE_X;
-                for (let img of buffer) {
+                for (let img of image) {
                     createImage(side++, img, level, width / n, height / n);
                 }
             }
-        } else if (buffer) {
+        } else {
             if (depth) {
                 if (target == gl.TEXTURE_3D) {
-                    createImage(gl.TEXTURE_3D, buffer, level, width / n, height / n, depth / n);
+                    createImage(gl.TEXTURE_3D, image, level, width / n, height / n, depth / n);
                 }
                 else {
                     console.assert(target == gl.TEXTURE_2D_ARRAY);
-                    createImage(gl.TEXTURE_3D, buffer, level, width / n, height / n, depth);
+                    createImage(gl.TEXTURE_3D, image, level, width / n, height / n, depth);
                 }
             } else {
                 console.assert(target == gl.TEXTURE_2D);
-                createImage(gl.TEXTURE_2D, buffer, level, width, height);
+                createImage(gl.TEXTURE_2D, image, level, width, height);
             }
         }
     }
@@ -84,13 +85,13 @@ export function createTexture(context: RendererContext, params: TextureParams) {
         }
     } else {
         createMipLevel(0, params.image);
-        if ("generateMipMaps" in params) {
-            if (params.generateMipMaps) {
-                if (isPowerOf2(width) && isPowerOf2(height) && type) {
-                    gl.generateMipmap(target);
-                } else {
-                    throw new Error(`Cannot generate mip maps on a texture of non-power of two sizes (${width}, ${height})!`);
-                }
+
+        const generateMipMaps = "generateMipMaps" in params && params.generateMipMaps;
+        if (generateMipMaps) {
+            if (isPowerOf2(width) && isPowerOf2(height) && type) {
+                gl.generateMipmap(target);
+            } else {
+                throw new Error(`Cannot generate mip maps on a texture of non-power of two sizes (${width}, ${height})!`);
             }
         }
     }
@@ -195,7 +196,7 @@ interface Size3D<T extends number = number> {
 // 2D
 export interface TextureParams2DUncompressed extends Uncompressed, Size2D, GenMipMap {
     readonly target: "TEXTURE_2D";
-    readonly image: BinarySource;
+    readonly image: BinarySource | null;
 };
 
 export interface TextureParams2DCompressed extends Compressed, Size2D {
@@ -210,13 +211,13 @@ export interface TextureParams2DUncompressedMipMapped extends Uncompressed, Size
 
 export interface TextureParams2DCompressedMipMapped extends Compressed, Size2D<Pow2> {
     readonly target: "TEXTURE_2D";
-    readonly mipMaps: readonly (BinarySource | null)[];
+    readonly mipMaps: readonly (BinarySource)[];
 };
 
 // Cube
 export interface TextureParamsCubeUncompressed extends Uncompressed, Size2D, GenMipMap {
     readonly target: "TEXTURE_CUBE_MAP";
-    readonly image: CubeImages;
+    readonly image: CubeImages | null;
 }
 
 export interface TextureParamsCubeCompressed extends Compressed, Size2D {
@@ -231,7 +232,7 @@ export interface TextureParamsCubeUncompressedMipMapped extends Uncompressed, Si
 
 export interface TextureParamsCubeCompressedMipMapped extends Compressed, Size2D<Pow2> {
     readonly target: "TEXTURE_CUBE_MAP";
-    readonly mipMaps: readonly (CubeImages | null)[];
+    readonly mipMaps: readonly (CubeImages)[];
 }
 
 // 3D
@@ -252,13 +253,13 @@ export interface TextureParams3DUncompressedMipMapped extends Uncompressed, Size
 
 export interface TextureParams3DCompressedMipMapped extends Compressed, Size3D<Pow2> {
     readonly target: "TEXTURE_3D";
-    readonly mipMaps: readonly (BinarySource | null)[];
+    readonly mipMaps: readonly (BinarySource)[];
 }
 
 // 2D Array
 export interface TextureParams2DArrayUncompressed extends Uncompressed, Size3D, GenMipMap {
     readonly target: "TEXTURE_2D_ARRAY";
-    readonly image: BinarySource;
+    readonly image: BinarySource | null;
 }
 
 export interface TextureParams2DArrayCompressed extends Compressed, Size3D {
@@ -273,7 +274,7 @@ export interface TextureParams2DArrayUncompressedMipMapped extends Uncompressed,
 
 export interface TextureParams2DArrayCompressedMipMapped extends Compressed, Size3D<Pow2> {
     readonly target: "TEXTURE_2D_ARRAY";
-    readonly mipMaps: readonly (BinarySource | null)[];
+    readonly mipMaps: readonly (BinarySource)[];
 }
 
 function isPowerOf2(value: number) {

@@ -1,41 +1,83 @@
+import { RenderBufferIndex } from "./renderBuffer.js";
 import type { RendererContext } from "./renderer.js";
 import type { TextureImageTargetString, TextureIndex } from "./texture.js";
 
 export type FrameBufferIndex = number;
 
-export interface TextureAttachment {
+export interface TextureBinding {
     readonly texture: TextureIndex;
-    readonly target?: TextureImageTargetString; // default: TEXTURE_2D
+    readonly target?: "TEXTURE_2D";
     readonly level?: number; // default: 0, mip-map level
     readonly layer?: number; // default: 0, face in cube map, z in 3d and index in 2d array
 }
 
+export interface RenderBufferBinding {
+    readonly renderBuffer: RenderBufferIndex;
+}
+
+export type Binding = TextureBinding | RenderBufferBinding;
+
 export interface FrameBufferParams {
-    readonly depthTexture?: TextureAttachment;
-    readonly stencilTexture?: TextureAttachment;
-    readonly colorTextures: readonly (TextureAttachment | null)[]; // length: [0, MAX_COLOR_ATTACHMENTS>
+    readonly depth?: Binding;
+    readonly stencil?: Binding;
+    readonly color: readonly (Binding | null)[]; // length: [0, MAX_COLOR_ATTACHMENTS>
+}
+
+function isTextureAttachment(attachment: Binding): attachment is TextureBinding {
+    return typeof attachment == "object" && "texture" in attachment;
 }
 
 export function createFrameBuffer(context: RendererContext, params: FrameBufferParams): WebGLFramebuffer {
-    const { gl, textures, limits } = context;
+    const { gl, textures, renderBuffers, limits } = context;
+
     const frameBuffer = gl.createFramebuffer();
     if (!frameBuffer)
         throw new Error("Could not create frame buffer!");
-    console.assert(params.colorTextures.length < limits.MAX_COLOR_ATTACHMENTS);
+    console.assert(params.color.length <= limits.MAX_COLOR_ATTACHMENTS);
+
+    // var texture = gl.createTexture();
+    // gl.bindTexture(gl.TEXTURE_2D, texture);
+    // // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    // // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1024, 512, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    // gl.bindTexture(gl.TEXTURE_2D, null);
+
+    // gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
+    // gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    // gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
+
     // const level = 0;
-    function bind(binding: TextureAttachment) {
-        gl.framebufferTextureLayer(gl.FRAMEBUFFER, gl[binding.target ?? "TEXTURE_2D"], textures[binding.texture], binding.level ?? 0, binding.layer ?? 0);
-        // gl.framebufferTexture2D(gl.FRAMEBUFFER, attachment, gl[binding.target ?? "TEXTURE_2D"], textures[binding.texture], level);
-    }
-    if (params.depthTexture)
-        bind(params.depthTexture);
-    if (params.stencilTexture)
-        bind(params.stencilTexture);
-    const colorAttachment0 = gl.COLOR_ATTACHMENT0;
-    for (const colorTexture of params.colorTextures) {
-        if (colorTexture) {
-            bind(colorTexture);
+    function bind(binding: Binding, attachment: number) {
+        if (isTextureAttachment(binding)) {
+            const texture = textures[binding.texture];
+            console.assert(texture);
+            if (binding.layer === undefined) {
+                const target = gl[binding.target ?? "TEXTURE_2D"];
+                gl.framebufferTexture2D(gl.FRAMEBUFFER, attachment, target, texture, binding.level ?? 0);
+            } else {
+                gl.framebufferTextureLayer(gl.FRAMEBUFFER, attachment, texture, binding.level ?? 0, binding.layer);
+            }
+        } else {
+            const renderBuffer = renderBuffers[binding.renderBuffer];
+            console.assert(renderBuffer);
+            gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, renderBuffer);
         }
     }
+    if (params.depth)
+        bind(params.depth, gl.DEPTH_ATTACHMENT);
+    if (params.stencil)
+        bind(params.stencil, gl.STENCIL_ATTACHMENT);
+    let i = gl.COLOR_ATTACHMENT0;
+    for (const color of params.color) {
+        if (color) {
+            bind(color, i);
+        }
+        i++;
+    }
+    const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+    console.assert(status == gl.FRAMEBUFFER_COMPLETE);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     return frameBuffer;
 }

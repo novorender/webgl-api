@@ -1,116 +1,15 @@
 [
-    [
-        "createProgram",
-        0,
-        {
-            "shaders": {
-                "vertex": "layout(location = 0) in vec2 position;\nout vec2 texCoord0;\n\nvoid main() {\n    gl_Position = vec4(position * 2. - 1., 0, 1);\n    texCoord0 = position;\n}\n",
-                "fragment": "uniform vec4 color;\nuniform sampler2D tex;\nin vec2 texCoord0;\nout vec4 fragColor;\n\nvoid main() {\n    // fragColor = vec4(texture(tex, texCoord0).rgb, 1);\n    fragColor = texture(tex, texCoord0);\n    // fragColor = vec4(texCoord0, 0, 1);\n    // fragColor = color;\n}\n"
-            }
-        }
-    ],
-    [
-        "createBuffer",
-        0,
-        {
-            "target": "ARRAY_BUFFER",
-            "srcData": {
-                "type": "Float32",
-                "base64": "AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AACAPwAAgD8="
-            }
-        }
-    ],
-    [
-        "createVertexArray",
-        0,
-        {
-            "attributes": [
-                {
-                    "buffer": 0,
-                    "numComponents": 2
-                }
-            ]
-        }
-    ],
-    [
-        "createTexture",
-        0,
-        {
-            "target": "TEXTURE_2D",
-            "internalFormat": "RGBA8",
-            "type": "UNSIGNED_BYTE",
-            "width": 2,
-            "height": 2,
-            "image": {
-                "type": "Uint8",
-                "base64": "/wAA/wD/AP8AAP///////w=="
-            },
-            "generateMipMaps": true
-        }
-    ],
-    [
-        "createSampler",
-        0,
-        {
-            "minificationFilter": "NEAREST",
-            "magnificationFilter": "NEAREST"
-        }
-    ],
-    [
-        "state",
-        {
-            "viewport": {
-                "width": 1920,
-                "height": 1080
-            },
-            "program": 0,
-            "uniforms": [
-                {
-                    "type": "4f",
-                    "name": "color",
-                    "value": [
-                        1,
-                        1,
-                        0,
-                        1
-                    ]
-                },
-                {
-                    "type": "1i",
-                    "name": "tex",
-                    "value": [
-                        0
-                    ]
-                }
-            ],
-            "vertexArrayObject": 0,
-            "textures": [
-                {
-                    "target": "TEXTURE_2D",
-                    "index": 0
-                }
-            ],
-            "samplers": [
-                0
-            ]
-        }
-    ],
-    [
-        "clear",
-        {
-            "color": [
-                1,
-                0,
-                0,
-                1
-            ]
-        }
-    ],
-    [
-        "draw",
-        {
-            "count": 4,
-            "mode": "TRIANGLE_STRIP"
-        }
-    ]
+["createProgram",0,{"shaders":{"vertex":"layout(location = 0) in vec4 position;\n\nvoid main() {\n    gl_Position = position;\n}\n","fragment":"uniform vec4 color;\nout vec4 fragColor;\n\nvoid main() {\n    fragColor = color;\n}\n"}}],
+["createBuffer",0,{"target":"ARRAY_BUFFER","srcData":{"type":"Float32","base64":"AACAvwAAgL+huW4/AACAPwAAgL8AAIA/"}}],
+["createVertexArray",0,{"attributes":[{"buffer":0,"numComponents":2}]}],
+["createRenderBuffer",0,{"internalFormat":"RGBA8","width":102.4,"height":51.2,"samples":4}],
+["createTexture",0,{"target":"TEXTURE_2D","internalFormat":"RGBA","type":"UNSIGNED_BYTE","width":102.4,"height":51.2,"image":null}],
+["createFrameBuffer",0,{"color":[{"renderBuffer":0}]}],
+["createFrameBuffer",1,{"color":[{"texture":0}]}],
+["state",{"viewport":{"width":1024,"height":512},"program":0,"uniforms":[{"type":"4f","name":"color","value":[1,1,1,1]}],"vertexArrayObject":0,"frameBuffer":0}],
+["clear",{"color":[0,0,1,1]}],
+["draw",{"count":3,"mode":"TRIANGLES"}],
+["state",{"frameBuffer":1}],
+["blit",{"source":0,"destination":1,"color":true,"srcX1":102.4,"srcY1":51.2,"dstX1":102.4,"dstY1":51.2}],
+["blit",{"source":1,"destination":null,"color":true,"srcX1":102.4,"srcY1":51.2}]
 ]

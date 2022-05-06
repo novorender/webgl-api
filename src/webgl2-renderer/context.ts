@@ -16,6 +16,7 @@ function contextArrays() {
         vertexArrays: [] as (WebGLVertexArrayObject | null)[],
         samplers: [] as (WebGLSampler | null)[],
         textures: [] as (WebGLTexture | null)[],
+        renderBuffers: [] as (WebGLRenderbuffer | null)[],
         frameBuffers: [] as (WebGLFramebuffer | null)[],
     } as const;
 }

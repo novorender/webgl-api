@@ -1,8 +1,10 @@
 import type { Renderer } from "../webgl2-renderer/index.js";
+import { shaders } from "./shaders.js";
 
-export function run(renderer: Renderer, width: number, height: number, vertex: string, fragment: string) {
-    const basicProgram = 0;
-    renderer.createProgram(basicProgram, { shaders: { vertex, fragment } });
+export function quadTex(renderer: Renderer) {
+    const { width, height } = renderer;
+    const program = 0;
+    renderer.createProgram(program, { shaders: shaders.tex });
 
     const vb = 0;
     renderer.createBuffer(vb, { target: "ARRAY_BUFFER", srcData: new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]) });
@@ -22,9 +24,8 @@ export function run(renderer: Renderer, width: number, height: number, vertex: s
         viewport: { width, height },
         // scissorTest: true,
         // scissorBox: { width: width / 2, height },
-        program: basicProgram,
+        program,
         uniforms: [
-            { type: "4f", name: "color", value: [1, 1, 0, 1] },
             { type: "1i", name: "tex", value: [0] }
         ],
         vertexArrayObject: vao,
@@ -39,6 +40,4 @@ export function run(renderer: Renderer, width: number, height: number, vertex: s
     renderer.clear({ color: [1, 0, 1, 1] });
 
     renderer.draw({ count: 4, mode: "TRIANGLE_STRIP" });
-
-    renderer.dispose();
 }

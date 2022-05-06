@@ -13,11 +13,11 @@ export interface BinaryBase64 {
 export type BinarySource = BinaryArray | BinaryBase64 | ArrayBufferView;
 
 function isArray(data: any): data is BinaryArray {
-    return typeof data == "object" && "array" in data;
+    return data && typeof data == "object" && "array" in data;
 }
 
 function isBase64(data: any): data is BinaryBase64 {
-    return typeof data == "object" && "base64" in data;
+    return data && typeof data == "object" && "base64" in data;
 }
 
 export function isBinarySource(data: unknown): data is BinarySource {

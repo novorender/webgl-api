@@ -15,6 +15,17 @@
         },
         {
             "type": "npm",
+            "script": "test",
+            "problemMatcher": [],
+            "label": "npm: test",
+            "isBackground": false,
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "npm",
             "script": "generate_binary",
             "problemMatcher": [],
             "label": "npm: generate_binary",
