@@ -7,7 +7,7 @@ const width = 1024;
 const height = 512;
 const commands: string[] = [];
 const renderer = createJsonRenderer(commands, width, height);
-// quadTex(renderer);
+//quadTex(renderer);
 lineAA(renderer);
 renderer.dispose();
 

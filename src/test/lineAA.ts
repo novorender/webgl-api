@@ -1,35 +1,32 @@
 import type { Renderer } from "../webgl2-renderer/index.js";
+import { allocators } from "./allocator.js";
 import { shaders } from "./shaders.js";
 
 export function lineAA(renderer: Renderer) {
     const { width, height } = renderer;
+    const { programs, buffers, vertexArrayObjects, textures, renderBuffers, frameBuffers } = allocators;
     const scale = 10;
+    const w = width / scale;
+    const h = height / scale;
 
-    const program = 0;
-    renderer.createProgram(program, { shaders: shaders.basic });
+    // TODO: can we wrap the allocator and renderer. into a single createProgram() function?
+    const program = renderer.createProgram(programs.alloc(), { shaders: shaders.basic });
 
-    // TODO: Check that multi sample rendering actually works. (Do we need to enable it in shader?)
-    const vb = 0;
-    renderer.createBuffer(vb, { target: "ARRAY_BUFFER", srcData: new Float32Array([-1, -1, 0.93252, 1, -1, 1]) });
+    const vb = renderer.createBuffer(buffers.alloc(), { target: "ARRAY_BUFFER", srcData: new Float32Array([-1, -1, 0.8453, .97354, -1, 1]) });
 
-    const vao = 0;
-    renderer.createVertexArray(vao, { attributes: [{ buffer: vb, numComponents: 2 }] });
+    const vao = renderer.createVertexArray(vertexArrayObjects.alloc(), { attributes: [{ buffer: vb, numComponents: 2 }] });
 
-    const rb = 0;
-    renderer.createRenderBuffer(rb, { internalFormat: "RGBA8", width: width / scale, height: height / scale, samples: 4 });
+    const rb = renderer.createRenderBuffer(renderBuffers.alloc(), { internalFormat: "RGBA8", width: w, height: h, samples: 4 });
 
-    const tex = 0;
-    const texParams = { target: "TEXTURE_2D", internalFormat: "RGBA", type: "UNSIGNED_BYTE", width: width / scale, height: height / scale, image: null } as const;
-    renderer.createTexture(tex, texParams);
+    const texParams = { target: "TEXTURE_2D", internalFormat: "RGBA", type: "UNSIGNED_BYTE", width: w, height: h, image: null } as const;
+    const tex = renderer.createTexture(textures.alloc(), texParams);
 
-    const fbms = 0;
-    renderer.createFrameBuffer(fbms, { color: [{ renderBuffer: rb }] });
+    const fbms = renderer.createFrameBuffer(frameBuffers.alloc(), { color: [{ renderBuffer: rb }] });
 
-    const fb = 1;
-    renderer.createFrameBuffer(fb, { color: [{ texture: tex }] });
+    const fb = renderer.createFrameBuffer(frameBuffers.alloc(), { color: [{ texture: tex }] });
 
     renderer.state({
-        viewport: { width, height },
+        viewport: { width: w, height: h },
         program,
         uniforms: [
             { type: "4f", name: "color", value: [1, 1, 1, 1] },
@@ -38,14 +35,9 @@ export function lineAA(renderer: Renderer) {
         frameBuffer: fbms
     });
 
-    renderer.clear({ color: [0, 0, 1, 1] });
+    renderer.clear({ color: [0, 0, 0, 1] });
 
     renderer.draw({ count: 3, mode: "TRIANGLES" });
-
-    renderer.state({
-        frameBuffer: fb
-    });
-
-    renderer.blit({ source: fbms, destination: fb, color: true, srcX1: width / scale, srcY1: height / scale, dstX1: width / scale, dstY1: height / scale });
-    renderer.blit({ source: fb, destination: null, color: true, srcX1: width / scale, srcY1: height / scale });
+    renderer.blit({ source: fbms, destination: fb, color: true, srcX1: w, srcY1: h, dstX1: w, dstY1: h });
+    renderer.blit({ source: fb, destination: null, color: true, srcX1: w, srcY1: h });
 }

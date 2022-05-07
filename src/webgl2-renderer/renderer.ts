@@ -56,17 +56,20 @@ export class WebGL2Renderer {
     createProgram(index: ProgramIndex, params: ProgramParams) {
         const { programs } = this.#context;
         programs[index] = createProgram(this.#context, params);
+        return index;
     }
 
     deleteProgram(index: ProgramIndex) {
         const { gl, programs } = this.#context;
         gl.deleteProgram(programs[index]);
         programs[index] = null;
+        return index;
     }
 
     createBuffer(index: BufferIndex, params: BufferParams) {
         const { buffers } = this.#context;
         buffers[index] = createBuffer(this.#context, params);
+        return index;
     }
 
     deleteBuffer(index: BufferIndex) {
@@ -78,6 +81,7 @@ export class WebGL2Renderer {
     createVertexArray(index: VertexArrayIndex, params: VertexArrayParams) {
         const { vertexArrays } = this.#context;
         vertexArrays[index] = createVertexArray(this.#context, params);
+        return index;
     }
 
     deleteVertexArray(index: VertexArrayIndex) {
@@ -89,6 +93,7 @@ export class WebGL2Renderer {
     createSampler(index: SamplerIndex, params: SamplerParams) {
         const { samplers } = this.#context;
         samplers[index] = createSampler(this.#context, params);
+        return index;
     }
 
     deleteSampler(index: SamplerIndex) {
@@ -100,6 +105,7 @@ export class WebGL2Renderer {
     createTexture(index: TextureIndex, params: TextureParams) {
         const { textures } = this.#context;
         textures[index] = createTexture(this.#context, params);
+        return index;
     }
 
     deleteTexture(index: TextureIndex) {
@@ -111,6 +117,7 @@ export class WebGL2Renderer {
     createRenderBuffer(index: RenderBufferIndex, params: RenderBufferParams) {
         const { renderBuffers } = this.#context;
         renderBuffers[index] = createRenderBuffer(this.#context, params);
+        return index;
     }
 
     deleteRenderBuffer(index: RenderBufferIndex) {
@@ -122,6 +129,7 @@ export class WebGL2Renderer {
     createFrameBuffer(index: FrameBufferIndex, params: FrameBufferParams) {
         const { frameBuffers } = this.#context;
         frameBuffers[index] = createFrameBuffer(this.#context, params);
+        return index;
     }
 
     deleteFrameBuffer(index: FrameBufferIndex) {

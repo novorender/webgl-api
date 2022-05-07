@@ -1,24 +1,21 @@
 import type { Renderer } from "../webgl2-renderer/index.js";
+import { allocators } from "./allocator.js";
 import { shaders } from "./shaders.js";
 
 export function quadTex(renderer: Renderer) {
     const { width, height } = renderer;
-    const program = 0;
-    renderer.createProgram(program, { shaders: shaders.tex });
+    const { programs, buffers, vertexArrayObjects, textures, samplers } = allocators;
+    const program = renderer.createProgram(programs.alloc(), { shaders: shaders.tex });
 
-    const vb = 0;
-    renderer.createBuffer(vb, { target: "ARRAY_BUFFER", srcData: new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]) });
+    const vb = renderer.createBuffer(buffers.alloc(), { target: "ARRAY_BUFFER", srcData: new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]) });
 
-    const vao = 0;
-    renderer.createVertexArray(vao, { attributes: [{ buffer: vb, numComponents: 2 }] });
+    const vao = renderer.createVertexArray(vertexArrayObjects.alloc(), { attributes: [{ buffer: vb, numComponents: 2 }] });
 
-    const tex = 0;
     const image = new Uint8Array([255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 255, 255, 255, 255]);
     const texParams = { target: "TEXTURE_2D", internalFormat: "RGBA8", type: "UNSIGNED_BYTE", width: 2, height: 2, image, generateMipMaps: true } as const;
-    renderer.createTexture(tex, texParams);
+    const tex = renderer.createTexture(textures.alloc(), texParams);
 
-    const sampler = 0;
-    renderer.createSampler(sampler, { minificationFilter: "NEAREST", magnificationFilter: "NEAREST" });
+    const sampler = renderer.createSampler(samplers.alloc(), { minificationFilter: "NEAREST", magnificationFilter: "NEAREST" });
 
     renderer.state({
         viewport: { width, height },
@@ -30,10 +27,10 @@ export function quadTex(renderer: Renderer) {
         ],
         vertexArrayObject: vao,
         textures: [
-            { target: "TEXTURE_2D", index: 0 }
+            { target: "TEXTURE_2D", index: tex }
         ],
         samplers: [
-            0
+            sampler
         ]
     });
 

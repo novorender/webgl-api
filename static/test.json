@@ -1,15 +1,14 @@
 [
 ["createProgram",0,{"shaders":{"vertex":"layout(location = 0) in vec4 position;\n\nvoid main() {\n    gl_Position = position;\n}\n","fragment":"uniform vec4 color;\nout vec4 fragColor;\n\nvoid main() {\n    fragColor = color;\n}\n"}}],
-["createBuffer",0,{"target":"ARRAY_BUFFER","srcData":{"type":"Float32","base64":"AACAvwAAgL+huW4/AACAPwAAgL8AAIA/"}}],
+["createBuffer",0,{"target":"ARRAY_BUFFER","srcData":{"type":"Float32","base64":"AACAvwAAgL+VZVg/6zl5PwAAgL8AAIA/"}}],
 ["createVertexArray",0,{"attributes":[{"buffer":0,"numComponents":2}]}],
 ["createRenderBuffer",0,{"internalFormat":"RGBA8","width":102.4,"height":51.2,"samples":4}],
 ["createTexture",0,{"target":"TEXTURE_2D","internalFormat":"RGBA","type":"UNSIGNED_BYTE","width":102.4,"height":51.2,"image":null}],
 ["createFrameBuffer",0,{"color":[{"renderBuffer":0}]}],
 ["createFrameBuffer",1,{"color":[{"texture":0}]}],
-["state",{"viewport":{"width":1024,"height":512},"program":0,"uniforms":[{"type":"4f","name":"color","value":[1,1,1,1]}],"vertexArrayObject":0,"frameBuffer":0}],
-["clear",{"color":[0,0,1,1]}],
+["state",{"viewport":{"width":102.4,"height":51.2},"program":0,"uniforms":[{"type":"4f","name":"color","value":[1,1,1,1]}],"vertexArrayObject":0,"frameBuffer":0}],
+["clear",{"color":[0,0,0,1]}],
 ["draw",{"count":3,"mode":"TRIANGLES"}],
-["state",{"frameBuffer":1}],
 ["blit",{"source":0,"destination":1,"color":true,"srcX1":102.4,"srcY1":51.2,"dstX1":102.4,"dstY1":51.2}],
 ["blit",{"source":1,"destination":null,"color":true,"srcX1":102.4,"srcY1":51.2}]
 ]

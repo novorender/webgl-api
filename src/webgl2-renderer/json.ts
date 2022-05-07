@@ -12,14 +12,11 @@ const handler = {
             return target[prop];
         return function (...args: any[]) {
             target.serialize(prop, ...args);
+            if (prop.startsWith("create")) {
+                return args[0];
+            }
         }
     },
-
-    apply: function (target: any, thisArg: any, argumentsList: any) {
-        console.log(target);
-        console.log(thisArg);
-        console.log(argumentsList);
-    }
 }
 
 function encodeBinariesAsBase64(context: { readonly blobs: readonly (ArrayBufferView | null)[] }, params: any) {
