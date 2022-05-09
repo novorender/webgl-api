@@ -23,7 +23,7 @@ export interface BlitParams {
 }
 
 export function blit(context: RendererContext, params: BlitParams) {
-    const { gl, frameBuffers } = context;
+    const { gl, framebuffers } = context;
     const w = gl.drawingBufferWidth;
     const h = gl.drawingBufferHeight;
     let mask = 0;
@@ -42,8 +42,8 @@ export function blit(context: RendererContext, params: BlitParams) {
     const dstY0 = params.dstY0 ?? 0;
     const dstX1 = params.dstX1 ?? w;
     const dstY1 = params.dstY1 ?? h;
-    const src = params.source == null ? null : frameBuffers[params.source];
-    const dst = params.destination == null ? null : frameBuffers[params.destination];
+    const src = params.source == null ? null : framebuffers[params.source];
+    const dst = params.destination == null ? null : framebuffers[params.destination];
 
     gl.bindFramebuffer(gl.READ_FRAMEBUFFER, src);
     gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, dst);

@@ -40,5 +40,7 @@ export function run(renderer: Renderer, width: number, height: number, vertex: s
 
     renderer.draw({ count: 4, mode: "TRIANGLE_STRIP" });
 
+    renderer.commit();
+
     renderer.dispose();
 }

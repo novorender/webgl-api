@@ -52,8 +52,49 @@ export class WebGL2Renderer {
     }
 
     dispose() {
-        // TODO: #implement
+        this.state(this.#context.defaultState); // make sure resources are unbound before deleting them.
+        // this.resetState(); 
+        const { gl } = this.#context;
+        const ctx = this.#context;
+        const arrays = ["program", "buffer", "vertexArray", "sampler", "texture", "renderbuffer", "framebuffer"] as const;
+        type TA = typeof arrays[number];
+        function deleteArray(name: TA) {
+            const array = ctx[`${name}s`];
+            for (const item of array) {
+                const nameCapitalized = name[0].toUpperCase() + name.substring(1) as Capitalize<TA>;
+                gl[`delete${nameCapitalized}`](item);
+            }
+            array.length = 0;
+        }
+        for (let ar of arrays) {
+            deleteArray(ar);
+        }
     }
+
+    // resetState() {
+    //     const { gl, limits } = this.#context;
+    //     const { MAX_TEXTURE_IMAGE_UNITS, MAX_UNIFORM_BUFFER_BINDINGS } = limits;
+
+    //     gl.useProgram(null);
+    //     gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    //     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+    //     gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+    //     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    //     gl.bindVertexArray(null);
+    //     // gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, null);
+    //     gl.drawBuffers([]);
+
+    //     for (let i = 0; i < MAX_TEXTURE_IMAGE_UNITS; i++) {
+    //         gl.activeTexture(gl.TEXTURE0 + i);
+    //         gl.bindTexture(gl.TEXTURE_2D, null);
+    //         gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+    //     }
+    //     gl.activeTexture(gl.TEXTURE0);
+
+    //     for (let i = 0; i < MAX_UNIFORM_BUFFER_BINDINGS; i++) {
+    //         gl.bindBufferBase(gl.UNIFORM_BUFFER, i, null);
+    //     }
+    // }
 
     get width() {
         return this.#context.gl.drawingBufferWidth;
@@ -61,6 +102,12 @@ export class WebGL2Renderer {
 
     get height() {
         return this.#context.gl.drawingBufferHeight;
+    }
+
+    commit() {
+        // on webGL, this is (still) a bit of a no-op, but on angle it could be the swapBuffers() function, or in open gl, the glutSwapBuffers() function.
+        // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/commit
+        this.#context.gl.flush();
     }
 
     measureBegin() {
@@ -144,27 +191,27 @@ export class WebGL2Renderer {
     }
 
     createRenderBuffer(index: RenderBufferIndex, params: RenderBufferParams) {
-        const { renderBuffers } = this.#context;
-        renderBuffers[index] = createRenderBuffer(this.#context, params);
+        const { renderbuffers } = this.#context;
+        renderbuffers[index] = createRenderBuffer(this.#context, params);
         return index;
     }
 
     deleteRenderBuffer(index: RenderBufferIndex) {
-        const { gl, renderBuffers } = this.#context;
-        gl.deleteRenderbuffer(renderBuffers[index]);
-        renderBuffers[index] = null;
+        const { gl, renderbuffers } = this.#context;
+        gl.deleteRenderbuffer(renderbuffers[index]);
+        renderbuffers[index] = null;
     }
 
     createFrameBuffer(index: FrameBufferIndex, params: FrameBufferParams) {
-        const { frameBuffers } = this.#context;
-        frameBuffers[index] = createFrameBuffer(this.#context, params);
+        const { framebuffers } = this.#context;
+        framebuffers[index] = createFrameBuffer(this.#context, params);
         return index;
     }
 
     deleteFrameBuffer(index: FrameBufferIndex) {
-        const { gl, frameBuffers } = this.#context;
-        gl.deleteFramebuffer(frameBuffers[index]);
-        frameBuffers[index] = null;
+        const { gl, framebuffers } = this.#context;
+        gl.deleteFramebuffer(framebuffers[index]);
+        framebuffers[index] = null;
     }
 
     state(params: StateParams) {

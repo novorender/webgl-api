@@ -28,7 +28,7 @@ function isTextureAttachment(attachment: Binding): attachment is TextureBinding 
 }
 
 export function createFrameBuffer(context: RendererContext, params: FrameBufferParams): WebGLFramebuffer {
-    const { gl, textures, renderBuffers, limits } = context;
+    const { gl, textures, renderbuffers, limits } = context;
 
     const frameBuffer = gl.createFramebuffer();
     if (!frameBuffer)
@@ -60,7 +60,7 @@ export function createFrameBuffer(context: RendererContext, params: FrameBufferP
                 gl.framebufferTextureLayer(gl.FRAMEBUFFER, attachment, texture, binding.level ?? 0, binding.layer);
             }
         } else {
-            const renderBuffer = renderBuffers[binding.renderBuffer];
+            const renderBuffer = renderbuffers[binding.renderBuffer];
             console.assert(renderBuffer);
             gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, renderBuffer);
         }

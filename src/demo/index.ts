@@ -5,6 +5,33 @@
 // import fragment from "../shaders/basic.frag";
 import { createWebGL2Renderer } from "@novorender/webgl2-renderer";
 import { Command, replay } from "./replay";
+import { discs } from "./discs";
+
+async function waitClick(canvas: HTMLCanvasElement) {
+    return new Promise<void>(resolve => {
+        canvas.addEventListener("click", function cb(e: any) {
+            canvas.removeEventListener("click", cb);
+            resolve();
+        });
+    });
+}
+
+async function waitFrame(element: HTMLElement): Promise<number | undefined> {
+    return new Promise<number | undefined>(resolve => {
+        function cb(e: KeyboardEvent) {
+            if (e.key == "Escape") {
+                element.removeEventListener("keydown", cb);
+                cancelAnimationFrame(handle);
+                resolve(undefined);
+            }
+        }
+        const handle = requestAnimationFrame(time => {
+            element.removeEventListener("keydown", cb);
+            resolve(time);
+        })
+        element.addEventListener("keydown", cb);
+    });
+}
 
 
 async function main(canvas: HTMLCanvasElement) {
@@ -15,10 +42,10 @@ async function main(canvas: HTMLCanvasElement) {
 
     canvas.width = 1024;
     canvas.height = 1024;
-    const response = await fetch(new URL("./test.json", location.origin).toString());
-    if (!response.ok)
-        throw new Error("test.json not found!");
-    const commands = await response.json() as readonly Command[];
+    // const response = await fetch(new URL("./test.json", location.origin).toString());
+    // if (!response.ok)
+    //     throw new Error("test.json not found!");
+    // const commands = await response.json() as readonly Command[];
     const renderer = createWebGL2Renderer(canvas, {
         alpha: false,
         antialias: false,
@@ -31,11 +58,15 @@ async function main(canvas: HTMLCanvasElement) {
         stencil: false,
     });
     try {
-        replay(renderer, commands);
+        const render = discs(renderer);
+        let time: number | undefined = 0;
+        while (time !== undefined && render(time)) {
+            time = await waitFrame(document.body);
+        }
     } catch (error) {
         alert(error);
     }
-    await renderer.dispose();
+    renderer.dispose();
 
     // const url = new URL("./test.jsonc", location.origin);
     // const { renderState, blobs } = await downloadRenderState(url);

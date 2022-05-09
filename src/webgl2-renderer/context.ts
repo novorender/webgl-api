@@ -1,12 +1,15 @@
+import { createDefaultState, State } from "./state.js";
 
 export interface RendererContext extends ReadonlyContextArray {
     readonly gl: WebGL2RenderingContext;
     readonly limits: LimitsGL;
+    readonly defaultState: State;
 };
 
 export function createContext(gl: WebGL2RenderingContext) {
     const limits = getLimits(gl);
-    return { gl, limits, ...contextArrays() } as const;
+    const defaultState = createDefaultState(limits);
+    return { gl, limits, defaultState, ...contextArrays() } as const;
 }
 
 function contextArrays() {
@@ -16,8 +19,8 @@ function contextArrays() {
         vertexArrays: [] as (WebGLVertexArrayObject | null)[],
         samplers: [] as (WebGLSampler | null)[],
         textures: [] as (WebGLTexture | null)[],
-        renderBuffers: [] as (WebGLRenderbuffer | null)[],
-        frameBuffers: [] as (WebGLFramebuffer | null)[],
+        renderbuffers: [] as (WebGLRenderbuffer | null)[],
+        framebuffers: [] as (WebGLFramebuffer | null)[],
     } as const;
 }
 

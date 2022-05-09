@@ -1,7 +1,8 @@
 import fs from "fs";
 import { createJsonRenderer } from "../webgl2-renderer/index.js";
 import { quadTex } from "./rectTex.js";
-import { lineAA } from "./lineAA.js";
+import { multiSample } from "./multiSample.js";
+import { vtxCol } from "./vtxCol.js";
 import { packed } from "./packed.js";
 
 async function main() {
@@ -9,9 +10,10 @@ async function main() {
     const height = 1024;
     const commands: string[] = [];
     const renderer = createJsonRenderer(commands, width, height);
-    //quadTex(renderer);
-    // lineAA(renderer);
-    await packed(renderer);
+    // quadTex(renderer);
+    // multiSample(renderer);
+    // await vtxCol(renderer);
+    packed(renderer);
 
     renderer.dispose();
 

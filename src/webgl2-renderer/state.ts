@@ -112,7 +112,7 @@ const defaultConstants = {
         height: 0,
     } as Rect,
 
-    scissorTest: false as boolean, // SCISSOR_TEST
+    scissorTest: false, // SCISSOR_TEST
     scissorBox: { // SCISSOR_BOX
         x: 0,
         y: 0,
@@ -129,16 +129,16 @@ const defaultConstants = {
 
     program: null as ProgramIndex | null,
     uniforms: null as readonly UniformBinding[] | null,
-} as const;
+};
 
-function createDefaultState(limits: LimitsGL) {
+export function createDefaultState(limits: LimitsGL) {
     return {
         ...defaultConstants,
-        drawBuffers: Array<ColorAttachment | null>(limits.MAX_DRAW_BUFFERS).fill(null),
-        attributeDefaults: Array<AttributeDefault | null>(limits.MAX_VERTEX_ATTRIBS).fill({ type: "4f", values: [0, 0, 0, 1] }),
-        uniformBuffers: Array<BufferIndex | null>(limits.MAX_VERTEX_ATTRIBS).fill(null),
-        textures: Array<TextureBinding | null>(limits.MAX_COMBINED_TEXTURE_IMAGE_UNITS).fill(null),
-        samplers: Array<SamplerIndex | null>(limits.MAX_COMBINED_TEXTURE_IMAGE_UNITS).fill(null),
+        drawBuffers: ["BACK"] as ReadonlyArray<ColorAttachment | "BACK" | "NONE">,
+        attributeDefaults: Array<AttributeDefault | null>(limits.MAX_VERTEX_ATTRIBS).fill({ type: "4f", values: [0, 0, 0, 1] }) as ReadonlyArray<AttributeDefault | null>,
+        uniformBuffers: Array<BufferIndex | null>(limits.MAX_VERTEX_ATTRIBS).fill(null) as ReadonlyArray<BufferIndex | null>,
+        textures: Array<TextureBinding | null>(limits.MAX_COMBINED_TEXTURE_IMAGE_UNITS).fill(null) as ReadonlyArray<TextureBinding | null>,
+        samplers: Array<SamplerIndex | null>(limits.MAX_COMBINED_TEXTURE_IMAGE_UNITS).fill(null) as ReadonlyArray<SamplerIndex | null>,
     } as const;
 }
 
@@ -158,7 +158,10 @@ export function setState(context: RendererContext, params: StateParams) {
 
     function set(setter: (this: WebGLRenderingContext, ...values: any) => void, ...keys: readonly (keyof typeof defaultConstants)[]) {
         if (keys.some(key => params[key] !== undefined)) {
-            const values = keys.map(key => params[key] ?? defaultConstants[key]);
+            const values = keys.map(key => {
+                const v = params[key] ?? defaultConstants[key];
+                return typeof v == "string" ? gl[v as keyof WebGL2RenderingContext] : v;
+            });
             (<Function>setter).apply(gl, values);
         }
     }
@@ -210,7 +213,7 @@ export function setState(context: RendererContext, params: StateParams) {
     // }
 
     if (frameBuffer !== undefined) {
-        const buffer = frameBuffer == null ? null : context.frameBuffers[frameBuffer];
+        const buffer = frameBuffer == null ? null : context.framebuffers[frameBuffer];
         gl.bindFramebuffer(gl.FRAMEBUFFER, buffer);
     }
 
@@ -220,7 +223,7 @@ export function setState(context: RendererContext, params: StateParams) {
     }
 
     if (drawBuffers) {
-        gl.drawBuffers(drawBuffers.map(b => gl[b ?? "NONE"]));
+        gl.drawBuffers(drawBuffers.map(b => gl[b]));
     }
 
     if (attributeDefaults) {

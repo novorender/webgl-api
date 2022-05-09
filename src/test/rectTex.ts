@@ -1,5 +1,5 @@
 import type { Renderer } from "../webgl2-renderer/index.js";
-import { allocators } from "./allocator.js";
+import { allocators } from "../webgl2-renderer/allocator.js";
 import { shaders } from "./shaders.js";
 
 export function quadTex(renderer: Renderer) {
@@ -37,4 +37,5 @@ export function quadTex(renderer: Renderer) {
     renderer.clear({ color: [1, 0, 1, 1] });
 
     renderer.draw({ count: 4, mode: "TRIANGLE_STRIP" });
+    renderer.commit();
 }

@@ -18,6 +18,10 @@ export const shaders = {
         vertex: loadShader("packed.vert"),
         fragment: loadShader("packed.frag"),
     },
+    vtxCol: {
+        vertex: loadShader("vtxCol.vert"),
+        fragment: loadShader("vtxCol.frag"),
+    },
     tex: {
         vertex: loadShader("tex.vert"),
         fragment: loadShader("tex.frag"),

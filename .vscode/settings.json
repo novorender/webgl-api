@@ -5,6 +5,7 @@
         "BPTC",
         "codepaths",
         "Framebuffers",
+        "framefuffers",
         "glsl",
         "highp",
         "inspectable",

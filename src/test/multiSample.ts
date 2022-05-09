@@ -1,8 +1,8 @@
 import type { Renderer } from "../webgl2-renderer/index.js";
-import { allocators } from "./allocator.js";
+import { allocators } from "../webgl2-renderer/allocator.js";
 import { shaders } from "./shaders.js";
 
-export function lineAA(renderer: Renderer) {
+export function multiSample(renderer: Renderer) {
     const { width, height } = renderer;
     const { programs, buffers, vertexArrayObjects, textures, renderBuffers, frameBuffers } = allocators;
     const scale = 10;
@@ -21,7 +21,7 @@ export function lineAA(renderer: Renderer) {
     const texParams = { target: "TEXTURE_2D", internalFormat: "RGBA", type: "UNSIGNED_BYTE", width: w, height: h, image: null } as const;
     const tex = renderer.createTexture(textures.alloc(), texParams);
 
-    const fbms = renderer.createFrameBuffer(frameBuffers.alloc(), { color: [{ renderBuffer: rb }] });
+    const fbMultisample = renderer.createFrameBuffer(frameBuffers.alloc(), { color: [{ renderBuffer: rb }] });
 
     const fb = renderer.createFrameBuffer(frameBuffers.alloc(), { color: [{ texture: tex }] });
 
@@ -32,12 +32,13 @@ export function lineAA(renderer: Renderer) {
             { type: "4f", name: "color", value: [1, 1, 1, 1] },
         ],
         vertexArrayObject: vao,
-        frameBuffer: fbms
+        frameBuffer: fbMultisample
     });
 
     renderer.clear({ color: [0, 0, 0, 1] });
 
     renderer.draw({ count: 3, mode: "TRIANGLES" });
-    renderer.blit({ source: fbms, destination: fb, color: true, srcX1: w, srcY1: h, dstX1: w, dstY1: h });
+    renderer.blit({ source: fbMultisample, destination: fb, color: true, srcX1: w, srcY1: h, dstX1: w, dstY1: h });
     renderer.blit({ source: fb, destination: null, color: true, srcX1: w, srcY1: h });
+    renderer.commit();
 }
