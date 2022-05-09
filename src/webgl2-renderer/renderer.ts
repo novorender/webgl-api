@@ -72,10 +72,10 @@ export class WebGL2Renderer {
     }
 
     async measurePrint() {
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 100; i++) {
             const measurement = this.#timer.getMeasurement();
-            if (measurement) {
-                console.log(measurement / 1000000);
+            if (measurement !== undefined) {
+                console.log(`#ms:${measurement / 1000000}`);
                 break;
             }
             await sleep(1);

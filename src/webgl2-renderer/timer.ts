@@ -18,7 +18,8 @@ export function createTimer(gl: WebGL2RenderingContext) {
         else
             return new GPUTimer(gl, ext);
     } else {
-        return new CPUTimer();
+        console.log("using cpu timer.")
+        return new CPUTimer(gl);
     }
 }
 
@@ -26,15 +27,20 @@ class CPUTimer {
     #begin = 0;
     #end = 0;
 
+    constructor(readonly gl: WebGL2RenderingContext) {
+    }
+
     dispose() {
     }
 
     begin() {
+        this.gl.finish();
         this.#begin = performance.now();
     }
 
     end() {
-        this.#begin = performance.now();
+        this.gl.finish();
+        this.#end = performance.now();
     }
 
     getMeasurement() {

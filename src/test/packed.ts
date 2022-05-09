@@ -7,11 +7,13 @@ export async function packed(renderer: Renderer) {
     const { width, height } = renderer;
     const { programs, buffers, vertexArrayObjects, textures, renderBuffers, frameBuffers } = allocators;
 
-    const w = 64;
-    const h = 64;
+    const w = 512;
+    const h = 512;
     let i = 0;
     const vtx = new Int16Array(w * h * 2);
     const ext = 32768;
+    // const vtx = new Float32Array(w * h * 2);
+    // const ext = 1;
     for (let y = 0; y < h; y++) {
         for (let x = 0; x < w; x++) {
             vtx[i++] = ((x + 0.5) / w * 2 - 1) * ext;
@@ -37,6 +39,7 @@ export async function packed(renderer: Renderer) {
     img = img.resize(w, h);
     const { buffer } = img.bitmap.data;
     const pixels = new Uint8Array(buffer);
+    // const pixels = new Float32Array([...new Uint8Array(buffer)].map(v => v / 255.0));
 
     // TODO: check performance on android and IOS. 
     // TODO: check out es build: https://esbuild.github.io/
@@ -50,6 +53,8 @@ export async function packed(renderer: Renderer) {
         attributes: [
             { buffer: pos, numComponents: 2, componentType: "SHORT", normalized: true },
             { buffer: col, numComponents: 4, componentType: "UNSIGNED_BYTE", normalized: true },
+            // { buffer: pos, numComponents: 2, componentType: "FLOAT" },
+            // { buffer: col, numComponents: 4, componentType: "FLOAT" },
         ],
         indices: idx
     });
@@ -64,7 +69,8 @@ export async function packed(renderer: Renderer) {
     renderer.draw({ count: indices.length, indexType: "UNSIGNED_INT" });
     renderer.clear({ color: [0, 1, 0, 1] });
     renderer.measureBegin();
-    renderer.draw({ count: indices.length, indexType: "UNSIGNED_INT", instanceCount: 100 });
+    for (let i = 0; i < 100; i++)
+        renderer.draw({ count: indices.length, indexType: "UNSIGNED_INT", instanceCount: 1 });
     renderer.measureEnd();
     renderer.measurePrint();
 }
