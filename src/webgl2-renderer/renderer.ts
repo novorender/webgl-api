@@ -11,6 +11,7 @@ import { clear, ClearParams } from "./clear.js";
 import { setState, StateParams } from "./state.js";
 import { draw, DrawParams } from "./draw.js";
 import { blit, BlitParams } from "./blit.js";
+import { createTimer } from "./timer.js";
 export type { RendererContext };
 
 export function createWebGL2Renderer(canvas: HTMLCanvasElement, options?: WebGLContextAttributes): Renderer {
@@ -34,11 +35,20 @@ export function createWebGL2Renderer(canvas: HTMLCanvasElement, options?: WebGLC
     return new WebGL2Renderer(gl);
 }
 
+async function sleep(time: number) {
+    return new Promise(resolve => {
+        self.setTimeout(resolve, time);
+    });
+}
+
+
 export class WebGL2Renderer {
     readonly #context; // we dont want anything GL specific to leak outside
+    readonly #timer;
 
     constructor(gl: WebGL2RenderingContext) {
         this.#context = createContext(gl);
+        this.#timer = createTimer(gl);
     }
 
     dispose() {
@@ -51,6 +61,25 @@ export class WebGL2Renderer {
 
     get height() {
         return this.#context.gl.drawingBufferHeight;
+    }
+
+    measureBegin() {
+        this.#timer.begin();
+    }
+
+    measureEnd() {
+        this.#timer.end();
+    }
+
+    async measurePrint() {
+        for (let i = 0; i < 10; i++) {
+            const measurement = this.#timer.getMeasurement();
+            if (measurement) {
+                console.log(measurement / 1000000);
+                break;
+            }
+            await sleep(1);
+        };
     }
 
     createProgram(index: ProgramIndex, params: ProgramParams) {

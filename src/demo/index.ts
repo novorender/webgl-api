@@ -35,6 +35,7 @@ async function main(canvas: HTMLCanvasElement) {
     } catch (error) {
         alert(error);
     }
+    await renderer.dispose();
 
     // const url = new URL("./test.jsonc", location.origin);
     // const { renderState, blobs } = await downloadRenderState(url);

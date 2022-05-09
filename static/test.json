@@ -6,5 +6,10 @@
 ["createVertexArray",0,{"attributes":[{"buffer":0,"numComponents":2,"componentType":"SHORT","normalized":true},{"buffer":1,"numComponents":4,"componentType":"UNSIGNED_BYTE","normalized":true}],"indices":2}],
 ["state",{"viewport":{"width":1024,"height":1024},"program":0,"vertexArrayObject":0}],
 ["clear",{"color":[0,0,0,1]}],
-["draw",{"count":23814,"indexType":"UNSIGNED_INT"}]
+["draw",{"count":23814,"indexType":"UNSIGNED_INT"}],
+["clear",{"color":[0,1,0,1]}],
+["measureBegin"],
+["draw",{"count":23814,"indexType":"UNSIGNED_INT","instanceCount":100}],
+["measureEnd"],
+["measurePrint"]
 ]

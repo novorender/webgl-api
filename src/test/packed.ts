@@ -38,6 +38,8 @@ export async function packed(renderer: Renderer) {
     const { buffer } = img.bitmap.data;
     const pixels = new Uint8Array(buffer);
 
+    // TODO: check performance on android and IOS. 
+    // TODO: check out es build: https://esbuild.github.io/
     const program = renderer.createProgram(programs.alloc(), { shaders: shaders.packed });
 
     const pos = renderer.createBuffer(buffers.alloc(), { target: "ARRAY_BUFFER", srcData: vtx });
@@ -60,4 +62,9 @@ export async function packed(renderer: Renderer) {
 
     renderer.clear({ color: [0, 0, 0, 1] });
     renderer.draw({ count: indices.length, indexType: "UNSIGNED_INT" });
+    renderer.clear({ color: [0, 1, 0, 1] });
+    renderer.measureBegin();
+    renderer.draw({ count: indices.length, indexType: "UNSIGNED_INT", instanceCount: 100 });
+    renderer.measureEnd();
+    renderer.measurePrint();
 }
