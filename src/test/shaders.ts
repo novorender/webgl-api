@@ -14,6 +14,10 @@ export const shaders = {
         vertex: loadShader("basic.vert"),
         fragment: loadShader("basic.frag"),
     },
+    packed: {
+        vertex: loadShader("packed.vert"),
+        fragment: loadShader("packed.frag"),
+    },
     tex: {
         vertex: loadShader("tex.vert"),
         fragment: loadShader("tex.frag"),

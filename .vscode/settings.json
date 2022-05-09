@@ -22,7 +22,8 @@
         "UNORM",
         "webgl",
         "webglcontextlost",
-        "webglcontextrestored"
+        "webglcontextrestored",
+        "XYZW"
     ],
     "cSpell.allowCompoundWords": false,
     "webgl-glsl-editor.codeInjection": true,

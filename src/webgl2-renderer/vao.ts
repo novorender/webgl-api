@@ -5,6 +5,7 @@ export type VertexArrayIndex = number;
 
 export interface VertexArrayParams {
     readonly attributes: readonly (VertexAttribute | null)[];
+    readonly indices?: BufferIndex;
 }
 
 export type ComponentTypeString = "BYTE" | "UNSIGNED_BYTE" | "SHORT" | "UNSIGNED_SHORT" | "FLOAT" | "HALF_FLOAT";
@@ -17,6 +18,7 @@ export interface VertexAttribute {
     readonly normalized?: boolean; // default: false
     readonly stride?: number; // default: 0
     readonly offset?: number; // default: 0
+    readonly divisor?: number; // default 0
 }
 
 export function createVertexArray(context: RendererContext, params: VertexArrayParams): WebGLVertexArrayObject {
@@ -32,10 +34,15 @@ export function createVertexArray(context: RendererContext, params: VertexArrayP
             gl.bindBuffer(gl.ARRAY_BUFFER, buffers[attribParams.buffer]);
             gl.enableVertexAttribArray(attribIndex);
             gl.vertexAttribPointer(attribIndex, attribParams.numComponents, gl[attribParams.componentType ?? "FLOAT"], attribParams.normalized ?? false, attribParams.stride ?? 0, attribParams.offset ?? 0);
+            gl.vertexAttribDivisor(attribIndex, attribParams.divisor ?? 0);
         }
         attribIndex++;
     };
+    if (params.indices) {
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers[params.indices]);
+    }
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
     gl.bindVertexArray(null);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
     return vao;
 }

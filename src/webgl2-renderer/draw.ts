@@ -11,14 +11,14 @@ export interface DrawParamsArrays {
 export interface DrawParamsElements {
     readonly mode?: DrawMode; // default: TRIANGLES
     readonly count: number;
-    readonly type: "UNSIGNED_BYTE" | "UNSIGNED_SHORT" | "UNSIGNED_INT";
+    readonly indexType: "UNSIGNED_BYTE" | "UNSIGNED_SHORT" | "UNSIGNED_INT";
     readonly offset?: number; // default: 0
 }
 
 export type DrawParams = DrawParamsArrays | DrawParamsElements;
 
 function isElements(params: DrawParams): params is DrawParamsElements {
-    return "type" in params;
+    return "indexType" in params;
 }
 
 export function draw(context: RendererContext, params: DrawParams) {
@@ -26,7 +26,7 @@ export function draw(context: RendererContext, params: DrawParams) {
     const { count } = params;
     const mode = params.mode ?? "TRIANGLES";
     if (isElements(params)) {
-        gl.drawElements(gl[mode], count, gl[params.type], params.offset ?? 0)
+        gl.drawElements(gl[mode], count, gl[params.indexType], params.offset ?? 0)
     } else {
         gl.drawArrays(gl[mode], params.first ?? 0, count);
     }

@@ -14,7 +14,7 @@ async function main(canvas: HTMLCanvasElement) {
     // run(renderer, width, height, vertex, fragment);
 
     canvas.width = 1024;
-    canvas.height = 512;
+    canvas.height = 1024;
     const response = await fetch(new URL("./test.json", location.origin).toString());
     if (!response.ok)
         throw new Error("test.json not found!");

@@ -122,8 +122,8 @@ const defaultConstants = {
 
     rasterizerDiscard: false, // RASTERIZER_DISCARD
 
-    arrayBuffer: null as BufferIndex | null, // ARRAY_BUFFER_BINDING
-    elementArrayBuffer: null as BufferIndex | null, // ELEMENT_ARRAY_BUFFER_BINDING
+    // arrayBuffer: null as BufferIndex | null, // ARRAY_BUFFER
+    // elementArrayBuffer: null as BufferIndex | null, // ELEMENT_ARRAY_BUFFER
     frameBuffer: null as FrameBufferIndex | null,
     vertexArrayObject: null as VertexArrayIndex | null,
 
@@ -197,17 +197,17 @@ export function setState(context: RendererContext, params: StateParams) {
 
     setFlag("RASTERIZER_DISCARD", "rasterizerDiscard");
 
-    const { arrayBuffer, elementArrayBuffer, frameBuffer, vertexArrayObject, drawBuffers, attributeDefaults, uniformBuffers, textures, uniforms, samplers } = params;
+    const { /*arrayBuffer, elementArrayBuffer,*/ frameBuffer, vertexArrayObject, drawBuffers, attributeDefaults, uniformBuffers, textures, uniforms, samplers } = params;
 
-    if (arrayBuffer !== undefined) {
-        const buffer = arrayBuffer == null ? null : context.buffers[arrayBuffer];
-        gl.bindBuffer(gl.ARRAY_BUFFER_BINDING, buffer);
-    }
+    // if (arrayBuffer !== undefined) {
+    //     const buffer = arrayBuffer == null ? null : context.buffers[arrayBuffer];
+    //     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    // }
 
-    if (elementArrayBuffer !== undefined) {
-        const buffer = elementArrayBuffer == null ? null : context.buffers[elementArrayBuffer];
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER_BINDING, buffer);
-    }
+    // if (elementArrayBuffer !== undefined) {
+    //     const buffer = elementArrayBuffer == null ? null : context.buffers[elementArrayBuffer];
+    //     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
+    // }
 
     if (frameBuffer !== undefined) {
         const buffer = frameBuffer == null ? null : context.frameBuffers[frameBuffer];
