@@ -1,16 +1,30 @@
+import type { BlobIndex } from "./renderer.js";
+
 export type ArrayType = "Float32" | "Uint8" | "Uint16" | "Int16" | "Int32";
 
 export interface BinaryArray {
-    readonly type: ArrayType;
+    readonly type?: ArrayType;
     readonly array: readonly number[];
 }
 
 export interface BinaryBase64 {
-    readonly type: ArrayType;
+    readonly type?: ArrayType;
     readonly base64: string;
 }
 
-export type BinarySource = BinaryArray | BinaryBase64 | ArrayBufferView;
+export interface BinaryBlob {
+    readonly blob: BlobIndex;
+}
+
+export type BinarySource = BinaryArray | BinaryBase64 | BinaryBlob | BufferSource;
+
+function isArrayBuffer(data: any): data is ArrayBuffer {
+    return data && typeof data == "object" && data instanceof ArrayBuffer;
+}
+
+function isBufferSource(data: any): data is BufferSource {
+    return isArrayBuffer(data) || ArrayBuffer.isView(data);
+}
 
 function isArray(data: any): data is BinaryArray {
     return data && typeof data == "object" && "array" in data;
@@ -20,24 +34,36 @@ function isBase64(data: any): data is BinaryBase64 {
     return data && typeof data == "object" && "base64" in data;
 }
 
+function isBlob(data: any): data is BinaryBlob {
+    return data && typeof data == "object" && "blobIndex" in data;
+}
+
 export function isBinarySource(data: unknown): data is BinarySource {
-    return ArrayBuffer.isView(data) || isArray(data) || isBase64(data);
+    return isBufferSource(data) || isArray(data) || isBase64(data) || isBlob(data);
 }
 
-export function encodeArrayBufferViewAsBase64(data: ArrayBufferView): BinaryBase64 {
-    const type = data.constructor.name.slice(0, -5) as ArrayType;
-    const base64 = encode(data.buffer);
-    return { type, base64 } as const;
+export function encodeArrayBufferViewAsBase64(data: BufferSource): BinaryBase64 {
+    const type = isArrayBuffer(data) ? undefined : data.constructor.name.slice(0, -5) as ArrayType;
+    const base64 = encode(ArrayBuffer.isView(data) ? data.buffer : data);
+    return type ? { type, base64 } as const : { base64 } as const;
 }
 
-export function getArrayBufferView(data: BinarySource): ArrayBufferView {
-    if (ArrayBuffer.isView(data)) {
+export function getBufferSource(context: { readonly blobs: readonly (ArrayBuffer | null)[] }, data: BinarySource): BufferSource {
+    if (isBufferSource(data)) {
         return data;
     } else if (isArray(data)) {
-        return new self[`${data.type}Array`](data.array);
+        const type = data.type ?? "Uint8";
+        const view = new self[`${type}Array`](data.array);
+        return data.type ? view : view.buffer;
     } else if (isBase64(data)) {
         const buffer = decode(data.base64);
-        return new self[`${data.type}Array`](buffer);
+        const type = data.type ?? "Uint8";
+        const view = new self[`${type}Array`](buffer);
+        return data.type ? view : view.buffer;
+    } else if (isBlob(data)) {
+        const buffer = context.blobs[data.blob]!;
+        console.assert(buffer);
+        return buffer;
     } else {
         throw new Error(`Unknown binary source: ${data}!`);
     }

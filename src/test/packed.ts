@@ -1,10 +1,9 @@
 import type { Renderer } from "../webgl2-renderer/index.js";
-import { allocators } from "../webgl2-renderer/allocator.js";
 import { shaders } from "./shaders.js";
 
 export async function packed(renderer: Renderer) {
     const { width, height } = renderer;
-    const { programs, buffers, vertexArrayObjects } = allocators;
+    const { programs, buffers, vertexArrayObjects } = renderer.allocators;
 
     const program = renderer.createProgram(programs.alloc(), { shaders: shaders.packed });
 

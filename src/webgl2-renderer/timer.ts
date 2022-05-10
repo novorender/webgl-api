@@ -7,7 +7,9 @@ interface EXT_disjoint_timer_query_webgl2 {
     queryCounterEXT(query: WebGLQuery, target: 0x8E28 /*GL.TIMESTAMP_EXT*/): void;
 }
 
-export function createTimer(gl: WebGL2RenderingContext) {
+export type Timer = CPUTimer | GPUTimer | GPUTimerTS;
+
+export function createTimer(gl: WebGL2RenderingContext): Timer {
     const ext = gl.getExtension('EXT_disjoint_timer_query_webgl2') as EXT_disjoint_timer_query_webgl2;
     if (ext) {
         // Clear the disjoint state before starting to work with queries to increase the chances that the results will be valid.
@@ -26,8 +28,10 @@ export function createTimer(gl: WebGL2RenderingContext) {
 class CPUTimer {
     #begin = 0;
     #end = 0;
+    readonly creationTime;
 
     constructor(readonly gl: WebGL2RenderingContext) {
+        this.creationTime = performance.now();
     }
 
     dispose() {
@@ -44,13 +48,16 @@ class CPUTimer {
     }
 
     getMeasurement() {
-        return (this.#end - this.#begin) * 1000000; // in nanoseconds
+        return (this.#end - this.#begin); // in milliseconds
     }
 }
 
 class GPUTimer {
     private readonly query;
+    readonly #creationTime;
+
     constructor(readonly gl: WebGL2RenderingContext, readonly ext: EXT_disjoint_timer_query_webgl2) {
+        this.#creationTime = performance.now();
         this.query = gl.createQuery()!;
     }
 
@@ -75,11 +82,11 @@ class GPUTimer {
         if (!disjoint) {
             const available = gl.getQueryParameter(query, gl.QUERY_RESULT_AVAILABLE);
             if (available) {
-                // See how much time the rendering of the object took in nanoseconds.
-                const timeElapsed = gl.getQueryParameter(query, gl.QUERY_RESULT) as number;
-                return timeElapsed; // in nanoseconds
+                const timeElapsed = gl.getQueryParameter(query, gl.QUERY_RESULT) as number; // in nanoseconds
+                return timeElapsed / 1000000; // in milliseconds
             }
         }
+        return performance.now() > this.#creationTime + 1000; // true if measurement failed, false if still pending
     }
 }
 
@@ -87,8 +94,10 @@ class GPUTimer {
 class GPUTimerTS {
     private readonly startQuery;
     private readonly endQuery;
+    readonly #creationTime;
 
     constructor(readonly gl: WebGL2RenderingContext, readonly ext: EXT_disjoint_timer_query_webgl2) {
+        this.#creationTime = performance.now();
         this.startQuery = gl.createQuery()!;
         this.endQuery = gl.createQuery()!;
     }
@@ -112,17 +121,15 @@ class GPUTimerTS {
     getMeasurement() {
         const { gl, ext, startQuery, endQuery } = this;
         let disjoint = gl.getParameter(ext.GPU_DISJOINT_EXT);
-        if (disjoint) {
-            return undefined;
-        } else {
+        if (!disjoint) {
             const available = gl.getQueryParameter(endQuery, gl.QUERY_RESULT_AVAILABLE);
             if (available) {
-                // See how much time the rendering of the object took in nanoseconds.
                 const timeStart = gl.getQueryParameter(startQuery, gl.QUERY_RESULT);
                 const timeEnd = gl.getQueryParameter(endQuery, gl.QUERY_RESULT);
-                const timeElapsed = timeEnd - timeStart;
-                return timeElapsed; // in nanoseconds
+                const timeElapsed = timeEnd - timeStart; // in nanoseconds
+                return timeElapsed / 1000000; // in milliseconds
             }
         }
+        return performance.now() > this.#creationTime + 1000; // true if measurement failed, false if still pending
     }
 }

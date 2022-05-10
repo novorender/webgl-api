@@ -1,5 +1,5 @@
 import type { Renderer } from ".";
-import { encodeArrayBufferViewAsBase64, getArrayBufferView, isBinarySource } from "./binary.js";
+import { encodeArrayBufferViewAsBase64, getBufferSource, isBinarySource } from "./binary.js";
 
 export function createJsonRenderer(commands: string[], width: number, height: number): Renderer {
     const target = new JsonRenderer(commands, width, height);
@@ -19,12 +19,12 @@ const handler = {
     },
 }
 
-function encodeBinariesAsBase64(context: { readonly blobs: readonly (ArrayBufferView | null)[] }, params: any) {
+function encodeBinariesAsBase64(context: { readonly blobs: readonly (ArrayBuffer | null)[] }, params: any) {
     if (typeof params == "object") {
         for (let key in params) {
             const value = params[key];
             if (isBinarySource(value)) {
-                const dataView = getArrayBufferView(value);
+                const dataView = getBufferSource(context, value);
                 const base64Binary = encodeArrayBufferViewAsBase64(dataView);
                 params[key] = base64Binary;
             } else {
@@ -36,7 +36,7 @@ function encodeBinariesAsBase64(context: { readonly blobs: readonly (ArrayBuffer
 
 export class JsonRenderer {
     #context = {
-        blobs: [] as (ArrayBufferView | null)[]
+        blobs: [] as (ArrayBuffer | null)[]
     }
 
     constructor(readonly commands: string[], readonly width: number, readonly height: number) {

@@ -2,6 +2,14 @@ import type { WebGL2Renderer } from "./renderer.js";
 export interface Renderer extends Omit<WebGL2Renderer, "#context"> { }
 export { createWebGL2Renderer } from "./renderer.js";
 export { createJsonRenderer } from "./json.js";
+export type { BlobIndex } from "./renderer.js";
+export type { ProgramIndex, ProgramParams } from "./program.js";
+export type { BufferIndex, BufferParams } from "./buffer.js";
+export type { VertexArrayIndex, VertexArrayParams } from "./vao.js";
+export type { SamplerIndex, SamplerParams } from "./sampler.js";
+export type { TextureIndex, TextureParams } from "./texture.js";
+export type { RenderBufferIndex, RenderBufferParams } from "./renderBuffer.js";
+export type { FrameBufferIndex, FrameBufferParams } from "./frameBuffer.js";
 
 
 export function resizeCanvasToDisplaySize(canvas: HTMLCanvasElement, scale: number = window.devicePixelRatio) {

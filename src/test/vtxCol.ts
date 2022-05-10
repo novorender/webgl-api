@@ -1,11 +1,10 @@
 import type { Renderer } from "../webgl2-renderer/index.js";
-import { allocators } from "../webgl2-renderer/allocator.js";
 import { shaders } from "./shaders.js";
 import jimp from "jimp";
 
 export async function vtxCol(renderer: Renderer) {
     const { width, height } = renderer;
-    const { programs, buffers, vertexArrayObjects, textures, renderBuffers, frameBuffers } = allocators;
+    const { programs, buffers, vertexArrayObjects, textures, renderBuffers, frameBuffers } = renderer.allocators;
 
     const w = 512;
     const h = 512;
@@ -73,5 +72,5 @@ export async function vtxCol(renderer: Renderer) {
         renderer.draw({ count: indices.length, indexType: "UNSIGNED_INT", instanceCount: 1 });
     renderer.measureEnd();
     renderer.commit();
-    renderer.measurePrint();
+    // renderer.measurePrint();
 }

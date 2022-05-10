@@ -16,20 +16,11 @@ async function waitClick(canvas: HTMLCanvasElement) {
     });
 }
 
-async function waitFrame(element: HTMLElement): Promise<number | undefined> {
-    return new Promise<number | undefined>(resolve => {
-        function cb(e: KeyboardEvent) {
-            if (e.key == "Escape") {
-                element.removeEventListener("keydown", cb);
-                cancelAnimationFrame(handle);
-                resolve(undefined);
-            }
-        }
+async function nextFrame(): Promise<number> {
+    return new Promise<number>(resolve => {
         const handle = requestAnimationFrame(time => {
-            element.removeEventListener("keydown", cb);
             resolve(time);
         })
-        element.addEventListener("keydown", cb);
     });
 }
 
@@ -40,8 +31,23 @@ async function main(canvas: HTMLCanvasElement) {
     // const renderer = createWebGL2Renderer(canvas);
     // run(renderer, width, height, vertex, fragment);
 
-    canvas.width = 1024;
-    canvas.height = 1024;
+    const statsElement = document.getElementById("stats")!;
+
+    let run = true;
+    canvas.addEventListener("click", function cb(e: any) {
+        run = !run;
+        lastMeasureTime = undefined;
+        statsElement.innerText = run ? "resumed" : "paused";
+    });
+
+    let quit = false;
+    canvas.addEventListener("keydown", e => {
+        if (e.key == "Escape")
+            quit = true;
+    });
+
+    canvas.width = 512;
+    canvas.height = 512;
     // const response = await fetch(new URL("./test.json", location.origin).toString());
     // if (!response.ok)
     //     throw new Error("test.json not found!");
@@ -57,14 +63,40 @@ async function main(canvas: HTMLCanvasElement) {
         preserveDrawingBuffer: false,
         stencil: false,
     });
+    let lastMeasureTime: number | undefined = undefined;
+    let measurements: number[] = [];
+    let frameCount = 0;
     try {
-        const render = discs(renderer);
-        let time: number | undefined = 0;
-        while (time !== undefined && render(time)) {
-            time = await waitFrame(document.body);
+        const useFloat = false;
+        const interleaved = true;
+        const numTrianglesPerObject = 32768;
+        const render = discs(renderer, numTrianglesPerObject, useFloat, interleaved);
+        render(0);
+        while (!quit) {
+            const time = await nextFrame();
+            if (run) {
+                if (lastMeasureTime === undefined) {
+                    lastMeasureTime = time;
+                    frameCount = 0;
+                }
+                measurements.push(...renderer.measurements);
+                if (lastMeasureTime !== undefined && time > lastMeasureTime + 1000) {
+                    const interval = (time - lastMeasureTime) / 1000;
+                    const avgMeasureTime = (measurements.length == 0 ? 0 : measurements.reduce((a, b) => a + b) / measurements.length);
+                    measurements.length = 0;
+                    const fps = (frameCount / interval);
+                    statsElement.innerText = `fps: ${fps.toFixed(1)}, measure: ${avgMeasureTime.toFixed(2)}ms`;
+                    lastMeasureTime = time;
+                    frameCount = 0;
+                }
+                render(time);
+                frameCount++;
+            }
         }
-    } catch (error) {
-        alert(error);
+        statsElement.innerText = "stopped";
+    } catch (error: any) {
+        statsElement.style.color = "red";
+        statsElement.innerText = error.toString();
     }
     renderer.dispose();
 

@@ -11,7 +11,8 @@ import { clear, ClearParams } from "./clear.js";
 import { setState, StateParams } from "./state.js";
 import { draw, DrawParams } from "./draw.js";
 import { blit, BlitParams } from "./blit.js";
-import { createTimer } from "./timer.js";
+import { createTimer, Timer } from "./timer.js";
+import { Allocator } from "./allocator";
 export type { RendererContext };
 
 export function createWebGL2Renderer(canvas: HTMLCanvasElement, options?: WebGLContextAttributes): Renderer {
@@ -41,14 +42,25 @@ async function sleep(time: number) {
     });
 }
 
+export type BlobIndex = number;
 
 export class WebGL2Renderer {
     readonly #context; // we dont want anything GL specific to leak outside
-    readonly #timer;
+    readonly #timers: Timer[] = [];
+    readonly allocators;
 
     constructor(gl: WebGL2RenderingContext) {
         this.#context = createContext(gl);
-        this.#timer = createTimer(gl);
+        this.allocators = {
+            blobs: new Allocator(),
+            programs: new Allocator(),
+            buffers: new Allocator(),
+            vertexArrayObjects: new Allocator(),
+            samplers: new Allocator(),
+            textures: new Allocator(),
+            renderBuffers: new Allocator(),
+            frameBuffers: new Allocator(),
+        };
     }
 
     dispose() {
@@ -104,6 +116,23 @@ export class WebGL2Renderer {
         return this.#context.gl.drawingBufferHeight;
     }
 
+    get measurements() {
+        const timers = this.#timers;
+        const measurements: number[] = [];
+        for (let i = 0; i < timers.length; i++) {
+            const timer = timers[i];
+            const measurement = timer.getMeasurement();
+            if (typeof measurement == "number") {
+                timers.splice(i--, 1);
+                measurements.push(measurement);
+            } else if (measurement) {
+                // measurement timed out
+                timers.splice(i--, 1);
+            }
+        }
+        return measurements;
+    }
+
     commit() {
         // on webGL, this is (still) a bit of a no-op, but on angle it could be the swapBuffers() function, or in open gl, the glutSwapBuffers() function.
         // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/commit
@@ -111,22 +140,41 @@ export class WebGL2Renderer {
     }
 
     measureBegin() {
-        this.#timer.begin();
+        const timer = createTimer(this.#context.gl);
+        this.#timers.push(timer);
+        timer.begin();
     }
 
     measureEnd() {
-        this.#timer.end();
+        const timers = this.#timers;
+        console.assert(timers.length > 0);
+        const timer = timers[timers.length - 1];
+        timer.end();
     }
 
-    async measurePrint() {
-        for (let i = 0; i < 100; i++) {
-            const measurement = this.#timer.getMeasurement();
-            if (measurement !== undefined) {
-                console.log(`#ms:${measurement / 1000000}`);
-                break;
-            }
-            await sleep(1);
-        };
+    // async measurePrint() {
+    //     const timers = this.#timers;
+    //     console.assert(timers.length > 0);
+    //     const timer = timers[timers.length - 1];
+    //     for (let i = 0; i < 100; i++) {
+    //         const measurement = timer.getMeasurement();
+    //         if (measurement !== undefined) {
+    //             console.log(`#ms:${measurement / 1000000}`);
+    //             break;
+    //         }
+    //         await sleep(1);
+    //     };
+    // }
+
+    createBlob(index: BlobIndex, blob: ArrayBuffer) {
+        const { blobs } = this.#context;
+        blobs[index] = blob;
+        return index;
+    }
+
+    deleteBlob(index: BlobIndex) {
+        const { blobs } = this.#context;
+        blobs[index] = null;
     }
 
     createProgram(index: ProgramIndex, params: ProgramParams) {
@@ -139,7 +187,6 @@ export class WebGL2Renderer {
         const { gl, programs } = this.#context;
         gl.deleteProgram(programs[index]);
         programs[index] = null;
-        return index;
     }
 
     createBuffer(index: BufferIndex, params: BufferParams) {

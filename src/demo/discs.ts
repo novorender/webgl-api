@@ -1,36 +1,70 @@
-import type { Renderer } from "@novorender/webgl2-renderer";
-import { allocators } from "@novorender/webgl2-renderer/allocator";
+import type { Renderer, BufferIndex } from "@novorender/webgl2-renderer";
 import vertex from "../shaders/vtxCol.vert";
 import fragment from "../shaders/vtxCol.frag";
 
 interface DiscParams {
     readonly radius: number;
-    readonly x: number;
-    readonly y: number;
+    readonly centerX: number;
+    readonly centerY: number;
     readonly segments: number;
     readonly useFloat: boolean;
+    readonly interleaved: boolean;
 }
 
 function createDiscGeometry(params: DiscParams) {
-    const { x, y, radius, segments, useFloat } = params;
+    const { centerX, centerY, radius, segments, useFloat, interleaved } = params;
+
+    const posComponents = 2;
+    const colComponents = 4;
+    const posBytes = posComponents * (useFloat ? 4 : 2);
+    const colBytes = colComponents * (useFloat ? 4 : 1);
+    const posOffset = 0;
+    const colOffset = interleaved ? posBytes : 0;
+    const posStride = interleaved ? posBytes + colBytes : posBytes;
+    const colStride = interleaved ? posBytes + colBytes : colBytes;
+    let positionsBuffer: ArrayBuffer = undefined!;
+    let colorsBuffer: ArrayBuffer = undefined!;
+    if (interleaved) {
+        const byteSize = (segments + 1) * (posBytes + colBytes);
+        const byteSizeRounded = byteSize % 4 ? (byteSize | 3) + 1 : byteSize; // round up to nearest four bytes
+        positionsBuffer = colorsBuffer = new ArrayBuffer(byteSizeRounded);
+    } else {
+        positionsBuffer = new ArrayBuffer((segments + 1) * posBytes);
+        colorsBuffer = new ArrayBuffer((segments + 1) * colBytes);
+    }
+
+    function setPos(i: number, x: number, y: number) {
+        const byteOffset = i * posStride + posOffset;
+        const view = new (useFloat ? Float32Array : Uint16Array)(positionsBuffer, byteOffset);
+        const magnitude = useFloat ? 1 : 32767;
+        view[0] = x * magnitude;
+        view[1] = y * magnitude;
+    }
+
+    function setCol(i: number, r: number, g: number, b: number, a = 1) {
+        const byteOffset = i * colStride + colOffset;
+        const view = new (useFloat ? Float32Array : Uint8Array)(colorsBuffer, byteOffset);
+        const magnitude = useFloat ? 1 : 255;
+        view[0] = r * magnitude;
+        view[1] = g * magnitude;
+        view[2] = b * magnitude;
+        if (colComponents as number == 4)
+            view[4] = a * magnitude;
+    }
+
     const d = Math.PI * 2 / 3;
-    const positions = new (useFloat ? Float32Array : Uint16Array)((segments + 1) * 2);
-    const colors = new (useFloat ? Float32Array : Uint8Array)((segments + 1) * 3);
-    const posMag = useFloat ? 1 : 32767;
-    const colMag = useFloat ? 1 : 255;
     for (let i = 0; i < segments; i++) {
         const angle = Math.PI * 2 * i / segments;
-        positions[i * 2 + 0] = (Math.cos(angle) * radius + x) * posMag;
-        positions[i * 2 + 1] = (Math.sin(angle) * radius + y) * posMag;
-        colors[i * 3 + 0] = Math.max(0, Math.cos(angle)) * colMag;
-        colors[i * 3 + 1] = Math.max(0, Math.cos(angle + d)) * colMag;
-        colors[i * 3 + 2] = Math.max(0, Math.cos(angle + d * 2)) * colMag;
+        const x = (Math.cos(angle) * radius + centerX);
+        const y = (Math.sin(angle) * radius + centerY);
+        const r = Math.max(0, Math.cos(angle));
+        const g = Math.max(0, Math.cos(angle + d));
+        const b = Math.max(0, Math.cos(angle + d * 2));
+        setPos(i, x, y);
+        setCol(i, r, g, b);
     }
-    positions[segments * 2 + 0] = x * posMag;
-    positions[segments * 2 + 1] = y * posMag;
-    colors[segments * 3 + 0] = 0.5 * colMag;
-    colors[segments * 3 + 1] = 0.5 * colMag;
-    colors[segments * 3 + 2] = 0.5 * colMag;
+    setPos(segments, centerX, centerY);
+    setCol(segments, 0.5, 0.5, 0.5);
 
     const indices = new Uint32Array(segments * 3);
     for (let i = 0; i < segments; i++) {
@@ -38,21 +72,29 @@ function createDiscGeometry(params: DiscParams) {
         indices[i * 3 + 1] = (i + 1) % segments;
         indices[i * 3 + 2] = segments;
     }
-    return { positions, colors, indices, count: segments * 3 };
+    const normalized = !useFloat;
+    const positions = { /*buffer,*/ numComponents: posComponents, componentType: useFloat ? "FLOAT" : "SHORT", normalized, stride: posStride, offset: 0 } as const;
+    const colors = { /*buffer,*/ numComponents: colComponents, componentType: useFloat ? "FLOAT" : "UNSIGNED_BYTE", normalized, stride: colStride, offset: interleaved ? posBytes : 0 } as const;
+    return { positionsBuffer, colorsBuffer, positions, colors, indices, count: segments * 3 };
 }
 
 function createDisc(renderer: Renderer, params: DiscParams) {
-    const { buffers, vertexArrayObjects } = allocators;
-    const { positions, colors, indices, count } = createDiscGeometry(params);
-    const { useFloat } = params;
-    const pos = renderer.createBuffer(buffers.alloc(), { target: "ARRAY_BUFFER", srcData: positions });
-    const col = renderer.createBuffer(buffers.alloc(), { target: "ARRAY_BUFFER", srcData: colors });
+    const { buffers, vertexArrayObjects } = renderer.allocators;
+    const { positionsBuffer, colorsBuffer, positions, colors, indices, count } = createDiscGeometry(params);
+    let pos: BufferIndex = undefined!;
+    let col: BufferIndex = undefined!;
+    if (params.interleaved) {
+        pos = col = renderer.createBuffer(buffers.alloc(), { target: "ARRAY_BUFFER", srcData: positionsBuffer })
+    } else {
+        pos = renderer.createBuffer(buffers.alloc(), { target: "ARRAY_BUFFER", srcData: positionsBuffer });
+        col = renderer.createBuffer(buffers.alloc(), { target: "ARRAY_BUFFER", srcData: colorsBuffer });
+    }
     const idx = renderer.createBuffer(buffers.alloc(), { target: "ELEMENT_ARRAY_BUFFER", srcData: indices });
 
     const vao = renderer.createVertexArray(vertexArrayObjects.alloc(), {
         attributes: [
-            { buffer: pos, numComponents: 2, componentType: useFloat ? "FLOAT" : "SHORT", normalized: !useFloat },
-            { buffer: col, numComponents: 3, componentType: useFloat ? "FLOAT" : "UNSIGNED_BYTE", normalized: !useFloat },
+            { buffer: pos, ...positions },
+            { buffer: col, ...colors },
         ],
         indices: idx
     });
@@ -60,13 +102,10 @@ function createDisc(renderer: Renderer, params: DiscParams) {
 }
 
 
-export function discs(renderer: Renderer) {
+export function discs(renderer: Renderer, segments = 32768, useFloat: boolean = false, interleaved = false) {
     const { width, height } = renderer;
-    const { programs } = allocators;
+    const { programs } = renderer.allocators;
     const program = renderer.createProgram(programs.alloc(), { shaders: { vertex, fragment } });
-
-    const segments = 32768;
-    const useFloat = true;
 
     const n = 256;
     const a = 0;
@@ -76,7 +115,7 @@ export function discs(renderer: Renderer) {
     const discs: ReturnType<typeof createDisc>[] = [];
     for (let i = 0; i < n; i++) {
         discs.push(
-            createDisc(renderer, { radius, x: Math.cos(a + i * d) * r, y: Math.sin(a + i * d) * r, segments, useFloat }),
+            createDisc(renderer, { radius, centerX: Math.cos(a + i * d) * r, centerY: Math.sin(a + i * d) * r, segments, useFloat, interleaved }),
         )
     }
 
@@ -95,7 +134,7 @@ export function discs(renderer: Renderer) {
         }
         renderer.measureEnd();
         renderer.commit();
-        renderer.measurePrint();
+        // renderer.measurePrint();
         return true;
     }
 }

@@ -1,6 +1,6 @@
 import type { RendererContext } from "./renderer";
 import { GL } from "./glEnum.js";
-import { getArrayBufferView, BinarySource } from "./binary.js";
+import { getBufferSource, BinarySource } from "./binary.js";
 
 export type TextureIndex = number;
 
@@ -26,8 +26,12 @@ export function createTexture(context: RendererContext, params: TextureParams) {
     const { internalFormat, format, type, arrayType } = getFormatInfo(gl, params.internalFormat, "type" in params ? params.type : undefined);
 
     function createImage(imgTarget: typeof gl[TextureImageTargetString], data: BinarySource | null, level: number, sizeX: number, sizeY: number, sizeZ = 0) {
-        const buffer = data === null ? null : getArrayBufferView(data);
-        const pixels = buffer === null ? null : new arrayType(buffer.buffer, buffer.byteOffset, buffer.byteLength);
+        const source = data === null ? null : getBufferSource(context, data);
+        const view = ArrayBuffer.isView(source) ? source : undefined;
+        const buffer = ArrayBuffer.isView(view) ? view.buffer : source as ArrayBufferLike;
+        const byteOffset = view?.byteOffset ?? 0;
+        const byteLength = view?.byteLength ?? buffer?.byteLength;
+        const pixels = buffer === null ? null : new arrayType(buffer, byteOffset, byteLength);
         if (type) {
             if (sizeZ) {
                 gl.texImage3D(imgTarget, level, internalFormat, sizeX, sizeY, sizeZ, border, format as number, type, pixels);

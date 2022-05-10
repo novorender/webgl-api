@@ -1,10 +1,9 @@
 import type { Renderer } from "../webgl2-renderer/index.js";
-import { allocators } from "../webgl2-renderer/allocator.js";
 import { shaders } from "./shaders.js";
 
 export function quadTex(renderer: Renderer) {
     const { width, height } = renderer;
-    const { programs, buffers, vertexArrayObjects, textures, samplers } = allocators;
+    const { programs, buffers, vertexArrayObjects, textures, samplers } = renderer.allocators;
     const program = renderer.createProgram(programs.alloc(), { shaders: shaders.tex });
 
     const vb = renderer.createBuffer(buffers.alloc(), { target: "ARRAY_BUFFER", srcData: new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]) });

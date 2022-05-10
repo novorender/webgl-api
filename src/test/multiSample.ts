@@ -1,10 +1,9 @@
 import type { Renderer } from "../webgl2-renderer/index.js";
-import { allocators } from "../webgl2-renderer/allocator.js";
 import { shaders } from "./shaders.js";
 
 export function multiSample(renderer: Renderer) {
     const { width, height } = renderer;
-    const { programs, buffers, vertexArrayObjects, textures, renderBuffers, frameBuffers } = allocators;
+    const { programs, buffers, vertexArrayObjects, textures, renderBuffers, frameBuffers } = renderer.allocators;
     const scale = 10;
     const w = width / scale;
     const h = height / scale;

@@ -19,13 +19,3 @@ export class Allocator {
     }
 }
 
-export const allocators = {
-    programs: new Allocator(),
-    buffers: new Allocator(),
-    vertexArrayObjects: new Allocator(),
-    samplers: new Allocator(),
-    textures: new Allocator(),
-    renderBuffers: new Allocator(),
-    frameBuffers: new Allocator(),
-};
-
