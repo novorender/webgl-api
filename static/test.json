@@ -1,8 +1,13 @@
 [
-["createTexture",0,{"target":"TEXTURE_2D","internalFormat":"R32UI","type":"UNSIGNED_INT","width":512,"height":512,"image":null}],
-["createFrameBuffer",0,{"color":[{"texture":0}]}],
-["state",{"viewport":{"width":512,"height":512},"frameBuffer":0,"drawBuffers":["COLOR_ATTACHMENT0"]}],
-["clear",{"type":"Uint","color":[42,0,0,0]}],
+["createProgram",0,{"shaders":{"vertex":"layout(location = 0) in vec4 position;\r\n\r\nvoid main() {\r\n    gl_Position = position;\r\n}\r\n","fragment":"uniform uint color;\r\nlayout(location = 0) out uint fragColor;\r\n\r\nvoid main() {\r\n    fragColor = color;\r\n}\r\n"}}],
+["createBuffer",0,{"target":"ARRAY_BUFFER","srcData":{"type":"Float32","base64":"AACAvwAAgL8AAIA/AACAvwAAgL8AAIA/AACAPwAAgD8="}}],
+["createVertexArray",0,{"attributes":[{"buffer":0,"numComponents":2}]}],
+["createRenderBuffer",0,{"internalFormat":"R32UI","width":512,"height":512}],
+["createFrameBuffer",0,{"color":[{"renderBuffer":0}]}],
+["state",{"viewport":{"width":512,"height":512},"program":0,"uniforms":[{"type":"1ui","name":"color","value":[42]}],"vertexArrayObject":0,"frameBuffer":0,"drawBuffers":["COLOR_ATTACHMENT0"]}],
+["clear",{"type":"Uint","color":[41,0,0,0]}],
+["draw",{"count":4,"mode":"TRIANGLE_STRIP"}],
 ["commit"],
+["checkStatus"],
 ["read"]
 ]

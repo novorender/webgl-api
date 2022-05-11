@@ -278,4 +278,26 @@ export class WebGL2Renderer {
     draw(params: DrawParams) {
         draw(this.#context, params);
     }
+
+    checkStatus(message: string = "GL") {
+        const { gl } = this.#context;
+        const status = gl.getError();
+        switch (status) {
+            case gl.NO_ERROR: break;
+            case gl.INVALID_ENUM:
+                throw `${message}: Invalid enum!`;
+            case gl.INVALID_VALUE:
+                throw `${message}: Invalid value!`;
+            case gl.INVALID_OPERATION:
+                throw `${message}: Invalid operation!`;
+            case gl.INVALID_FRAMEBUFFER_OPERATION:
+                throw `${message}: Invalid framebuffer operation!`;
+            case gl.OUT_OF_MEMORY:
+                throw `${message}: Out of memory!`;
+            case gl.CONTEXT_LOST_WEBGL:
+                throw `${message}: Context lost!`;
+            default:
+                throw `${message}: Unknown status!`;
+        }
+    }
 }

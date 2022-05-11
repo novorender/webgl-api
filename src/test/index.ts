@@ -15,7 +15,7 @@ async function main() {
     // multiSample(renderer);
     // await vtxCol(renderer);
     // packed(renderer);
-    renderTarget(renderer);
+    renderTarget(renderer, "texture");
 
     // TODO: check mac/IOS uint32 render target!
     renderer.dispose();

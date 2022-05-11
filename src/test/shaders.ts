@@ -18,6 +18,10 @@ export const shaders = {
         vertex: loadShader("packed.vert"),
         fragment: loadShader("packed.frag"),
     },
+    ui32: {
+        vertex: loadShader("ui32.vert"),
+        fragment: loadShader("ui32.frag"),
+    },
     vtxCol: {
         vertex: loadShader("vtxCol.vert"),
         fragment: loadShader("vtxCol.frag"),

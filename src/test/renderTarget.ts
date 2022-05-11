@@ -1,24 +1,50 @@
-import type { Renderer } from "../webgl2-renderer/index.js";
+import type { FrameBufferIndex, Renderer } from "../webgl2-renderer/index.js";
 import { shaders } from "./shaders.js";
 
-export function renderTarget(renderer: Renderer) {
+function createFrameBuffer(renderer: Renderer, target: "texture" | "renderBuffer"): FrameBufferIndex {
     const { width, height } = renderer;
-    const { programs, buffers, vertexArrayObjects, textures, renderBuffers, frameBuffers } = renderer.allocators;
+    const { textures, renderBuffers, frameBuffers } = renderer.allocators;
+    if (target == "texture") {
+        const texParams = { target: "TEXTURE_2D", internalFormat: "R32UI", type: "UNSIGNED_INT", width, height, image: null } as const;
+        const texture = renderer.createTexture(textures.alloc(), texParams);
+        const frameBuffer = renderer.createFrameBuffer(frameBuffers.alloc(), { color: [{ texture }] });
+        return frameBuffer;
+    } else if (target == "renderBuffer") {
+        const renderBuffer = renderer.createRenderBuffer(renderBuffers.alloc(), { internalFormat: "R32UI", width, height });
+        const frameBuffer = renderer.createFrameBuffer(frameBuffers.alloc(), { color: [{ renderBuffer }] });
+        return frameBuffer;
+    }
+    throw new Error(`Unknown render target ${target}!`);
+}
 
-    const texParams = { target: "TEXTURE_2D", internalFormat: "R32UI", type: "UNSIGNED_INT", width, height, image: null } as const;
-    const texture = renderer.createTexture(textures.alloc(), texParams);
+export function renderTarget(renderer: Renderer, target: "texture" | "renderBuffer") {
+    const { width, height } = renderer;
+    const { programs, buffers, vertexArrayObjects } = renderer.allocators;
 
-    // const fbMultisample = renderer.createFrameBuffer(frameBuffers.alloc(), { color: [{ renderBuffer: rb }] });
+    const program = renderer.createProgram(programs.alloc(), { shaders: shaders.ui32 });
+    const vb = renderer.createBuffer(buffers.alloc(), { target: "ARRAY_BUFFER", srcData: new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]) });
+    const vertexArrayObject = renderer.createVertexArray(vertexArrayObjects.alloc(), { attributes: [{ buffer: vb, numComponents: 2 }] });
 
-    const frameBuffer = renderer.createFrameBuffer(frameBuffers.alloc(), { color: [{ texture }] });
+    const frameBuffer = createFrameBuffer(renderer, target);
 
     renderer.state({
         viewport: { width, height },
+        program,
+        uniforms: [
+            { type: "1ui", name: "color", value: [42] }
+        ],
+        vertexArrayObject,
         frameBuffer,
         drawBuffers: ["COLOR_ATTACHMENT0"]
     });
 
-    renderer.clear({ type: "Uint", color: [42, 0, 0, 0] });
+    renderer.clear({ type: "Uint", color: [41, 0, 0, 0] });
+
+    renderer.draw({ count: 4, mode: "TRIANGLE_STRIP" });
+
     renderer.commit();
+
+    renderer.checkStatus();
+
     renderer.read();
 }

@@ -21,6 +21,7 @@
         "tsbuildinfo",
         "Uncapitalize",
         "UNORM",
+        "uvec",
         "webgl",
         "webglcontextlost",
         "webglcontextrestored",
