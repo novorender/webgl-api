@@ -5,9 +5,9 @@
 ["createTexture",0,{"target":"TEXTURE_2D","internalFormat":"R32UI","type":"UNSIGNED_INT","width":512,"height":512,"image":null}],
 ["createFrameBuffer",0,{"color":[{"texture":0}]}],
 ["state",{"viewport":{"width":512,"height":512},"program":0,"uniforms":[{"type":"1ui","name":"color","value":[42]}],"vertexArrayObject":0,"frameBuffer":0,"drawBuffers":["COLOR_ATTACHMENT0"]}],
-["clear",{"type":"Uint","color":[41,0,0,0]}],
+["clear",{"buffer":"COLOR","type":"Uint","color":[41,0,0,0]}],
 ["draw",{"count":4,"mode":"TRIANGLE_STRIP"}],
 ["commit"],
 ["checkStatus"],
-["readPixels",{"x":0,"y":0,"format":"RED_INTEGER","type":"UNSIGNED_INT"}]
+["readPixels",{"buffer":"COLOR_ATTACHMENT0","x":0,"y":0,"format":"RED_INTEGER","type":"UNSIGNED_INT"}]
 ]

@@ -104,6 +104,8 @@ async function main(canvas: HTMLCanvasElement) {
             statsElement.innerText = exception.toString();
         }
     }
+    // for (let i = 0; i < 60; i++)
+    //     await nextFrame();
     renderer.dispose();
 
     // const url = new URL("./test.jsonc", location.origin);

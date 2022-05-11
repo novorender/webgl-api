@@ -1,5 +1,5 @@
 import type { RendererContext } from "./context";
-import { getBufferViewType } from "./util.js";
+import { getPixelFormatChannels, getBufferViewType } from "./util.js";
 
 export type AttachmentType = "BACK" | `COLOR_ATTACHMENT${0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15}`;
 export type PixelFormat = "ALPHA" | "RGB" | "RGBA" | "RED" | "RG" | "RED_INTEGER" | "RG_INTEGER" | "RGB_INTEGER" | "RGBA_INTEGER";
@@ -10,9 +10,9 @@ export interface ReadPixelsParams {
     readonly y: number;
     readonly width?: number; // default: 1
     readonly height?: number; // default: 1
-    readonly buffer?: AttachmentType; // default: COLOR_ATTACHMENT0
+    readonly buffer?: AttachmentType; // default: BACK
     readonly format?: PixelFormat; // default: RGBA
-    readonly type: PixelType; // default: UNSIGNED_BYTE
+    readonly type?: PixelType; // default: UNSIGNED_BYTE
 }
 
 export function readPixels(context: RendererContext, params: ReadPixelsParams) {
@@ -20,11 +20,12 @@ export function readPixels(context: RendererContext, params: ReadPixelsParams) {
     const { x, y } = params;
     const width = params.width ?? 1;
     const height = params.height ?? 1;
-    const buffer = params.buffer ?? "COLOR_ATTACHMENT0";
+    const buffer = params.buffer ?? "BACK";
     const format = params.format ?? "RGBA";
     const type = params.type ?? "UNSIGNED_BYTE";
+    const channels = getPixelFormatChannels(gl[format]);
     const ctor = getBufferViewType(gl[type]);
-    const buf = new ctor(width * height);
+    const buf = new ctor(width * height * channels);
     gl.readBuffer(gl[buffer]);
     gl.readPixels(x, y, width, height, gl[format], gl[type], buf);
     return buf;

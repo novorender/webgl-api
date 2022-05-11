@@ -1,9 +1,14 @@
 import type { RendererContext } from "./renderer.js";
 
+export interface ClearParamsBack {
+    readonly buffer?: "BACK";
+    readonly color?: readonly [red: number, green: number, blue: number, alpha: number]; // default: [0, 0, 0, 1]
+}
+
 export interface ClearParamsColor {
-    readonly buffer?: "COLOR";
+    readonly buffer: "COLOR";
     readonly drawBuffer?: number; // 0 - MAX_DRAW_BUFFERS
-    readonly color?: readonly [red: number, green: number, blue: number, alpha: number];
+    readonly color?: readonly [red: number, green: number, blue: number, alpha: number]; // default: [0, 0, 0, 1]
     readonly type?: "Int" | "Uint" | "Float"; // default: Float
 }
 
@@ -15,14 +20,13 @@ export interface ClearStencil {
     readonly buffer: "STENCIL";
     readonly stencil: number;
 }
-
 export interface ClearDepthStencil {
     readonly buffer: "DEPTH_STENCIL";
     readonly depth: number;
     readonly stencil: number;
 }
 
-export type ClearParams = ClearParamsColor | ClearDepth | ClearStencil | ClearDepthStencil;
+export type ClearParams = ClearParamsBack | ClearParamsColor | ClearDepth | ClearStencil | ClearDepthStencil;
 
 function exhaustiveBufferCheck(value: never) {
     throw new Error(`Unknown buffer type: ${value}!`);
@@ -43,6 +47,13 @@ export function clear(context: RendererContext, params: ClearParams) {
             const depth = "depth" in params ? params.depth : 1.0;
             const stencil = "stencil" in params ? params.stencil : 0;
             gl.clearBufferfi(gl[buffer], 0, depth, stencil);
+            break;
+        }
+        case undefined:
+        case "BACK": {
+            const color = params.color ?? [0, 0, 0, 0];
+            gl.clearColor(...color);
+            gl.clear(gl.COLOR_BUFFER_BIT);
             break;
         }
         default: {

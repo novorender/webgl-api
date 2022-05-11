@@ -38,7 +38,7 @@ export function renderTarget(renderer: Renderer, target: "texture" | "renderBuff
         drawBuffers: ["COLOR_ATTACHMENT0"]
     });
 
-    renderer.clear({ type: "Uint", color: [41, 0, 0, 0] });
+    renderer.clear({ buffer: "COLOR", type: "Uint", color: [41, 0, 0, 0] });
 
     renderer.draw({ count: 4, mode: "TRIANGLE_STRIP" });
 
@@ -46,5 +46,5 @@ export function renderTarget(renderer: Renderer, target: "texture" | "renderBuff
 
     renderer.checkStatus();
 
-    renderer.readPixels({ x: 0, y: 0, format: "RED_INTEGER", type: "UNSIGNED_INT" });
+    renderer.readPixels({ buffer: "COLOR_ATTACHMENT0", x: 0, y: 0, format: "RED_INTEGER", type: "UNSIGNED_INT" });
 }

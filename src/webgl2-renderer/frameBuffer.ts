@@ -35,20 +35,8 @@ export function createFrameBuffer(context: RendererContext, params: FrameBufferP
         throw new Error("Could not create frame buffer!");
     console.assert(params.color.length <= limits.MAX_COLOR_ATTACHMENTS);
 
-    // var texture = gl.createTexture();
-    // gl.bindTexture(gl.TEXTURE_2D, texture);
-    // // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    // // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1024, 512, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-    // gl.bindTexture(gl.TEXTURE_2D, null);
-
-    // gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
-    // gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
-    // gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-
     gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
 
-    // const level = 0;
     function bind(binding: Binding, attachment: number) {
         if (isTextureAttachment(binding)) {
             const texture = textures[binding.texture];

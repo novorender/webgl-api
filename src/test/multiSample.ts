@@ -34,7 +34,7 @@ export function multiSample(renderer: Renderer) {
         frameBuffer: fbMultisample
     });
 
-    renderer.clear({ color: [0, 0, 0, 1] });
+    renderer.clear({ buffer: "BACK", color: [0, 0, 0, 1] });
 
     renderer.draw({ count: 3, mode: "TRIANGLES" });
     renderer.blit({ source: fbMultisample, destination: fb, color: true, srcX1: w, srcY1: h, dstX1: w, dstY1: h });

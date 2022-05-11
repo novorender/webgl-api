@@ -1,5 +1,26 @@
 import { GL } from "./glEnum.js";
 
+
+export function getPixelFormatChannels(format: number) {
+    switch (format) {
+        case GL.ALPHA:
+        case GL.RED:
+        case GL.RED_INTEGER:
+            return 1;
+        case GL.RG:
+        case GL.RG_INTEGER:
+            return 2;
+        case GL.RGB:
+        case GL.RGB_INTEGER:
+            return 3;
+        case GL.RGBA:
+        case GL.RGBA_INTEGER:
+            return 4;
+    }
+    throw new Error(`Unknown pixel format: ${format}!`);
+}
+
+
 export function getBufferViewType(type: number) {
     switch (type) {
         case GL.BYTE:
