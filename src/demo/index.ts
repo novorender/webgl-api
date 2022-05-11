@@ -33,7 +33,7 @@ async function main(canvas: HTMLCanvasElement) {
 
     const statsElement = document.getElementById("stats")!;
 
-    let run = true;
+    let run = false;
     canvas.addEventListener("click", function cb(e: any) {
         run = !run;
         lastMeasureTime = undefined;
@@ -48,10 +48,10 @@ async function main(canvas: HTMLCanvasElement) {
 
     canvas.width = 512;
     canvas.height = 512;
-    // const response = await fetch(new URL("./test.json", location.origin).toString());
-    // if (!response.ok)
-    //     throw new Error("test.json not found!");
-    // const commands = await response.json() as readonly Command[];
+    const response = await fetch(new URL("./test.json", location.origin).toString());
+    if (!response.ok)
+        throw new Error("test.json not found!");
+    const commands = await response.json() as readonly Command[];
     const renderer = createWebGL2Renderer(canvas, {
         alpha: false,
         antialias: false,
@@ -67,10 +67,11 @@ async function main(canvas: HTMLCanvasElement) {
     let measurements: number[] = [];
     let frameCount = 0;
     try {
-        const useFloat = false;
-        const interleaved = true;
-        const numTrianglesPerObject = 32768;
-        const render = discs(renderer, numTrianglesPerObject, useFloat, interleaved);
+        // const useFloat = true;
+        // const interleaved = true;
+        // const numTrianglesPerObject = 32768;
+        // const render = discs(renderer, numTrianglesPerObject, useFloat, interleaved);
+        const render = replay(renderer, commands);
         render(0);
         while (!quit) {
             const time = await nextFrame();

@@ -1,3 +1,16 @@
+export function createAllocators() {
+    return {
+        blobs: new Allocator(),
+        programs: new Allocator(),
+        buffers: new Allocator(),
+        vertexArrayObjects: new Allocator(),
+        samplers: new Allocator(),
+        textures: new Allocator(),
+        renderBuffers: new Allocator(),
+        frameBuffers: new Allocator(),
+    } as const;
+}
+
 export class Allocator {
     readonly #allocated: boolean[] = [];
 

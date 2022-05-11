@@ -4,7 +4,6 @@ import { shaders } from "./shaders.js";
 export async function packed(renderer: Renderer) {
     const { width, height } = renderer;
     const { programs, buffers, vertexArrayObjects } = renderer.allocators;
-
     const program = renderer.createProgram(programs.alloc(), { shaders: shaders.packed });
 
     // const positions = [

@@ -12,7 +12,7 @@ import { setState, StateParams } from "./state.js";
 import { draw, DrawParams } from "./draw.js";
 import { blit, BlitParams } from "./blit.js";
 import { createTimer, Timer } from "./timer.js";
-import { Allocator } from "./allocator";
+import { createAllocators } from "./allocator.js";
 export type { RendererContext };
 
 export function createWebGL2Renderer(canvas: HTMLCanvasElement, options?: WebGLContextAttributes): Renderer {
@@ -47,20 +47,10 @@ export type BlobIndex = number;
 export class WebGL2Renderer {
     readonly #context; // we dont want anything GL specific to leak outside
     readonly #timers: Timer[] = [];
-    readonly allocators;
+    readonly allocators = createAllocators();
 
     constructor(gl: WebGL2RenderingContext) {
         this.#context = createContext(gl);
-        this.allocators = {
-            blobs: new Allocator(),
-            programs: new Allocator(),
-            buffers: new Allocator(),
-            vertexArrayObjects: new Allocator(),
-            samplers: new Allocator(),
-            textures: new Allocator(),
-            renderBuffers: new Allocator(),
-            frameBuffers: new Allocator(),
-        };
     }
 
     dispose() {
@@ -271,6 +261,15 @@ export class WebGL2Renderer {
 
     blit(params: BlitParams) {
         blit(this.#context, params);
+    }
+
+    read() {
+        const buf = new Uint32Array(1);
+        const { gl } = this.#context;
+        gl.readBuffer(gl.COLOR_ATTACHMENT0);
+        gl.readPixels(0, 0, 1, 1, gl.RED_INTEGER, gl.UNSIGNED_INT, buf);
+        throw buf[0];
+        // console.log(buf[0]);
     }
 
     copy() {

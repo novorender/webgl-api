@@ -1,4 +1,5 @@
 import type { Renderer } from ".";
+import { createAllocators } from "./allocator.js";
 import { encodeArrayBufferViewAsBase64, getBufferSource, isBinarySource } from "./binary.js";
 
 export function createJsonRenderer(commands: string[], width: number, height: number): Renderer {
@@ -35,9 +36,10 @@ function encodeBinariesAsBase64(context: { readonly blobs: readonly (ArrayBuffer
 }
 
 export class JsonRenderer {
-    #context = {
+    readonly #context = {
         blobs: [] as (ArrayBuffer | null)[]
     }
+    readonly allocators = createAllocators();
 
     constructor(readonly commands: string[], readonly width: number, readonly height: number) {
     }

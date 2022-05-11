@@ -1,9 +1,8 @@
 [
-["createProgram",0,{"shaders":{"vertex":"layout(location = 0) in vec4 pos0;\r\nlayout(location = 1) in vec4 pos1;\r\nlayout(location = 2) in vec4 pos2;\r\nlayout(location = 3) in vec4 color;\r\nout vec4 triangleColor;\r\n\r\nvoid main() {\r\n    switch(gl_VertexID) {\r\n        case 0:\r\n            gl_Position = pos0;\r\n            break;\r\n        case 1:\r\n            gl_Position = (gl_InstanceID % 2 == 0) ? pos1 : pos2;\r\n            break;\r\n        case 2:\r\n            gl_Position = (gl_InstanceID % 2 == 0) ? pos2 : pos1;\r\n            break;\r\n    }\r\n    triangleColor = color;\r\n}\r\n","fragment":"in vec4 triangleColor;\r\nout vec4 fragColor;\r\n\r\nvoid main() {\r\n    // fragColor = vec4(1);\r\n    fragColor = triangleColor;\r\n}\r\n"}}],
-["createBuffer",0,{"target":"ARRAY_BUFFER","srcData":{"type":"Float32","base64":"AACAvwAAgL8AAIA/AACAvwAAgL8AAIA/ZmZmP2ZmZj8="}}],
-["createBuffer",1,{"target":"ARRAY_BUFFER","srcData":{"type":"Float32","base64":"AACAPwAAgD8AAAAAAAAAAAAAgD8AAIA/"}}],
-["createVertexArray",0,{"attributes":[{"buffer":0,"numComponents":2,"offset":0,"stride":8,"divisor":1},{"buffer":0,"numComponents":2,"offset":8,"stride":8,"divisor":1},{"buffer":0,"numComponents":2,"offset":16,"stride":8,"divisor":1},{"buffer":1,"numComponents":3,"offset":0,"stride":12,"divisor":1}]}],
-["state",{"cullEnable":true,"viewport":{"width":1024,"height":1024},"program":0,"vertexArrayObject":0}],
-["clear",{"color":[0,0,0,1]}],
-["draw",{"count":3,"instanceCount":2}]
+["createTexture",0,{"target":"TEXTURE_2D","internalFormat":"R32UI","type":"UNSIGNED_INT","width":512,"height":512,"image":null}],
+["createFrameBuffer",0,{"color":[{"texture":0}]}],
+["state",{"viewport":{"width":512,"height":512},"frameBuffer":0,"drawBuffers":["COLOR_ATTACHMENT0"]}],
+["clear",{"type":"Uint","color":[42,0,0,0]}],
+["commit"],
+["read"]
 ]

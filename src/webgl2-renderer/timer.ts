@@ -38,12 +38,12 @@ class CPUTimer {
     }
 
     begin() {
-        this.gl.finish();
+        // this.gl.finish();
         this.#begin = performance.now();
     }
 
     end() {
-        this.gl.finish();
+        // this.gl.finish();
         this.#end = performance.now();
     }
 

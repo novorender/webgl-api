@@ -3,7 +3,7 @@ import type { RendererContext } from "./renderer.js";
 export interface ClearParamsColor {
     readonly buffer?: "COLOR";
     readonly drawBuffer?: number; // 0 - MAX_DRAW_BUFFERS
-    readonly color: readonly [red: number, green: number, blue: number, alpha: number];
+    readonly color?: readonly [red: number, green: number, blue: number, alpha: number];
     readonly type?: "Int" | "Uint" | "Float"; // default: Float
 }
 
@@ -48,10 +48,11 @@ export function clear(context: RendererContext, params: ClearParams) {
         default: {
             const type = params.type ?? "Float";
             const target = gl.COLOR;
+            const color = params.color ?? [0, 0, 0, 0];
             switch (type) {
-                case "Float": gl.clearBufferfv(target, drawBuffer ?? 0, params.color); break;
-                case "Int": gl.clearBufferiv(target, drawBuffer ?? 0, new Int32Array(params.color)); break;
-                case "Uint": gl.clearBufferuiv(target, drawBuffer ?? 0, new Uint32Array(params.color)); break;
+                case "Float": gl.clearBufferfv(target, drawBuffer ?? 0, color); break;
+                case "Int": gl.clearBufferiv(target, drawBuffer ?? 0, new Int32Array(color)); break;
+                case "Uint": gl.clearBufferuiv(target, drawBuffer ?? 0, new Uint32Array(color)); break;
                 default: exhaustiveColorCheck(type);
             }
             break;

@@ -212,14 +212,14 @@ export function setState(context: RendererContext, params: StateParams) {
     //     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
     // }
 
-    if (frameBuffer !== undefined) {
-        const buffer = frameBuffer == null ? null : context.framebuffers[frameBuffer];
-        gl.bindFramebuffer(gl.FRAMEBUFFER, buffer);
-    }
-
     if (vertexArrayObject !== undefined) {
         const vao = vertexArrayObject == null ? null : context.vertexArrays[vertexArrayObject];
         gl.bindVertexArray(vao);
+    }
+
+    if (frameBuffer !== undefined) {
+        const buffer = frameBuffer == null ? null : context.framebuffers[frameBuffer];
+        gl.bindFramebuffer(gl.FRAMEBUFFER, buffer);
     }
 
     if (drawBuffers) {
