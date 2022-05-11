@@ -46,5 +46,5 @@ export function renderTarget(renderer: Renderer, target: "texture" | "renderBuff
 
     renderer.checkStatus();
 
-    renderer.read();
+    renderer.readPixels({ x: 0, y: 0, format: "RED_INTEGER", type: "UNSIGNED_INT" });
 }

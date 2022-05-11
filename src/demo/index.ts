@@ -95,9 +95,14 @@ async function main(canvas: HTMLCanvasElement) {
             }
         }
         statsElement.innerText = "stopped";
-    } catch (error: any) {
-        statsElement.style.color = "red";
-        statsElement.innerText = error.toString();
+    } catch (exception: any) {
+        if (typeof exception == "object" && Symbol.iterator in exception) {
+            statsElement.style.color = "lime";
+            statsElement.innerText = `[${[...exception].join(", ")}]`;
+        } else {
+            statsElement.style.color = "red";
+            statsElement.innerText = exception.toString();
+        }
     }
     renderer.dispose();
 

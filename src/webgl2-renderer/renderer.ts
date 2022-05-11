@@ -13,6 +13,7 @@ import { draw, DrawParams } from "./draw.js";
 import { blit, BlitParams } from "./blit.js";
 import { createTimer, Timer } from "./timer.js";
 import { createAllocators } from "./allocator.js";
+import { readPixels, ReadPixelsParams } from "./read.js";
 export type { RendererContext };
 
 export function createWebGL2Renderer(canvas: HTMLCanvasElement, options?: WebGLContextAttributes): Renderer {
@@ -142,20 +143,6 @@ export class WebGL2Renderer {
         timer.end();
     }
 
-    // async measurePrint() {
-    //     const timers = this.#timers;
-    //     console.assert(timers.length > 0);
-    //     const timer = timers[timers.length - 1];
-    //     for (let i = 0; i < 100; i++) {
-    //         const measurement = timer.getMeasurement();
-    //         if (measurement !== undefined) {
-    //             console.log(`#ms:${measurement / 1000000}`);
-    //             break;
-    //         }
-    //         await sleep(1);
-    //     };
-    // }
-
     createBlob(index: BlobIndex, blob: ArrayBuffer) {
         const { blobs } = this.#context;
         blobs[index] = blob;
@@ -263,13 +250,9 @@ export class WebGL2Renderer {
         blit(this.#context, params);
     }
 
-    read() {
-        const buf = new Uint32Array(1);
-        const { gl } = this.#context;
-        gl.readBuffer(gl.COLOR_ATTACHMENT0);
-        gl.readPixels(0, 0, 1, 1, gl.RED_INTEGER, gl.UNSIGNED_INT, buf);
-        throw buf[0];
-        // console.log(buf[0]);
+    readPixels(params: ReadPixelsParams) {
+        const pixels = readPixels(this.#context, params);
+        throw pixels;
     }
 
     copy() {
