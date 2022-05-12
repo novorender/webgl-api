@@ -14,8 +14,8 @@ async function main() {
     // quadTex(renderer);
     // multiSample(renderer);
     // await vtxCol(renderer);
-    // packed(renderer);
-    renderTarget(renderer, "texture");
+    packed(renderer);
+    // renderTarget(renderer, "texture");
 
     // TODO: check mac/IOS uint32 render target!
     renderer.dispose();

@@ -8,18 +8,30 @@ export interface VertexArrayParams {
     readonly indices?: BufferIndex;
 }
 
-export type ComponentTypeString = "BYTE" | "UNSIGNED_BYTE" | "SHORT" | "UNSIGNED_SHORT" | "FLOAT" | "HALF_FLOAT";
+export type ComponentTypeString = "BYTE" | "UNSIGNED_BYTE" | "SHORT" | "UNSIGNED_SHORT" | "INT" | "UNSIGNED_INT" | "HALF_FLOAT" | "FLOAT";
 
-export interface VertexAttribute {
+export interface VertexAttributeCommon {
     readonly buffer: BufferIndex;
-    // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/vertexAttribPointer
     readonly numComponents: 1 | 2 | 3 | 4;
-    readonly componentType?: ComponentTypeString; // default: FLOAT
-    readonly normalized?: boolean; // default: false
     readonly stride?: number; // default: 0
     readonly offset?: number; // default: 0
-    readonly divisor?: number; // default 0
+    readonly divisor?: number; // default: 0
 }
+
+// https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/vertexAttribPointer
+export interface VertexAttributeFloat extends VertexAttributeCommon {
+    readonly componentType?: ComponentTypeString; // default: FLOAT
+    readonly normalized?: boolean; // default: false
+    readonly shaderInteger?: false;
+}
+
+// https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/vertexAttribIPointer
+export interface VertexAttributeInteger extends VertexAttributeCommon {
+    readonly shaderInteger: true;
+    readonly componentType: ComponentTypeString;
+}
+
+export type VertexAttribute = VertexAttributeFloat | VertexAttributeInteger;
 
 export function createVertexArray(context: RendererContext, params: VertexArrayParams): WebGLVertexArrayObject {
     const { gl, buffers } = context;
@@ -31,10 +43,20 @@ export function createVertexArray(context: RendererContext, params: VertexArrayP
     const { attributes } = params;
     for (const attribParams of attributes) {
         if (attribParams) {
+            const { numComponents } = attribParams;
+            const componentType = attribParams.componentType ?? "FLOAT";
+            const divisor = attribParams.divisor ?? 0;
+            const stride = attribParams.stride ?? 0;
+            const offset = attribParams.offset ?? 0;
             gl.bindBuffer(gl.ARRAY_BUFFER, buffers[attribParams.buffer]);
             gl.enableVertexAttribArray(attribIndex);
-            gl.vertexAttribPointer(attribIndex, attribParams.numComponents, gl[attribParams.componentType ?? "FLOAT"], attribParams.normalized ?? false, attribParams.stride ?? 0, attribParams.offset ?? 0);
-            gl.vertexAttribDivisor(attribIndex, attribParams.divisor ?? 0);
+            if (attribParams.shaderInteger) {
+                gl.vertexAttribIPointer(attribIndex, numComponents, gl[componentType], stride, offset);
+            } else {
+                const normalized = attribParams.normalized ?? false;
+                gl.vertexAttribPointer(attribIndex, numComponents, gl[componentType], normalized, stride, offset);
+            }
+            gl.vertexAttribDivisor(attribIndex, divisor);
         }
         attribIndex++;
     };

@@ -1,4 +1,5 @@
 import type { RendererContext } from "./renderer.js";
+import { getAttributesInfo } from "./util.js";
 
 export type ProgramIndex = number;
 
@@ -48,6 +49,9 @@ export function createProgram(context: RendererContext, params: ProgramParams) {
 
     if (!gl.getProgramParameter(program, gl.LINK_STATUS))
         throw new Error(`: Failed to compile link shaders!\r\n${gl.getProgramInfoLog(program)}`);
+
+    const info = getAttributesInfo(gl, program);
+    // console.log(info);
 
     return program;
 }
