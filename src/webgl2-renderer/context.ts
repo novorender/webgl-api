@@ -3,13 +3,26 @@ import { createDefaultState, State } from "./state.js";
 export interface RendererContext extends ReadonlyContextArray {
     readonly gl: WebGL2RenderingContext;
     readonly limits: LimitsGL;
+    readonly extensions: {
+        readonly multiDraw: WebGLMultiDrawExt;
+    }
     readonly defaultState: State;
 };
+
+export interface WebGLMultiDrawExt {
+    multiDrawArraysWEBGL(mode: number,
+        firstsList: Int32Array, firstsOffset: number,
+        countsList: Int32Array, countsOffset: number,
+        drawCount: number): void;
+}
 
 export function createContext(gl: WebGL2RenderingContext) {
     const limits = getLimits(gl);
     const defaultState = createDefaultState(limits);
-    return { gl, limits, defaultState, ...contextArrays() } as const;
+    const extensions = {
+        multiDraw: gl.getExtension("WEBGL_MULTI_DRAW") as WebGLMultiDrawExt,
+    } as const;
+    return { gl, extensions, limits, defaultState, ...contextArrays() } as const;
 }
 
 function contextArrays() {

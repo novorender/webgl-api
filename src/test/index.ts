@@ -5,6 +5,7 @@ import { multiSample } from "./multiSample.js";
 import { vtxCol } from "./vtxCol.js";
 import { packed } from "./packed.js";
 import { renderTarget } from "./renderTarget.js";
+import { multiDraw } from "./multiDraw.js";
 
 async function main() {
     const width = 512;
@@ -12,9 +13,10 @@ async function main() {
     const commands: string[] = [];
     const renderer = createJsonRenderer(commands, width, height);
     // quadTex(renderer);
+    multiDraw(renderer);
     // multiSample(renderer);
     // await vtxCol(renderer);
-    packed(renderer);
+    // packed(renderer);
     // renderTarget(renderer, "texture");
 
     // TODO: check mac/IOS uint32 render target!
