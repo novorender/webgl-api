@@ -9,6 +9,7 @@
         "glsl",
         "highp",
         "inspectable",
+        "metalness",
         "novorender",
         "PUNCHTHROUGH",
         "pvrtc",

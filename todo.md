@@ -1,5 +1,19 @@
 # render engine
 
+## Research topics
+
+- Investigate WEBGL_multi_draw performance
+  - How much overhead is there per batch on various devices?
+- Getting vertex info from textures in vertex shader
+  - How is performance affected?
+- Getting material info from uniform buffers (64 byte per material? max 1K materials = 64KB)
+  - base color, metalness, roughness, occlusionStrength?, emissiveFactor?, textures?, uv transform?
+  - How many materials does our worst case currently have? (>1024?)
+- Shuffling triangles
+  - Single draw call per material?
+  - Single draw call per highlight?
+  - Move invisible triangles away from active range (parent LODs, clipping volumes, invisible highlights, etc.)
+
 ## low-level gl abstraction
 
 main goals:
