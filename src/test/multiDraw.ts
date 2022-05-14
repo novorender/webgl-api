@@ -14,7 +14,7 @@ export function multiDraw(renderer: Renderer) {
     }
     const vb = renderer.createBuffer(buffers.alloc(), { target: "ARRAY_BUFFER", srcData: array });
 
-    const drawCount = 10000;
+    const drawCount = 100000;
     const countsList = new Int32Array(drawCount);
     const firstsList = new Int32Array(drawCount);
     const batchSize = numPoints / drawCount;
