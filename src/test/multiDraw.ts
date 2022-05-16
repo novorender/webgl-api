@@ -7,14 +7,14 @@ export function multiDraw(renderer: Renderer) {
 
     const program = renderer.createProgram(programs.alloc(), { shaders: shaders.basic });
 
-    const numPoints = 1000000;
+    const numPoints = 100000;
     const array = new Float32Array(numPoints * 2);
     for (let i = 0; i < array.length; i++) {
         array[i] = Math.random() * 2 - 1;
     }
     const vb = renderer.createBuffer(buffers.alloc(), { target: "ARRAY_BUFFER", srcData: array });
 
-    const drawCount = 100000;
+    const drawCount = 10000;
     const countsList = new Int32Array(drawCount);
     const firstsList = new Int32Array(drawCount);
     const batchSize = numPoints / drawCount;

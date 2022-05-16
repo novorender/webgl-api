@@ -6,7 +6,6 @@ import type { TextureIndex } from "./texture.js";
 import type { VertexArrayIndex } from "./vao.js";
 import type { BufferIndex } from "./buffer.js";
 import type { SamplerIndex } from "./sampler.js";
-import { getBufferSource, isBinarySource } from "./binary.js";
 
 export type BlendEquation = "FUNC_ADD" | "FUNC_SUBTRACT" | "FUNC_REVERSE_SUBTRACT" | "MIN" | "MAX";
 export type BlendFunction = "ZERO" | "ONE" | "SRC_COLOR" | "ONE_MINUS_SRC_COLOR" | "DST_COLOR" | "ONE_MINUS_DST_COLOR" | "SRC_ALPHA" | "ONE_MINUS_SRC_ALPHA" | "DST_ALPHA" | "ONE_MINUS_DST_ALPHA" | "CONSTANT_COLOR" | "ONE_MINUS_CONSTANT_COLOR" | "CONSTANT_ALPHA" | "ONE_MINUS_CONSTANT_ALPHA" | "SRC_ALPHA_SATURATE";
@@ -36,10 +35,12 @@ export interface AttributeBinding {
 }
 
 
+type UniformTypeScalar = "1f" | "1i" | "1ui";
+
 type UniformTypeVector =
-    "1f" | "2f" | "3f" | "4f" |
-    "1i" | "2i" | "3i" | "4i" |
-    "1ui" | "2ui" | "3ui" | "4ui";
+    "2f" | "3f" | "4f" |
+    "2i" | "3i" | "4i" |
+    "2ui" | "3ui" | "4ui";
 
 type UniformTypeMatrix =
     "Matrix2f" | "Matrix3f" | "Matrix4f" |
@@ -47,12 +48,32 @@ type UniformTypeMatrix =
     "Matrix3x2f" | "Matrix3x4f" |
     "Matrix4x2f" | "Matrix4x3f";
 
-type UniformType = UniformTypeVector | UniformTypeMatrix;
+type UniformType = UniformTypeScalar | UniformTypeVector | UniformTypeMatrix;
 
-export interface UniformBinding {
-    readonly type: UniformType;
+export interface UniformBindingScalar {
+    readonly type: UniformTypeScalar;
+    readonly name: string;
+    readonly value: number;
+}
+
+export interface UniformBindingVector {
+    readonly type: UniformTypeVector;
     readonly name: string;
     readonly value: readonly number[];
+}
+
+export interface UniformBindingMatrix {
+    readonly type: UniformTypeMatrix;
+    readonly name: string;
+    readonly value: readonly number[];
+    readonly transpose?: boolean; // default: false
+}
+
+export type UniformBinding = UniformBindingScalar | UniformBindingVector | UniformBindingMatrix;
+
+export interface UniformBlockBinding {
+    readonly name?: string;
+    readonly buffer: BufferIndex | null;
 }
 
 export interface TextureBinding {
@@ -65,8 +86,28 @@ export type StateParams = Partial<State>;
 
 // https://github.com/regl-project/regl
 
-function isUniformTypeMatrix(type: UniformType): type is UniformTypeMatrix {
-    return type.startsWith("Matrix");
+// function isUniformTypeScalar(type: UniformType): type is UniformTypeScalar {
+//     return type.startsWith("1");
+// }
+
+// function isUniformTypeVector(type: UniformType): type is UniformTypeVector {
+//     return type[0] >= '2' && type[0] <= '4';
+// }
+
+// function isUniformTypeMatrix(type: UniformType): type is UniformTypeMatrix {
+//     return type.startsWith("Matrix");
+// }
+
+function isUniformScalar(params: UniformBinding): params is UniformBindingScalar {
+    return params.type.startsWith("1");
+}
+
+function isUniformVector(params: UniformBinding): params is UniformBindingVector {
+    return params.type[0] >= '2' && params.type[0] <= '4';
+}
+
+function isUniformMatrix(params: UniformBinding): params is UniformBindingMatrix {
+    return params.type.startsWith("Matrix");
 }
 
 const defaultConstants = {
@@ -129,7 +170,8 @@ const defaultConstants = {
     vertexArrayObject: null as VertexArrayIndex | null,
 
     program: null as ProgramIndex | null,
-    uniforms: null as readonly UniformBinding[] | null,
+    uniformBlocks: [] as readonly UniformBlockBinding[], // max length: MAX_UNIFORM_BUFFER_BINDINGS
+    uniforms: [] as readonly UniformBinding[],
 };
 
 export function createDefaultState(limits: LimitsGL) {
@@ -201,7 +243,7 @@ export function setState(context: RendererContext, params: StateParams) {
 
     setFlag("RASTERIZER_DISCARD", "rasterizerDiscard");
 
-    const { /*arrayBuffer, elementArrayBuffer,*/ frameBuffer, vertexArrayObject, drawBuffers, attributeDefaults, uniformBuffers, textures, uniforms, samplers } = params;
+    const { /*arrayBuffer, elementArrayBuffer,*/ frameBuffer, vertexArrayObject, drawBuffers, attributeDefaults, uniformBuffers, textures, uniforms, samplers, uniformBlocks } = params;
 
     // if (arrayBuffer !== undefined) {
     //     const buffer = arrayBuffer == null ? null : context.buffers[arrayBuffer];
@@ -267,15 +309,31 @@ export function setState(context: RendererContext, params: StateParams) {
         gl.useProgram(program);
     }
 
-    if (uniforms && program) {
-        for (const { type, name, value } of uniforms) {
-            const location = gl.getUniformLocation(program, name); // TODO: cache this?
-            const n = `uniform${type}v` as const;
-            if (isUniformTypeMatrix(type)) {
-                gl[`uniform${type}v`](location, false, value);
-            } else {
-                gl[`uniform${type}v`](location, value);
+    const currentProgram = program != undefined ? program : gl.getParameter(gl.CURRENT_PROGRAM) as WebGLProgram | null; // TODO: check performance on gl.getParameter on Angle renderer.
+
+    if (uniforms && currentProgram != null) {
+        for (const uniformParams of uniforms) {
+            const { name } = uniformParams;
+            const location = gl.getUniformLocation(currentProgram, name); // TODO: cache this?
+            if (isUniformScalar(uniformParams)) {
+                gl[`uniform${uniformParams.type}`](location, uniformParams.value);
+            } else if (isUniformVector(uniformParams)) {
+                gl[`uniform${uniformParams.type}v`](location, uniformParams.value);
+            } else if (isUniformMatrix(uniformParams)) {
+                gl[`uniform${uniformParams.type}v`](location, uniformParams.transpose ?? false, uniformParams.value);
             }
+        }
+    }
+
+    if (uniformBlocks && currentProgram != null) {
+        let idx = 0;
+        for (const uniformBlockParams of uniformBlocks) {
+            const buffer = uniformBlockParams.buffer == null ? null : context.buffers[uniformBlockParams.buffer];
+            if (uniformBlockParams.name) {
+                const blockIndex = gl.getUniformBlockIndex(currentProgram, uniformBlockParams.name); // TODO: cache this?
+                gl.uniformBlockBinding(currentProgram, blockIndex, idx);
+            }
+            gl.bindBufferBase(gl.UNIFORM_BUFFER, idx, buffer);
         }
     }
 }

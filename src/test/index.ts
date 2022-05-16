@@ -6,20 +6,26 @@ import { vtxCol } from "./vtxCol.js";
 import { packed } from "./packed.js";
 import { renderTarget } from "./renderTarget.js";
 import { multiDraw } from "./multiDraw.js";
+import { srgb } from "./srgb.js";
+import { multiMaterial } from "./multiMaterial.js";
 
 async function main() {
     const width = 512;
     const height = 512;
     const commands: string[] = [];
     const renderer = createJsonRenderer(commands, width, height);
-    // quadTex(renderer);
-    multiDraw(renderer);
+
+    // TODO: shuffle index buffers (random enable/disable draw)
+
+    // multiDraw(renderer);
     // multiSample(renderer);
+    multiMaterial(renderer);
+    // quadTex(renderer);
     // await vtxCol(renderer);
     // packed(renderer);
     // renderTarget(renderer, "texture");
+    // srgb(renderer);
 
-    // TODO: check mac/IOS uint32 render target!
     renderer.dispose();
 
     const json = `[\n${commands.join(",\n")}\n]`;

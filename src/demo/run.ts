@@ -25,7 +25,7 @@ export function run(renderer: Renderer, width: number, height: number, vertex: s
         program: basicProgram,
         uniforms: [
             { type: "4f", name: "color", value: [1, 1, 0, 1] },
-            { type: "1i", name: "tex", value: [0] }
+            { type: "1i", name: "tex", value: 0 }
         ],
         vertexArrayObject: vao,
         textures: [

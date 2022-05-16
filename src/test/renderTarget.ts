@@ -31,7 +31,7 @@ export function renderTarget(renderer: Renderer, target: "texture" | "renderBuff
         viewport: { width, height },
         program,
         uniforms: [
-            { type: "1ui", name: "color", value: [42] }
+            { type: "1ui", name: "color", value: 42 }
         ],
         vertexArrayObject,
         frameBuffer,

@@ -22,7 +22,7 @@ export function quadTex(renderer: Renderer) {
         // scissorBox: { width: width / 2, height },
         program,
         uniforms: [
-            { type: "1i", name: "tex", value: [0] }
+            { type: "1i", name: "tex", value: 0 }
         ],
         vertexArrayObject: vao,
         textures: [

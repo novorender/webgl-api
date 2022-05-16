@@ -14,6 +14,10 @@ export const shaders = {
         vertex: loadShader("basic.vert"),
         fragment: loadShader("basic.frag"),
     },
+    gradient: {
+        vertex: loadShader("gradient.vert"),
+        fragment: loadShader("gradient.frag"),
+    },
     packedTri: {
         vertex: loadShader("packedTri.vert"),
         fragment: loadShader("packed.frag"),
@@ -25,6 +29,10 @@ export const shaders = {
     packedOutline: {
         vertex: loadShader("packedOutline.vert"),
         fragment: loadShader("packed.frag"),
+    },
+    multiMaterial: {
+        vertex: loadShader("multiMaterial.vert"),
+        fragment: loadShader("multiMaterial.frag"),
     },
     ui32: {
         vertex: loadShader("ui32.vert"),

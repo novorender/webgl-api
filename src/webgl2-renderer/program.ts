@@ -41,6 +41,7 @@ export function createProgram(context: RendererContext, params: ProgramParams) {
 
     // TODO: Consider doing linking in a separate stage, so as to take advantage of parallel shader compilation. (https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices#Compile_Shaders_and_Link_Programs_in_parallel)
     gl.linkProgram(program);
+    gl.validateProgram(program);
 
     gl.detachShader(program, vertexShader);
     gl.detachShader(program, fragmentShader);
