@@ -1,8 +1,8 @@
-uniform uint numVerticesPerObject;
+uniform int numVerticesPerObject;
 layout(location = 0) in vec4 position;
-flat out uint material;
+flat out int material;
 
 void main() {
     gl_Position = position;
-    material = uint(gl_VertexID) / numVerticesPerObject;
+    material = gl_VertexID / numVerticesPerObject;
 }

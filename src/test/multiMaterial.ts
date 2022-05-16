@@ -44,12 +44,9 @@ export function multiMaterial(renderer: Renderer) {
     const vao = renderer.createVertexArray(vertexArrayObjects.alloc(), { attributes: [{ buffer: vb, numComponents: 2 }], indices: ib });
 
     const numMaterials = quadExt * quadExt;
-    const materialColors = new Float32Array(numMaterials * 4); // TODO: Used packed u8 rgba instead
+    const materialColors = new Uint32Array(numMaterials);
     for (let i = 0; i < numMaterials; i++) {
-        materialColors[i * 4 + 0] = Math.random();
-        materialColors[i * 4 + 1] = Math.random();
-        materialColors[i * 4 + 2] = Math.random();
-        materialColors[i * 4 + 3] = 1;
+        materialColors[i] = Math.random() * 255 << 0 | Math.random() * 255 << 8 | Math.random() * 255 << 16 | 255 << 24;
     }
     const ub = renderer.createBuffer(buffers.alloc(), { target: "UNIFORM_BUFFER", srcData: materialColors.buffer });
 
@@ -60,7 +57,7 @@ export function multiMaterial(renderer: Renderer) {
         program,
         vertexArrayObject: vao,
         uniforms: [
-            { type: "1ui", name: "numVerticesPerObject", value: 4 },
+            { type: "1i", name: "numVerticesPerObject", value: 4 },
         ],
         uniformBlocks: [
             { name: "MaterialColors", buffer: ub },
