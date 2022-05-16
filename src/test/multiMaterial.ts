@@ -60,7 +60,7 @@ export function multiMaterial(renderer: Renderer) {
             { type: "1i", name: "numVerticesPerObject", value: 4 },
         ],
         uniformBlocks: [
-            { name: "MaterialColors", buffer: ub },
+            { buffer: ub },
         ]
     });
 
