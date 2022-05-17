@@ -1,4 +1,4 @@
-function memoize<TA extends Object, TR>(map: WeakMap<TA, TR>, fn: (arg: TA) => TR) {
+export function memoize<TA extends Object, TR>(map: WeakMap<TA, TR>, fn: (arg: TA) => TR) {
     return function () {
         const arg: TA = arguments[0];
         if (!map.has(arguments[0])) {

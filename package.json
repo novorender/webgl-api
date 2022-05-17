@@ -5,6 +5,8 @@
     "scripts": {
         "start": "webpack serve --mode development",
         "build:schema": "typescript-json-schema tsconfig.json RenderState.Scene --include src/webgl-api/*.ts >render-state-schema.json",
+        "build:production": "esbuild --bundle --minify src/demo/index.ts",
+        "build:serve": "esbuild src/demo/index.ts --servedir=static --bundle --outfile=static/bundle.js",
         "generate_binary": "node src/node/generateBinary.mjs",
         "test": "ts-node --esm src/test/index.ts"
     },
@@ -25,8 +27,10 @@
     },
     "homepage": "https://github.com/novorender/webgl-api#readme",
     "devDependencies": {
+        "esbuild": "^0.14.39",
         "jimp": "^0.16.1",
         "resolve-typescript-plugin": "^1.2.0",
+        "serve": "^13.0.2",
         "ts-loader": "9.2.8",
         "ts-node": "^10.7.0",
         "tslib": "2.4.0",

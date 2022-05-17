@@ -16,8 +16,6 @@ async function main() {
     const commands: string[] = [];
     const renderer = createJsonRenderer(commands, width, height);
 
-    // TODO: shuffle index buffers (random enable/disable draw)
-
     // multiDraw(renderer);
     // multiSample(renderer);
     // multiMaterial(renderer);

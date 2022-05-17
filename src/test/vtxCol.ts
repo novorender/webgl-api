@@ -40,8 +40,6 @@ export async function vtxCol(renderer: Renderer) {
     const pixels = new Uint8Array(buffer);
     // const pixels = new Float32Array([...new Uint8Array(buffer)].map(v => v / 255.0));
 
-    // TODO: check performance on android and IOS. 
-    // TODO: check out es build: https://esbuild.github.io/
     const program = renderer.createProgram(programs.alloc(), { shaders: shaders.vtxCol });
 
     const pos = renderer.createBuffer(buffers.alloc(), { target: "ARRAY_BUFFER", srcData: vtx });

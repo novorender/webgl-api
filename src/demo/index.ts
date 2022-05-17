@@ -1,20 +1,5 @@
-// import { createView, downloadRenderState } from "@novorender/webgl-api";
-// import { createJsonRenderer, createWebGL2Renderer, resizeCanvasToDisplaySize } from "@novorender/webgl2-renderer/";
-// import { run } from "./run";
-// import vertex from "../shaders/basic.vert";
-// import fragment from "../shaders/basic.frag";
 import { createWebGL2Renderer } from "@novorender/webgl2-renderer";
 import { Command, replay } from "./replay";
-import { discs } from "./discs";
-
-async function waitClick(canvas: HTMLCanvasElement) {
-    return new Promise<void>(resolve => {
-        canvas.addEventListener("click", function cb(e: any) {
-            canvas.removeEventListener("click", cb);
-            resolve();
-        });
-    });
-}
 
 async function nextFrame(): Promise<number> {
     return new Promise<number>(resolve => {
@@ -24,20 +9,28 @@ async function nextFrame(): Promise<number> {
     });
 }
 
-
 async function main(canvas: HTMLCanvasElement) {
     // resizeCanvasToDisplaySize(canvas);
     // const { width, height } = canvas;
-    // const renderer = createWebGL2Renderer(canvas);
-    // run(renderer, width, height, vertex, fragment);
-
     const statsElement = document.getElementById("stats")!;
+    function showStats(text: string) {
+        statsElement.style.color = "yellow";
+        statsElement.innerText = text;
+    }
+    function showOutput(text: string) {
+        statsElement.style.color = "lime";
+        statsElement.innerText = text;
+    }
+    function showError(text: string) {
+        statsElement.style.color = "red";
+        statsElement.innerText = text;
+    }
 
     let run = false;
     canvas.addEventListener("click", function cb(e: any) {
         run = !run;
         lastMeasureTime = undefined;
-        statsElement.innerText = run ? "resumed" : "paused";
+        showStats(run ? "resumed" : "paused");
     });
 
     let quit = false;
@@ -67,10 +60,6 @@ async function main(canvas: HTMLCanvasElement) {
     let measurements: number[] = [];
     let frameCount = 0;
     try {
-        // const useFloat = true;
-        // const interleaved = true;
-        // const numTrianglesPerObject = 32768;
-        // const render = discs(renderer, numTrianglesPerObject, useFloat, interleaved);
         const render = replay(renderer, commands);
         await render(0);
         while (!quit) {
@@ -86,7 +75,7 @@ async function main(canvas: HTMLCanvasElement) {
                     const avgMeasureTime = (measurements.length == 0 ? 0 : measurements.reduce((a, b) => a + b) / measurements.length);
                     measurements.length = 0;
                     const fps = (frameCount / interval);
-                    statsElement.innerText = `fps: ${fps.toFixed(1)}, measure: ${avgMeasureTime.toFixed(2)}ms`;
+                    showStats(`fps: ${fps.toFixed(1)}, measure: ${avgMeasureTime.toFixed(2)}ms`);
                     lastMeasureTime = time;
                     frameCount = 0;
                 }
@@ -97,21 +86,12 @@ async function main(canvas: HTMLCanvasElement) {
         statsElement.innerText = "stopped";
     } catch (exception: any) {
         if (typeof exception == "object" && Symbol.iterator in exception) {
-            statsElement.style.color = "lime";
-            statsElement.innerText = `[${[...exception].join(", ")}]`;
+            showOutput(`[${[...exception].join(", ")}]`);
         } else {
-            statsElement.style.color = "red";
-            statsElement.innerText = exception.toString();
+            showError(exception.toString());
         }
     }
-    // for (let i = 0; i < 60; i++)
-    //     await nextFrame();
     renderer.dispose();
-
-    // const url = new URL("./test.jsonc", location.origin);
-    // const { renderState, blobs } = await downloadRenderState(url);
-    // const view = createView(canvas);
-    // view.render(renderState, blobs);
 }
 
 main(document.getElementById("container") as HTMLCanvasElement);
