@@ -1,5 +1,6 @@
 layout(std140) uniform MaterialColors {
-    uvec4 colors[64 * 64];
+    uvec4 colors[20 * 20];
+    // vec4 colors[32 * 32];
 };
 flat in int material;
 out vec4 fragColor;
@@ -10,4 +11,5 @@ vec4 unpackColor(uint rgba) {
 
 void main() {
     fragColor = unpackColor(colors[material / 4][material % 4]);
+    // fragColor = colors[material];
 }

@@ -14,6 +14,7 @@ import { blit, BlitParams } from "./blit.js";
 import { createTimer, Timer } from "./timer.js";
 import { createAllocators } from "./allocator.js";
 import { readPixels, ReadPixelsParams } from "./read.js";
+import { copy, CopyParams } from "./copy.js";
 export type { RendererContext };
 
 export function createWebGL2Renderer(canvas: HTMLCanvasElement, options?: WebGLContextAttributes): Renderer {
@@ -40,6 +41,14 @@ export function createWebGL2Renderer(canvas: HTMLCanvasElement, options?: WebGLC
 async function sleep(time: number) {
     return new Promise(resolve => {
         self.setTimeout(resolve, time);
+    });
+}
+
+async function nextFrame(): Promise<number> {
+    return new Promise<number>(resolve => {
+        const handle = requestAnimationFrame(time => {
+            resolve(time);
+        })
     });
 }
 
@@ -128,6 +137,12 @@ export class WebGL2Renderer {
         // on webGL, this is (still) a bit of a no-op, but on angle it could be the swapBuffers() function, or in open gl, the glutSwapBuffers() function.
         // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/commit
         this.#context.gl.flush();
+    }
+
+    async waitFrames(numFrames = 1) {
+        for (let i = 0; i < numFrames; i++) {
+            await nextFrame();
+        }
     }
 
     measureBegin() {
@@ -255,7 +270,8 @@ export class WebGL2Renderer {
         throw pixels;
     }
 
-    copy() {
+    copy(params: CopyParams) {
+        copy(this.#context, params);
     }
 
     draw(params: DrawParams) {

@@ -21,6 +21,7 @@ export function createContext(gl: WebGL2RenderingContext) {
     const defaultState = createDefaultState(limits);
     const extensions = {
         multiDraw: gl.getExtension("WEBGL_MULTI_DRAW") as WebGLMultiDrawExt,
+        // multiDraw: undefined as unknown as WebGLMultiDrawExt,
     } as const;
     return { gl, extensions, limits, defaultState, ...contextArrays() } as const;
 }

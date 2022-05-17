@@ -20,7 +20,7 @@ export function createTimer(gl: WebGL2RenderingContext): Timer {
         else
             return new GPUTimer(gl, ext);
     } else {
-        console.log("using cpu timer.")
+        // console.log("using cpu timer.")
         return new CPUTimer(gl);
     }
 }

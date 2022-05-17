@@ -8,6 +8,7 @@ import { renderTarget } from "./renderTarget.js";
 import { multiDraw } from "./multiDraw.js";
 import { srgb } from "./srgb.js";
 import { multiMaterial } from "./multiMaterial.js";
+import { shuffle } from "./shuffle.js";
 
 async function main() {
     const width = 512;
@@ -19,11 +20,12 @@ async function main() {
 
     // multiDraw(renderer);
     // multiSample(renderer);
-    multiMaterial(renderer);
+    // multiMaterial(renderer);
     // quadTex(renderer);
     // await vtxCol(renderer);
     // packed(renderer);
     // renderTarget(renderer, "texture");
+    shuffle(renderer);
     // srgb(renderer);
 
     renderer.dispose();

@@ -72,7 +72,7 @@ async function main(canvas: HTMLCanvasElement) {
         // const numTrianglesPerObject = 32768;
         // const render = discs(renderer, numTrianglesPerObject, useFloat, interleaved);
         const render = replay(renderer, commands);
-        render(0);
+        await render(0);
         while (!quit) {
             const time = await nextFrame();
             if (run) {
@@ -90,7 +90,7 @@ async function main(canvas: HTMLCanvasElement) {
                     lastMeasureTime = time;
                     frameCount = 0;
                 }
-                render(time);
+                await render(time);
                 frameCount++;
             }
         }

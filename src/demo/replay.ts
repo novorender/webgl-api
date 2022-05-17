@@ -14,11 +14,14 @@ export function replay(renderer: Renderer, commands: readonly Command[]) {
         func.apply(renderer, args);
     }
 
-    return function render(time: number) {
+    return async function render(time: number) {
         for (const command of renderCommands) {
             const [name, ...args] = command;
             const func = renderer[name] as Function;
-            func.apply(renderer, args);
+            const r = func.apply(renderer, args);
+            if (r && typeof r == "object" && r instanceof Promise) {
+                await r;
+            }
         }
     }
 }

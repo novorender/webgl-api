@@ -7,7 +7,7 @@ export function multiMaterial(renderer: Renderer) {
 
     const program = renderer.createProgram(programs.alloc(), { shaders: shaders.multiMaterial });
 
-    const quadExt = 128;
+    const quadExt = 40;
     const numQuads = quadExt * quadExt;
 
     const positions = new Float32Array(quadExt * quadExt * 4 * 2);
@@ -48,6 +48,13 @@ export function multiMaterial(renderer: Renderer) {
     for (let i = 0; i < numMaterials; i++) {
         materialColors[i] = Math.random() * 255 << 0 | Math.random() * 255 << 8 | Math.random() * 255 << 16 | 255 << 24;
     }
+    // const materialColors = new Float32Array(numMaterials * 4);
+    // for (let i = 0; i < numMaterials; i++) {
+    //     materialColors[i * 4 + 0] = Math.random();
+    //     materialColors[i * 4 + 1] = Math.random();
+    //     materialColors[i * 4 + 2] = Math.random();
+    //     materialColors[i * 4 + 3] = 1;
+    // }
     const ub = renderer.createBuffer(buffers.alloc(), { target: "UNIFORM_BUFFER", srcData: materialColors.buffer });
 
     renderer.clear({ color: [0, 0, 0, 1] });

@@ -27,6 +27,7 @@ export function createProgram(context: RendererContext, params: ProgramParams) {
     const { gl } = context;
     const { shaders, flags } = params;
     const header = "#version 300 es\n#extension GL_ANGLE_multi_draw : require\nprecision highp float;\n";
+    // const header = "#version 300 es\nprecision highp float;\n";
     const defines = flags?.map(flag => `#define ${flag}\n`)?.join() ?? "";
     const vs = header + defines + shaders.vertex;
     const fs = header + defines + shaders.fragment;
