@@ -77,8 +77,9 @@ export interface UniformBlockBinding {
 }
 
 export interface TextureBinding {
-    target: "TEXTURE_2D" | "TEXTURE_3D" | "TEXTURE_2D_ARRAY" | "TEXTURE_CUBE_MAP";
-    index: TextureIndex;
+    readonly target: "TEXTURE_2D" | "TEXTURE_3D" | "TEXTURE_2D_ARRAY" | "TEXTURE_CUBE_MAP";
+    readonly texture: TextureIndex;
+    readonly sampler: SamplerIndex;
 }
 
 export type State = ReturnType<typeof createDefaultState>;
@@ -181,7 +182,6 @@ export function createDefaultState(limits: LimitsGL) {
         attributeDefaults: Array<AttributeDefault | null>(limits.MAX_VERTEX_ATTRIBS).fill({ type: "4f", values: [0, 0, 0, 1] }) as ReadonlyArray<AttributeDefault | null>,
         uniformBuffers: Array<BufferIndex | null>(limits.MAX_VERTEX_ATTRIBS).fill(null) as ReadonlyArray<BufferIndex | null>,
         textures: Array<TextureBinding | null>(limits.MAX_COMBINED_TEXTURE_IMAGE_UNITS).fill(null) as ReadonlyArray<TextureBinding | null>,
-        samplers: Array<SamplerIndex | null>(limits.MAX_COMBINED_TEXTURE_IMAGE_UNITS).fill(null) as ReadonlyArray<SamplerIndex | null>,
     } as const;
 }
 
@@ -243,7 +243,7 @@ export function setState(context: RendererContext, params: StateParams) {
 
     setFlag("RASTERIZER_DISCARD", "rasterizerDiscard");
 
-    const { /*arrayBuffer, elementArrayBuffer,*/ frameBuffer, vertexArrayObject, drawBuffers, attributeDefaults, uniformBuffers, textures, uniforms, samplers, uniformBlocks } = params;
+    const { /*arrayBuffer, elementArrayBuffer,*/ frameBuffer, vertexArrayObject, drawBuffers, attributeDefaults, uniformBuffers, textures, uniforms, uniformBlocks } = params;
 
     // if (arrayBuffer !== undefined) {
     //     const buffer = arrayBuffer == null ? null : context.buffers[arrayBuffer];
@@ -288,20 +288,14 @@ export function setState(context: RendererContext, params: StateParams) {
     if (textures) {
         const texture0 = gl.TEXTURE0;
         for (let i = 0; i < textures.length; i++) {
-            const tex = textures[i];
-            const texture = tex == null ? null : context.textures[tex.index];
+            const binding = textures[i];
+            const texture = binding == null ? null : context.textures[binding.texture];
             gl.activeTexture(texture0 + i);
-            gl.bindTexture(gl[tex?.target ?? "TEXTURE_2D"], texture);
-        }
-        gl.activeTexture(texture0);
-    }
-
-    if (samplers) {
-        for (let i = 0; i < samplers.length; i++) {
-            const index = samplers[i];
-            const sampler = index == null ? null : context.samplers[index];
+            gl.bindTexture(gl[binding?.target ?? "TEXTURE_2D"], texture);
+            const sampler = binding == null ? null : context.samplers[binding.sampler];
             gl.bindSampler(i, sampler);
         }
+        gl.activeTexture(texture0);
     }
 
     const program = params.program == null ? null : context.programs[params.program];

@@ -15,6 +15,7 @@ import { createTimer, Timer } from "./timer.js";
 import { createAllocators } from "./allocator.js";
 import { readPixels, ReadPixelsParams } from "./read.js";
 import { copy, CopyParams } from "./copy.js";
+import { BinaryData, getBufferData } from "./binary.js";
 export type { RendererContext };
 
 export function createWebGL2Renderer(canvas: HTMLCanvasElement, options?: WebGLContextAttributes): Renderer {
@@ -158,9 +159,9 @@ export class WebGL2Renderer {
         timer.end();
     }
 
-    createBlob(index: BlobIndex, blob: ArrayBuffer) {
+    createBlob(index: BlobIndex, params: { readonly data: BinaryData }) {
         const { blobs } = this.#context;
-        blobs[index] = blob;
+        blobs[index] = getBufferData(params.data);
         return index;
     }
 

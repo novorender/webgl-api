@@ -1,6 +1,6 @@
 import type { Renderer } from ".";
 import { createAllocators } from "./allocator.js";
-import { encodeArrayBufferViewAsBase64, getBufferSource, isBinarySource } from "./binary.js";
+import { encodeArrayBufferViewAsBase64, getBufferSource, isBinaryData } from "./binary.js";
 
 export function createJsonRenderer(commands: string[], width: number, height: number): Renderer {
     const target = new JsonRenderer(commands, width, height);
@@ -24,7 +24,7 @@ function encodeBinariesAsBase64(context: { readonly blobs: readonly (ArrayBuffer
     if (typeof params == "object") {
         for (let key in params) {
             const value = params[key];
-            if (isBinarySource(value)) {
+            if (isBinaryData(value)) {
                 const dataView = getBufferSource(context, value);
                 const base64Binary = encodeArrayBufferViewAsBase64(dataView);
                 params[key] = base64Binary;

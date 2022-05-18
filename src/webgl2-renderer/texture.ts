@@ -32,7 +32,7 @@ export function createTexture(context: RendererContext, params: TextureParams) {
         const buffer = ArrayBuffer.isView(view) ? view.buffer : source as ArrayBufferLike;
         const byteOffset = view?.byteOffset ?? 0;
         const byteLength = view?.byteLength ?? buffer?.byteLength;
-        const pixels = buffer === null ? null : new arrayType(buffer, byteOffset, byteLength);
+        const pixels = buffer === null ? null : new arrayType(buffer, byteOffset, byteLength / arrayType.BYTES_PER_ELEMENT);
         if (type) {
             if (sizeZ) {
                 gl.texImage3D(imgTarget, level, internalFormat, sizeX, sizeY, sizeZ, border, format as number, type, pixels);

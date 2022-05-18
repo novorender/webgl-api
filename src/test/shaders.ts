@@ -45,7 +45,11 @@ export const shaders = {
     tex: {
         vertex: loadShader("tex.vert"),
         fragment: loadShader("tex.frag"),
-    }
+    },
+    texVertices: {
+        vertex: loadShader("texVertices.vert"),
+        fragment: loadShader("texVertices.frag"),
+    },
 } as const
 
 export type Shaders = typeof shaders;

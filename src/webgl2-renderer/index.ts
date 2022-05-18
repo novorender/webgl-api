@@ -6,6 +6,7 @@ export type { BlobIndex } from "./renderer.js";
 export type { ProgramIndex, ProgramParams } from "./program.js";
 export type { BufferIndex, BufferParams } from "./buffer.js";
 export type { VertexArrayIndex, VertexArrayParams } from "./vao.js";
+export type { StateParams } from "./state.js";
 export type { SamplerIndex, SamplerParams } from "./sampler.js";
 export type { TextureIndex, TextureParams } from "./texture.js";
 export type { RenderBufferIndex, RenderBufferParams } from "./renderBuffer.js";

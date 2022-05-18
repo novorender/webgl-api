@@ -26,10 +26,7 @@ export function quadTex(renderer: Renderer) {
         ],
         vertexArrayObject: vao,
         textures: [
-            { target: "TEXTURE_2D", index: tex }
-        ],
-        samplers: [
-            sampler
+            { target: "TEXTURE_2D", texture: tex, sampler }
         ]
     });
 
