@@ -13,8 +13,8 @@ export function texVertices(renderer: Renderer, useTextures = true) {
     const positions = new Float32Array(n * 2);
     for (let y = 0; y < ext; y++) {
         for (let x = 0; x < ext; x++) {
-            positions[(x + y * ext) * 2 + 0] = x / ext * 2 - 1;
-            positions[(x + y * ext) * 2 + 1] = y / ext * 2 - 1;
+            positions[(x + y * ext) * 2 + 0] = (x + 0.5) / ext * 2 - 1;
+            positions[(x + y * ext) * 2 + 1] = (y + 0.5) / ext * 2 - 1;
         }
     }
     // for (let i = 0; i < positions.length; i++) {
@@ -73,9 +73,11 @@ export function texVertices(renderer: Renderer, useTextures = true) {
 
     renderer.clear({ color: [0, 0, 0.25, 1] });
 
+    // renderer.commit();
     renderer.measureBegin();
     // renderer.draw({ count: n, indexType: "UNSIGNED_INT", mode: "POINTS" });
     renderer.draw({ count: n, mode: "POINTS" });
+    // renderer.commit();
     renderer.measureEnd();
 
     // renderer.commit();
