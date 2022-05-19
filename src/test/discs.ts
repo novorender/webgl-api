@@ -1,4 +1,4 @@
-import type { Renderer, BufferIndex } from "@novorender/webgl2-renderer";
+import type { Renderer, BufferIndex } from "../renderer";
 import { shaders } from "./shaders.js";
 
 interface DiscParams {

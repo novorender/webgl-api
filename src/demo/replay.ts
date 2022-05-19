@@ -1,4 +1,4 @@
-import type { Renderer } from "@novorender/webgl2-renderer";
+import type { Renderer } from "@novorender/renderer";
 
 export type Command = readonly [name: keyof Renderer, args: any[]];
 

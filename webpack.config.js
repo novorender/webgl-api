@@ -22,7 +22,7 @@ module.exports = {
         extensions: [".tsx", ".ts", ".js"],
         alias: {
             ["@novorender/webgl-api"]: path.resolve(__dirname, "./src/webgl-api"),
-            ["@novorender/webgl2-renderer"]: path.resolve(__dirname, "./src/webgl2-renderer"),
+            ["@novorender/renderer"]: path.resolve(__dirname, "./src/renderer"),
         },
         roots: [path.resolve(__dirname, "./src/")],
         plugins: [new ResolveTypeScriptPlugin()]

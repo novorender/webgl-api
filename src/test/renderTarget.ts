@@ -1,4 +1,4 @@
-import type { FrameBufferIndex, Renderer } from "../webgl2-renderer/index.js";
+import type { FrameBufferIndex, Renderer } from "../renderer";
 import { shaders } from "./shaders.js";
 
 function createFrameBuffer(renderer: Renderer, target: "texture" | "renderBuffer"): FrameBufferIndex {

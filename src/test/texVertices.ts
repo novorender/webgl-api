@@ -1,4 +1,4 @@
-import type { Renderer, StateParams } from "@novorender/webgl2-renderer";
+import type { Renderer, StateParams } from "../renderer";
 import { shaders } from "./shaders.js";
 
 

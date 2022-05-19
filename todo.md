@@ -15,38 +15,41 @@
   - Move invisible triangles away from active range (parent LODs, clipping volumes, invisible highlights, etc.)
 
 ## single draw call - multiple materials - multiple nodes
-  - material colors in uniform buffers or texture
-  - textures in texture arrays
-  - node object->world matrices in uniform buffer or texture
-    - we only need node translation, so single vector per node -> max 4K nodes.
+
+- material colors in uniform buffers or texture
+- textures in texture arrays
+- node object->world matrices in uniform buffer or texture
+  - we only need node translation, so single vector per node -> max 4K nodes.
 
 ## instancing
-  - one triangle per instance
-    - vbo can contain vertex index triplets and per-triangle info
-      - vertex positions and normals from textures
-    - can draw outlines
-    - can draw hard edges
+
+- one triangle per instance
+  - vbo can contain vertex index triplets and per-triangle info
+    - vertex positions and normals from textures
+  - can draw outlines
+  - can draw hard edges
 
 ## instancing - parametric
-  - one triangle for planar surface
-  - one tetrahedron per instance for quadric and bezier surfaces
-    - barycentric varyings can be computed in vertex shader
-      - compute 3D position from surface or store in texture?
-    - vbo contains per tetrahedron info (surface index,etc.)
-    - pixel shader projects pixel ray (pos + cam dir) onto surface (quadric/bezier)
-      - computes normal etc from projected uv.
-    - single trim curve?
-      - quadratic bezier uv curve?
-      - quadric 3d curve?
-    - tetrahedra can be generated from uv triangulated face
-      - 3 vertices from uv triangulation, 1 computed from the derivatives
-      - split at inflexion points?
-        - what if curvatures are in different directions?
-        - extend 3 base vertices backwards from max curvature?
-      - triangles that have more than two edge curves must be split.
 
+- one triangle for planar surface
+- one tetrahedron per instance for quadric and bezier surfaces
+- barycentric varyings can be computed in vertex shader
+  - compute 3D position from surface or store in texture?
+- vbo contains per tetrahedron info (surface index,etc.)
+- pixel shader projects pixel ray (pos + cam dir) onto surface (quadric/bezier)
+  - computes normal etc from projected uv.
+- single trim curve?
+  - quadratic bezier uv curve?
+  - quadric 3d curve?
+- tetrahedra can be generated from uv triangulated face
+  - 3 vertices from uv triangulation, 1 computed from the derivatives
+  - split at inflexion points?
+  - what if curvatures are in different directions?
+  - extend 3 base vertices backwards from max curvature?
+  - triangles that have more than two edge curves must be split.
 
 ## multidraw based rendering
+
 - one draw call per highlight?
   - triangles are already grouped by object_id at load time (one range per object).
   - no need to render invisible groups!
@@ -90,38 +93,28 @@ main goals:
 
 deals with scenes, views and cameras + controllers.
 
-## resources
+## new binary format
 
-createProgram
-createBuffer
-createSampler
-createTexture
-createVertexArrayObject
-createFrameBuffer
+- gltf/glb?
+  - draco mesh compression? ~8X compression
+  - texture HW (super) compression ~4X compression (in memory)
+- single attributes buffer (ranges with offset, lengths)
+- 4byte align buffer in binary blob
+- compact components (bytes and shorts instead of floats)
+- remove object id, octant index and material index from vertices
+  - use sub-meshes/ranges instead
+  - make extra buffer(s) on load to fit current implementation
+- 16 bit index buffer only (relative to sub-mesh/range)
 
-## functions
+goals:
 
-viewport(w,h)
-clear(buffer, r,g,b,a)
-copy(dst, src, rect?)
-state
-draw
-read (async via storage buffer?)
-query
-
-## state
-
-program
-attributes defaults
-uniforms
-uniform_blocks_bindings
-samplers
-frameBuffer_bindings
-textures
-blend
-cull
-depth_test
-dither
-polygon_offset
-sample_coverage
-stencil_test
+- webgl2 only, cleanup, optimizing (vbo, uniform buffers, etc)
+- compact vertices: reduce memory footprint, improve performance
+- only draw visible triangles
+- only pay for what we need: filter on load, reload when change: groups, clipping volume, etc.
+- selective LOD: bias for detail per selection group to enable e.g. full/high LOD on selected object.
+- static buffer allocation: no reallocations needed, no more IOS memory leaks
+- single draw call for all node for each of these types of primitives: opaque. transparent, terrain, points, lines
+- draw clipping outlines
+- draw hard edges
+- (pave the way for parametric rendering later)

@@ -1,4 +1,4 @@
-import type { Renderer } from "../webgl2-renderer/index.js";
+import type { Renderer } from "../renderer";
 import { shaders } from "./shaders.js";
 
 export function multiMaterial(renderer: Renderer) {
@@ -66,7 +66,7 @@ export function multiMaterial(renderer: Renderer) {
         uniforms: [
             { type: "1i", name: "numVerticesPerObject", value: 4 },
         ],
-        uniformBlocks: [
+        uniformBuffers: [
             { buffer: ub },
         ]
     });

@@ -1,12 +1,16 @@
 {
     "cSpell.words": [
         "ASTC",
+        "bezier",
+        "beziers",
         "BPPV",
         "BPTC",
         "codepaths",
+        "Delauney",
         "Framebuffers",
         "framefuffers",
         "glsl",
+        "gltf",
         "highp",
         "inspectable",
         "metalness",

@@ -1,5 +1,5 @@
-import { createWebGL2Renderer } from "@novorender/webgl2-renderer";
-import { Command, replay } from "./replay";
+import { createWebGL2Renderer } from "@novorender/renderer";
+import { Command, replay } from "./replay.js";
 
 async function nextFrame(): Promise<number> {
     return new Promise<number>(resolve => {

@@ -1,4 +1,4 @@
-import type { Renderer } from "../webgl2-renderer/index.js";
+import type { Renderer } from "../renderer";
 import { shaders } from "./shaders.js";
 
 export function multiSample(renderer: Renderer) {

@@ -1,5 +1,5 @@
 import fs from "fs";
-import { createJsonRenderer } from "../webgl2-renderer/index.js";
+import { createJsonRenderer } from "../renderer/index.js";
 import { quadTex } from "./rectTex.js";
 import { multiSample } from "./multiSample.js";
 import { vtxCol } from "./vtxCol.js";

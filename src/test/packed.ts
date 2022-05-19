@@ -1,5 +1,5 @@
 import { mat3, mat4, vec3, vec4 } from "gl-matrix";
-import type { Renderer } from "../webgl2-renderer/index.js";
+import type { Renderer } from "../renderer";
 import { shaders } from "./shaders.js";
 
 const vertices = [
