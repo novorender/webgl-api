@@ -2,6 +2,15 @@ import type { Renderer } from ".";
 import { createAllocators } from "./allocator.js";
 import { encodeArrayBufferViewAsBase64, getBufferSource, isBinaryData } from "./binary.js";
 
+export type JsonRendererCommand = readonly [functionName: keyof Renderer, args: any[]];
+
+export interface JsonRendererData {
+    readonly version: Renderer["version"];
+    readonly width: number;
+    readonly height: number;
+    readonly commands: readonly JsonRendererCommand[];
+}
+
 export function createJsonRenderer(commands: string[], width: number, height: number): Renderer {
     const target = new JsonRenderer(commands, width, height);
     return new Proxy(target, handler) as unknown as Renderer;
@@ -40,6 +49,7 @@ export class JsonRenderer {
         blobs: [] as (ArrayBuffer | null)[]
     }
     readonly allocators = createAllocators();
+    readonly version: Renderer["version"] = "0.0.1";
 
     constructor(readonly commands: string[], readonly width: number, readonly height: number) {
     }

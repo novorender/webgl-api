@@ -1,8 +1,7 @@
 import type { Renderer } from "@novorender/renderer";
+import type { JsonRendererCommand } from "@novorender/renderer/json";
 
-export type Command = readonly [name: keyof Renderer, args: any[]];
-
-export function replay(renderer: Renderer, commands: readonly Command[]) {
+export function replay(renderer: Renderer, commands: readonly JsonRendererCommand[]) {
     const startRenderIndex = commands.findIndex(c => !c[0].startsWith("create"));
     console.assert(startRenderIndex >= 0);
     const resourceCreationCommands = commands.slice(0, startRenderIndex);

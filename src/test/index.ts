@@ -32,7 +32,7 @@ async function main() {
 
     renderer.dispose();
 
-    const json = `[\n${commands.join(",\n")}\n]`;
+    const json = `{"version": "${renderer.version}", "width": ${renderer.width}, "height": ${renderer.height}, "commands": [\n${commands.join(",\n")}\n]}`;
     fs.writeFileSync("static/test.json", json);
 }
 

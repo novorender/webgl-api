@@ -1,5 +1,6 @@
+import type { JsonRendererData } from "@novorender/renderer/json.js";
 import { createWebGL2Renderer } from "@novorender/renderer";
-import { Command, replay } from "./replay.js";
+import { replay } from "./replay.js";
 
 async function nextFrame(): Promise<number> {
     return new Promise<number>(resolve => {
@@ -44,7 +45,11 @@ async function main(canvas: HTMLCanvasElement) {
     const response = await fetch(new URL("./test.json", location.origin).toString());
     if (!response.ok)
         throw new Error("test.json not found!");
-    const commands = await response.json() as readonly Command[];
+    const json = await response.json() as JsonRendererData;
+    const { version, width, height, commands } = json;
+    console.assert(version == "0.0.1");
+    canvas.width = width;
+    canvas.height = height;
     const renderer = createWebGL2Renderer(canvas, {
         alpha: false,
         antialias: false,

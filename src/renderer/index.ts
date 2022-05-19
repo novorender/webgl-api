@@ -8,6 +8,7 @@ export type Allocators = ReturnType<typeof createAllocators>;
 export interface Renderer {
     dispose(): void;
 
+    readonly version: "0.0.1";
     readonly width: number;
     readonly height: number;
     readonly allocators: Allocators;

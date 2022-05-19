@@ -56,6 +56,7 @@ async function nextFrame(): Promise<number> {
 export class WebGL2Renderer implements Renderer {
     readonly #context; // we dont want anything GL specific to leak outside
     readonly #timers: Timer[] = [];
+    readonly version = "0.0.1";
     readonly allocators = createAllocators();
 
     constructor(gl: WebGL2RenderingContext) {
