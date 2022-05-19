@@ -135,5 +135,5 @@ export async function packed(renderer: Renderer) {
     });
     renderer.draw({ count: 2, "mode": "LINES", instanceCount: numTriangles });
 
-    renderer.commit();
+    renderer.flush();
 }

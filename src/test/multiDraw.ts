@@ -43,5 +43,5 @@ export function multiDraw(renderer: Renderer) {
     // renderer.commit();
     renderer.measureEnd();
 
-    renderer.commit();
+    renderer.flush();
 }

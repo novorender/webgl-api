@@ -39,5 +39,5 @@ export function multiSample(renderer: Renderer) {
     renderer.draw({ count: 3, mode: "TRIANGLES" });
     renderer.blit({ source: fbMultisample, destination: fb, color: true, srcX1: w, srcY1: h, dstX1: w, dstY1: h });
     renderer.blit({ source: fb, destination: null, color: true, srcX1: w, srcY1: h });
-    renderer.commit();
+    renderer.flush();
 }

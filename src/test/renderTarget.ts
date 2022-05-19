@@ -42,7 +42,7 @@ export function renderTarget(renderer: Renderer, target: "texture" | "renderBuff
 
     renderer.draw({ count: 4, mode: "TRIANGLE_STRIP" });
 
-    renderer.commit();
+    renderer.flush();
 
     renderer.checkStatus();
 

@@ -43,5 +43,5 @@ export async function shuffle(renderer: Renderer) {
     renderer.measureEnd();
     // renderer.waitFrames(60);
     renderer.draw({ count: numPoints / 2, "mode": "POINTS" });
-    renderer.commit();
+    renderer.flush();
 }

@@ -75,5 +75,5 @@ export function multiMaterial(renderer: Renderer) {
     renderer.draw({ mode: "TRIANGLES", "indexType": "UNSIGNED_INT", count: numQuads * 6 });
     renderer.measureEnd();
 
-    renderer.commit();
+    renderer.flush();
 }

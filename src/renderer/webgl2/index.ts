@@ -107,9 +107,7 @@ export class WebGL2Renderer implements Renderer {
         return measurements;
     }
 
-    commit() {
-        // on webGL, this is (still) a bit of a no-op, but on angle it could be the swapBuffers() function, or in open gl, the glutSwapBuffers() function.
-        // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/commit
+    flush() {
         this.#context.gl.flush();
     }
 

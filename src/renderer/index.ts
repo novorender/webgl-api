@@ -17,7 +17,7 @@ export interface Renderer {
     measureBegin(): void;
     measureEnd(): void;
     checkStatus(message?: string): void;
-    commit(): void;
+    flush(): void;
 
     createBlob(index: BlobIndex, params: BlobParams): BlobIndex;
     deleteBlob(index: BlobIndex): void;

@@ -130,5 +130,5 @@ export function discs(renderer: Renderer, segments = 32768, useFloat: boolean = 
         renderer.draw({ count, indexType: "UNSIGNED_INT" });
     }
     renderer.measureEnd();
-    renderer.commit();
+    renderer.flush();
 }

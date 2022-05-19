@@ -33,5 +33,5 @@ export function quadTex(renderer: Renderer) {
     renderer.clear({ color: [1, 0, 1, 1] });
 
     renderer.draw({ count: 4, mode: "TRIANGLE_STRIP" });
-    renderer.commit();
+    renderer.flush();
 }

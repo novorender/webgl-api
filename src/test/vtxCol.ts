@@ -69,6 +69,6 @@ export async function vtxCol(renderer: Renderer) {
     for (let i = 0; i < 100; i++)
         renderer.draw({ count: indices.length, indexType: "UNSIGNED_INT", instanceCount: 1 });
     renderer.measureEnd();
-    renderer.commit();
+    renderer.flush();
     // renderer.measurePrint();
 }
