@@ -19,6 +19,8 @@ export function createTexture(context: RendererContext, params: TextureParams) {
     const { internalFormat, format, type, arrayType } = getFormatInfo(gl, params.internalFormat, "type" in params ? params.type : undefined);
 
     function createImage(imgTarget: typeof gl[TextureImageTargetString], data: BinarySource | null, level: number, sizeX: number, sizeY: number, sizeZ = 0) {
+        if (!data)
+            return;
         const source = data === null ? null : getBufferSource(context, data);
         const view = ArrayBuffer.isView(source) ? source : undefined;
         const buffer = ArrayBuffer.isView(view) ? view.buffer : source as ArrayBufferLike;
@@ -93,16 +95,15 @@ export function createTexture(context: RendererContext, params: TextureParams) {
             }
         }
     } else {
-        createStorage();
-        createMipLevel(0, params.image);
-
         const generateMipMaps = "generateMipMaps" in params && params.generateMipMaps;
-        if (generateMipMaps) {
-            if (isPowerOf2(width) && isPowerOf2(height) && type) {
-                gl.generateMipmap(target);
-            } else {
-                throw new Error(`Cannot generate mip maps on a texture of non-power of two sizes (${width}, ${height})!`);
-            }
+        if (generateMipMaps && !(isPowerOf2(width) && isPowerOf2(height) && type)) {
+            throw new Error(`Cannot generate mip maps on a texture of non-power of two sizes (${width}, ${height})!`);
+        }
+        const levels = generateMipMaps ? Math.log2(Math.min(width, height)) : 1;
+        createStorage(levels);
+        createMipLevel(0, params.image);
+        if (generateMipMaps && params.image) {
+            gl.generateMipmap(target);
         }
     }
     gl.bindTexture(target, null);

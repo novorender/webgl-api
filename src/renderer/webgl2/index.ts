@@ -1,4 +1,4 @@
-import type { BlobIndex, BlobParams, BlitParams, BufferIndex, BufferParams, ClearParams, CopyParams, DrawParams, FrameBufferIndex, FrameBufferParams, ProgramIndex, ProgramParams, ReadPixelsParams, RenderBufferIndex, RenderBufferParams, Renderer, SamplerIndex, SamplerParams, StateParams, TextureIndex, TextureParams, VertexArrayIndex, VertexArrayParams, Pixels } from "..";
+import type { BlobIndex, BlobParams, BlitParams, BufferIndex, BufferParams, ClearParams, CopyParams, DrawParams, FrameBufferIndex, FrameBufferParams, ProgramIndex, ProgramParams, ReadPixelsParams, RenderBufferIndex, RenderBufferParams, Renderer, SamplerIndex, SamplerParams, StateParams, TextureIndex, TextureParams, VertexArrayIndex, VertexArrayParams, Pixels, InvalidateFrameBufferParams } from "..";
 import { createContext, RendererContext } from "./context.js";
 import { createAllocators } from "../allocator.js";
 import { createTimer, Timer } from "./timer.js";
@@ -10,7 +10,7 @@ import { createVertexArray } from "./vao.js";
 import { createSampler } from "./sampler.js";
 import { createTexture } from "./texture.js";
 import { createRenderBuffer } from "./renderBuffer.js";
-import { createFrameBuffer } from "./frameBuffer.js";
+import { createFrameBuffer, invalidateFrameBuffer } from "./frameBuffer.js";
 import { clear } from "./clear.js";
 import { copy } from "./copy.js";
 import { draw } from "./draw.js";
@@ -214,6 +214,10 @@ export class WebGL2Renderer implements Renderer {
         const { framebuffers } = this.#context;
         framebuffers[index] = createFrameBuffer(this.#context, params);
         return index;
+    }
+
+    invalidateFrameBuffer(params: InvalidateFrameBufferParams) {
+        invalidateFrameBuffer(this.#context, params);
     }
 
     deleteFrameBuffer(index: FrameBufferIndex) {

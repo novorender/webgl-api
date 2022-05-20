@@ -1,8 +1,31 @@
-import type { FrameBufferBinding, FrameBufferParams, FrameBufferTextureBinding } from "..";
+import type { InvalidateFrameBufferParams, FrameBufferBinding, FrameBufferIndex, FrameBufferParams, FrameBufferTextureBinding } from "..";
 import type { RendererContext } from ".";
 
 function isTextureAttachment(attachment: FrameBufferBinding): attachment is FrameBufferTextureBinding {
     return typeof attachment == "object" && "texture" in attachment;
+}
+
+export function invalidateFrameBuffer(context: RendererContext, params: InvalidateFrameBufferParams) {
+    const { gl } = context;
+    const attachments: number[] = [];
+    if (params.depth && params.stencil) {
+        attachments.push(gl.DEPTH_STENCIL_ATTACHMENT);
+    } else if (params.depth) {
+        attachments.push(gl.DEPTH_ATTACHMENT);
+    } else if (params.stencil) {
+        attachments.push(gl.STENCIL_ATTACHMENT);
+    }
+    let i = 0;
+    for (const invalidate of params.color) {
+        if (invalidate) {
+            attachments.push(gl.COLOR_ATTACHMENT0 + i);
+        }
+        i++;
+    }
+    const frameBuffer = context.framebuffers[params.frameBuffer];
+    gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
+    gl.invalidateFramebuffer(gl.FRAMEBUFFER, attachments);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 }
 
 export function createFrameBuffer(context: RendererContext, params: FrameBufferParams): WebGLFramebuffer {

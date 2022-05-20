@@ -13,7 +13,7 @@ export interface Renderer {
     readonly height: number;
     readonly allocators: Allocators;
 
-    nextFrame(numFrames?: number): Promise<number>;
+    nextFrame(): Promise<number>;
     // pollPromises(): boolean;
     measureBegin(): void;
     measureEnd(): Promise<number>;
@@ -42,6 +42,7 @@ export interface Renderer {
     deleteRenderBuffer(index: RenderBufferIndex): void;
 
     createFrameBuffer(index: FrameBufferIndex, params: FrameBufferParams): FrameBufferIndex;
+    invalidateFrameBuffer(params: InvalidateFrameBufferParams): void;
     deleteFrameBuffer(index: FrameBufferIndex): void;
 
     // resetState(): void;
@@ -247,6 +248,13 @@ export interface FrameBufferTextureBinding {
 
 export interface FrameBufferRenderBufferBinding {
     readonly renderBuffer: RenderBufferIndex;
+}
+
+export interface InvalidateFrameBufferParams {
+    readonly frameBuffer: FrameBufferIndex;
+    readonly depth?: boolean;
+    readonly stencil?: boolean;
+    readonly color: readonly (boolean)[]; // length: [0, MAX_COLOR_ATTACHMENTS>
 }
 
 export type FrameBufferBinding = FrameBufferTextureBinding | FrameBufferRenderBufferBinding;
@@ -554,7 +562,7 @@ export type TexelTypeString =
     "UNSIGNED_INT_2_10_10_10_REV" | "UNSIGNED_INT_10F_11F_11F_REV" | "UNSIGNED_INT_5_9_9_9_REV" | "UNSIGNED_INT_24_8" | "FLOAT_32_UNSIGNED_INT_24_8_REV";
 
 export type UncompressedTextureFormatString =
-    "ALPHA" | "RGB" | "RGBA" | "LUMINANCE" | "LUMINANCE_ALPHA" |
+    // "ALPHA" | "RGB" | "RGBA" | "LUMINANCE" | "LUMINANCE_ALPHA" |
     "R8" | "R8_SNORM" | "RG8" | "RG8_SNORM" | "RGB8" | "RGB8_SNORM" |
     "RGB565" | "RGBA4" | "RGB5_A1" |
     "RGBA8" | "RGBA8_SNORM" |

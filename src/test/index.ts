@@ -20,9 +20,9 @@ async function main() {
 
     // discs(renderer);
     // multiDraw(renderer);
-    // multiSample(renderer);
+    multiSample(renderer);
     // multiMaterial(renderer);
-    quadTex(renderer);
+    // quadTex(renderer);
     // await vtxCol(renderer);
     // packed(renderer);
     // renderTarget(renderer, "texture");

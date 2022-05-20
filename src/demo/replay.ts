@@ -1,12 +1,17 @@
 import type { Pixels, Renderer } from "@novorender/renderer";
 import type { JsonRendererCommand } from "@novorender/renderer/json";
 
+function isCreationCommand(command: JsonRendererCommand) {
+    const [name] = command;
+    return name.startsWith("create") || name.startsWith("check");
+}
+
 export function replay(renderer: Renderer, commands: readonly JsonRendererCommand[]) {
-    const startRenderIndex = commands.findIndex(c => !c[0].startsWith("create"));
+    const startRenderIndex = commands.findIndex(c => !isCreationCommand(c));
     console.assert(startRenderIndex >= 0);
     const resourceCreationCommands = commands.slice(0, startRenderIndex);
     const renderCommands = commands.slice(startRenderIndex);
-    console.assert(renderCommands.every(c => !c[0].startsWith("create"))); // verify that there are no resource creation commands after the initial bulk
+    console.assert(renderCommands.every(c => !isCreationCommand(c))); // verify that there are no resource creation commands after the initial bulk
     for (const command of resourceCreationCommands) {
         const [name, ...args] = command;
         const func = renderer[name] as Function;
