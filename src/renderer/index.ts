@@ -12,11 +12,11 @@ export interface Renderer {
     readonly width: number;
     readonly height: number;
     readonly allocators: Allocators;
-    readonly measurements: readonly number[];
 
     waitFrames(numFrames: number): Promise<void>;
     measureBegin(): void;
-    measureEnd(): void;
+    measureEnd(): Promise<number>;
+    pollPromises(): boolean;
     checkStatus(message?: string): void;
     flush(): void;
 
@@ -48,9 +48,9 @@ export interface Renderer {
     state(params: StateParams): void;
     clear(params: ClearParams): void;
     blit(params: BlitParams): void;
-    readPixels(params: ReadPixelsParams): void;
     copy(params: CopyParams): void;
     draw(params: DrawParams): void;
+    readPixels(params: ReadPixelsParams): Promise<Pixels>;
 }
 
 // indices
@@ -63,6 +63,8 @@ export type SamplerIndex = number;
 export type TextureIndex = number;
 export type RenderBufferIndex = number;
 export type FrameBufferIndex = number;
+
+export type Pixels = Float32Array | Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array | Uint32Array;
 
 // blob
 

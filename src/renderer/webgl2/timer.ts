@@ -26,12 +26,15 @@ export function createTimer(gl: WebGL2RenderingContext): Timer {
 }
 
 class CPUTimer {
+    readonly measurement: Promise<number>;
+    readonly creationTime;
     #begin = 0;
     #end = 0;
-    readonly creationTime;
+    #resolve: ((value: number | PromiseLike<number>) => void) = undefined!;
 
     constructor(readonly gl: WebGL2RenderingContext) {
         this.creationTime = performance.now();
+        this.measurement = new Promise<number>(resolve => { this.#resolve = resolve; });
     }
 
     dispose() {
@@ -47,18 +50,23 @@ class CPUTimer {
         this.#end = performance.now();
     }
 
-    getMeasurement() {
-        return (this.#end - this.#begin); // in milliseconds
+    poll() {
+        this.#resolve(this.#end - this.#begin) // in milliseconds 
+        return true;
     }
 }
 
 class GPUTimer {
+    readonly measurement: Promise<number>;
     private readonly query;
     readonly #creationTime;
+    #resolve: ((value: number | PromiseLike<number>) => void) = undefined!;
+    #reject: ((reason?: any) => void) = undefined!;
 
     constructor(readonly gl: WebGL2RenderingContext, readonly ext: EXT_disjoint_timer_query_webgl2) {
         this.#creationTime = performance.now();
         this.query = gl.createQuery()!;
+        this.measurement = new Promise<number>((resolve, reject) => { this.#resolve = resolve; this.#reject = reject; });
     }
 
     dispose() {
@@ -76,30 +84,40 @@ class GPUTimer {
         gl.endQuery(ext.TIME_ELAPSED_EXT);
     }
 
-    getMeasurement() {
+    poll() {
         const { gl, ext, query } = this;
         let disjoint = gl.getParameter(ext.GPU_DISJOINT_EXT);
         if (!disjoint) {
             const available = gl.getQueryParameter(query, gl.QUERY_RESULT_AVAILABLE);
             if (available) {
                 const timeElapsed = gl.getQueryParameter(query, gl.QUERY_RESULT) as number; // in nanoseconds
-                return timeElapsed / 1000000; // in milliseconds
+                this.#resolve(timeElapsed / 1000000); // in milliseconds
             }
+            return true;
         }
-        return performance.now() > this.#creationTime + 1000; // true if measurement failed, false if still pending
+        if (performance.now() > this.#creationTime + 1000) {
+            this.#reject("timed out!");
+            return true;
+        }
+        return false;
     }
 }
 
 
 class GPUTimerTS {
+    readonly measurement: Promise<number>;
     private readonly startQuery;
     private readonly endQuery;
     readonly #creationTime;
+    #resolve: ((value: number | PromiseLike<number>) => void) = undefined!;
+    #reject: ((reason?: any) => void) = undefined!;
+
 
     constructor(readonly gl: WebGL2RenderingContext, readonly ext: EXT_disjoint_timer_query_webgl2) {
         this.#creationTime = performance.now();
         this.startQuery = gl.createQuery()!;
         this.endQuery = gl.createQuery()!;
+        this.measurement = new Promise<number>((resolve, reject) => { this.#resolve = resolve; this.#reject = reject; });
     }
 
     dispose() {
@@ -118,7 +136,7 @@ class GPUTimerTS {
         ext.queryCounterEXT(endQuery, ext.TIMESTAMP_EXT);
     }
 
-    getMeasurement() {
+    poll() {
         const { gl, ext, startQuery, endQuery } = this;
         let disjoint = gl.getParameter(ext.GPU_DISJOINT_EXT);
         if (!disjoint) {
@@ -127,9 +145,14 @@ class GPUTimerTS {
                 const timeStart = gl.getQueryParameter(startQuery, gl.QUERY_RESULT);
                 const timeEnd = gl.getQueryParameter(endQuery, gl.QUERY_RESULT);
                 const timeElapsed = timeEnd - timeStart; // in nanoseconds
-                return timeElapsed / 1000000; // in milliseconds
+                this.#resolve(timeElapsed / 1000000); // in milliseconds
+                return true;
             }
         }
-        return performance.now() > this.#creationTime + 1000; // true if measurement failed, false if still pending
+        if (performance.now() > this.#creationTime + 1000) {
+            this.#reject("timed out!");
+            return true;
+        }
+        return false;
     }
 }

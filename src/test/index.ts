@@ -25,10 +25,10 @@ async function main() {
     // quadTex(renderer);
     // await vtxCol(renderer);
     // packed(renderer);
-    // renderTarget(renderer, "texture");
+    renderTarget(renderer, "texture");
     // shuffle(renderer);
     // srgb(renderer);
-    texVertices(renderer);
+    // texVertices(renderer);
 
     renderer.dispose();
 

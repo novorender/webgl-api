@@ -51,7 +51,7 @@ async function main(canvas: HTMLCanvasElement) {
     canvas.width = width;
     canvas.height = height;
     const renderer = createWebGL2Renderer(canvas, {
-        alpha: false,
+        alpha: true,
         antialias: false,
         depth: false,
         desynchronized: false,
@@ -66,15 +66,24 @@ async function main(canvas: HTMLCanvasElement) {
     let frameCount = 0;
     try {
         const render = replay(renderer, commands);
-        await render(0);
+        const { measurement, pixels } = render(0);
+        if (pixels) {
+            pixels.then(value => {
+                showOutput(`[${[...value].join(", ")}]`);
+            })
+        } else if (measurement) {
+            measurement.then(value => {
+                measurements.push(value)
+            });
+        }
         while (!quit) {
             const time = await nextFrame();
+            renderer.pollPromises(); // resolve promises for timers and readPixels that are ready/valid
             if (run) {
                 if (lastMeasureTime === undefined) {
                     lastMeasureTime = time;
                     frameCount = 0;
                 }
-                measurements.push(...renderer.measurements);
                 if (lastMeasureTime !== undefined && time > lastMeasureTime + 1000) {
                     const interval = (time - lastMeasureTime) / 1000;
                     const avgMeasureTime = (measurements.length == 0 ? 0 : measurements.reduce((a, b) => a + b) / measurements.length);
@@ -84,17 +93,22 @@ async function main(canvas: HTMLCanvasElement) {
                     lastMeasureTime = time;
                     frameCount = 0;
                 }
-                await render(time);
+                const { measurement, pixels } = render(time);
+                if (measurement) {
+                    measurement.then(value => {
+                        measurements.push(value)
+                    });
+                } else if (pixels) {
+                    pixels.then(value => {
+                        showOutput(`[${[...value].join(", ")}]`);
+                    })
+                }
                 frameCount++;
             }
         }
         statsElement.innerText = "stopped";
     } catch (exception: any) {
-        if (typeof exception == "object" && Symbol.iterator in exception) {
-            showOutput(`[${[...exception].join(", ")}]`);
-        } else {
-            showError(exception.toString());
-        }
+        showError(exception.toString());
     }
     renderer.dispose();
 }

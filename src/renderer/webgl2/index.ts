@@ -1,4 +1,4 @@
-import type { BlobIndex, BlobParams, BlitParams, BufferIndex, BufferParams, ClearParams, CopyParams, DrawParams, FrameBufferIndex, FrameBufferParams, ProgramIndex, ProgramParams, ReadPixelsParams, RenderBufferIndex, RenderBufferParams, Renderer, SamplerIndex, SamplerParams, StateParams, TextureIndex, TextureParams, VertexArrayIndex, VertexArrayParams } from "..";
+import type { BlobIndex, BlobParams, BlitParams, BufferIndex, BufferParams, ClearParams, CopyParams, DrawParams, FrameBufferIndex, FrameBufferParams, ProgramIndex, ProgramParams, ReadPixelsParams, RenderBufferIndex, RenderBufferParams, Renderer, SamplerIndex, SamplerParams, StateParams, TextureIndex, TextureParams, VertexArrayIndex, VertexArrayParams, Pixels } from "..";
 import { createContext, RendererContext } from "./context.js";
 import { createAllocators } from "../allocator.js";
 import { createTimer, Timer } from "./timer.js";
@@ -15,7 +15,7 @@ import { clear } from "./clear.js";
 import { copy } from "./copy.js";
 import { draw } from "./draw.js";
 import { setState } from "./state.js";
-import { readPixels } from "./read.js";
+import { readPixelsAsync } from "./read.js";
 export type { RendererContext };
 
 export function createWebGL2Renderer(canvas: HTMLCanvasElement, options?: WebGLContextAttributes): Renderer {
@@ -55,7 +55,8 @@ async function nextFrame(): Promise<number> {
 
 export class WebGL2Renderer implements Renderer {
     readonly #context; // we dont want anything GL specific to leak outside
-    readonly #timers: Timer[] = [];
+    readonly #polls: (() => boolean)[] = [];
+    #timer: Timer | undefined;
     readonly version = "0.0.1";
     readonly allocators = createAllocators();
 
@@ -91,21 +92,15 @@ export class WebGL2Renderer implements Renderer {
         return this.#context.gl.drawingBufferHeight;
     }
 
-    get measurements() {
-        const timers = this.#timers;
-        const measurements: number[] = [];
-        for (let i = 0; i < timers.length; i++) {
-            const timer = timers[i];
-            const measurement = timer.getMeasurement();
-            if (typeof measurement == "number") {
-                timers.splice(i--, 1);
-                measurements.push(measurement);
-            } else if (measurement) {
-                // measurement timed out
-                timers.splice(i--, 1);
+    pollPromises() {
+        const polls = this.#polls;
+        for (let i = 0; i < polls.length; i++) {
+            const poll = polls[i];
+            if (poll()) {
+                polls.splice(i--, 1);
             }
         }
-        return measurements;
+        return polls.length > 0;
     }
 
     flush() {
@@ -120,15 +115,16 @@ export class WebGL2Renderer implements Renderer {
 
     measureBegin() {
         const timer = createTimer(this.#context.gl);
-        this.#timers.push(timer);
+        this.#timer = timer;
         timer.begin();
     }
 
-    measureEnd() {
-        const timers = this.#timers;
-        console.assert(timers.length > 0);
-        const timer = timers[timers.length - 1];
+    measureEnd(): Promise<number> {
+        const timer = this.#timer!;
         timer.end();
+        this.#timer = undefined;
+        this.#polls.push(() => timer.poll());
+        return timer.measurement;
     }
 
     createBlob(index: BlobIndex, params: BlobParams) {
@@ -238,9 +234,10 @@ export class WebGL2Renderer implements Renderer {
         blit(this.#context, params);
     }
 
-    readPixels(params: ReadPixelsParams) {
-        const pixels = readPixels(this.#context, params);
-        throw pixels;
+    readPixels(params: ReadPixelsParams): Promise<Pixels> {
+        const { promise, poll } = readPixelsAsync(this.#context, params);
+        this.#polls.push(poll);
+        return promise;
     }
 
     copy(params: CopyParams) {
