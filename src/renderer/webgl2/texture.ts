@@ -13,7 +13,6 @@ export function createTexture(context: RendererContext, params: TextureParams) {
     const { width, height } = params;
     const target = gl[params.target];
     const depth = "depth" in params ? params.depth : undefined;
-    const border = 0;
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(target, texture);
 
@@ -26,18 +25,20 @@ export function createTexture(context: RendererContext, params: TextureParams) {
         const byteOffset = view?.byteOffset ?? 0;
         const byteLength = view?.byteLength ?? buffer?.byteLength;
         const pixels = buffer === null ? null : new arrayType(buffer, byteOffset, byteLength / arrayType.BYTES_PER_ELEMENT);
+        const offsetX = 0;
+        const offsetY = 0
+        const offsetZ = 0;
         if (type) {
             if (sizeZ) {
-                gl.texImage3D(imgTarget, level, internalFormat, sizeX, sizeY, sizeZ, border, format as number, type, pixels);
+                gl.texSubImage3D(imgTarget, level, offsetX, offsetY, offsetZ, sizeX, sizeY, sizeZ, format as number, type, pixels);
             } else {
-                gl.texImage2D(imgTarget, level, internalFormat, sizeX, sizeY, border, format as number, type, pixels);
+                gl.texSubImage2D(imgTarget, level, offsetX, offsetY, sizeX, sizeY, format as number, type, pixels);
             }
         } else {
-            console.assert(pixels);
             if (sizeZ) {
-                gl.compressedTexImage3D(imgTarget, level, internalFormat, sizeX, sizeY, sizeZ, border, pixels!);
+                gl.compressedTexSubImage3D(imgTarget, level, offsetX, offsetY, offsetZ, sizeX, sizeY, sizeZ, internalFormat, pixels!);
             } else {
-                gl.compressedTexImage2D(imgTarget, level, internalFormat, sizeX, sizeY, border, pixels!);
+                gl.compressedTexSubImage2D(imgTarget, level, offsetX, offsetY, sizeX, sizeY, internalFormat, pixels!);
             }
         }
     }
@@ -72,16 +73,27 @@ export function createTexture(context: RendererContext, params: TextureParams) {
         }
     }
 
+    function createStorage(levels: number = 1) {
+        if (depth) {
+            gl.texStorage3D(target, levels, internalFormat, width, height, depth);
+        } else {
+            gl.texStorage2D(target, levels, internalFormat, width, height);
+        }
+    }
+
     if ("mipMaps" in params) {
         // mip mapped
         const { mipMaps } = params;
-        for (let level = 0; level < mipMaps.length; level++) {
+        const levels = mipMaps.length;
+        createStorage(levels);
+        for (let level = 0; level < levels; level++) {
             const mipMap = mipMaps[level];
             if (mipMap) {
                 createMipLevel(level, mipMap);
             }
         }
     } else {
+        createStorage();
         createMipLevel(0, params.image);
 
         const generateMipMaps = "generateMipMaps" in params && params.generateMipMaps;

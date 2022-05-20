@@ -214,9 +214,10 @@ export function setState(context: RendererContext, params: StateParams) {
     const program = params.program == null ? null : context.programs[params.program];
     if (params.program !== undefined) {
         gl.useProgram(program);
+        context.currentProgram = program;
     }
 
-    const currentProgram = program != undefined ? program : gl.getParameter(gl.CURRENT_PROGRAM) as WebGLProgram | null; // TODO: check performance on gl.getParameter on Angle renderer.
+    const { currentProgram } = context;
 
     if (uniforms && currentProgram != null) {
         for (const uniformParams of uniforms) {

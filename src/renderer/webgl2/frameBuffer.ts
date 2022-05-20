@@ -42,23 +42,28 @@ export function createFrameBuffer(context: RendererContext, params: FrameBufferP
         }
         i++;
     }
-    const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
-    switch (status) {
-        case gl.FRAMEBUFFER_COMPLETE:
-            break;
-        case gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-            throw new Error("Framebuffer incomplete attachment!");
-        case gl.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-            throw new Error("Framebuffer missing attachment!")
-        case gl.FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
-            throw new Error("Framebuffer incomplete dimensions!")
-        case gl.FRAMEBUFFER_UNSUPPORTED:
-            throw new Error("Framebuffer unsupported!")
-        case gl.FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
-            throw new Error("Framebuffer incomplete multisample!")
-        default:
-            throw new Error("Unknown framebuffer error!")
+
+    const debug = false; // TODO: get from build environment
+    if (debug) {
+        const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+        switch (status) {
+            case gl.FRAMEBUFFER_COMPLETE:
+                break;
+            case gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+                throw new Error("Framebuffer incomplete attachment!");
+            case gl.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+                throw new Error("Framebuffer missing attachment!")
+            case gl.FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
+                throw new Error("Framebuffer incomplete dimensions!")
+            case gl.FRAMEBUFFER_UNSUPPORTED:
+                throw new Error("Framebuffer unsupported!")
+            case gl.FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
+                throw new Error("Framebuffer incomplete multisample!")
+            default:
+                throw new Error("Unknown framebuffer error!")
+        }
     }
+
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     return frameBuffer;
 }

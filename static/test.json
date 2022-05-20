@@ -1,13 +1,11 @@
 {"version": "0.0.1", "width": 512, "height": 512, "commands": [
-["createProgram",0,{"shaders":{"vertex":"layout(location = 0) in vec4 position;\r\n\r\nvoid main() {\r\n    gl_Position = position;\r\n}\r\n","fragment":"uniform uint color;\r\nlayout(location = 0) out uint fragColor;\r\n\r\nvoid main() {\r\n    fragColor = color;\r\n}\r\n"}}],
-["createBuffer",0,{"target":"ARRAY_BUFFER","srcData":{"type":"Float32","base64":"AACAvwAAgL8AAIA/AACAvwAAgL8AAIA/AACAPwAAgD8="}}],
+["createProgram",0,{"shaders":{"vertex":"layout(location = 0) in vec2 position;\r\nout vec2 texCoord0;\r\n\r\nvoid main() {\r\n    gl_Position = vec4(position * 2. - 1., 0, 1);\r\n    texCoord0 = position;\r\n}\r\n","fragment":"uniform vec4 color;\r\nuniform sampler2D tex;\r\nin vec2 texCoord0;\r\nout vec4 fragColor;\r\n\r\nvoid main() {\r\n    // fragColor = vec4(texture(tex, texCoord0).rgb, 1);\r\n    fragColor = texture(tex, texCoord0);\r\n    // fragColor = vec4(texCoord0, 0, 1);\r\n    // fragColor = color;\r\n}\r\n"}}],
+["createBuffer",0,{"target":"ARRAY_BUFFER","srcData":{"type":"Float32","base64":"AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AACAPwAAgD8="}}],
 ["createVertexArray",0,{"attributes":[{"buffer":0,"numComponents":2}]}],
-["createTexture",0,{"target":"TEXTURE_2D","internalFormat":"R32UI","type":"UNSIGNED_INT","width":512,"height":512,"image":null}],
-["createFrameBuffer",0,{"color":[{"texture":0}]}],
-["state",{"viewport":{"width":512,"height":512},"program":0,"uniforms":[{"type":"1ui","name":"color","value":42}],"vertexArrayObject":0,"frameBuffer":0,"drawBuffers":["COLOR_ATTACHMENT0"]}],
-["clear",{"buffer":"COLOR","type":"Uint","color":[41,0,0,0]}],
+["createTexture",0,{"target":"TEXTURE_2D","internalFormat":"RGBA8","type":"UNSIGNED_BYTE","width":2,"height":2,"image":{"type":"Uint8","base64":"/wAA/wD/AP8AAP///////w=="},"generateMipMaps":true}],
+["createSampler",0,{"minificationFilter":"NEAREST","magnificationFilter":"NEAREST"}],
+["state",{"viewport":{"width":512,"height":512},"program":0,"uniforms":[{"type":"1i","name":"tex","value":0}],"vertexArrayObject":0,"textures":[{"target":"TEXTURE_2D","texture":0,"sampler":0}]}],
+["clear",{"color":[1,0,1,1]}],
 ["draw",{"count":4,"mode":"TRIANGLE_STRIP"}],
-["flush"],
-["checkStatus"],
-["readPixels",{"buffer":"COLOR_ATTACHMENT0","x":0,"y":0,"format":"RED_INTEGER","type":"UNSIGNED_INT"}]
+["flush"]
 ]}

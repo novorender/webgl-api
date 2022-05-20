@@ -22,10 +22,10 @@ async function main() {
     // multiDraw(renderer);
     // multiSample(renderer);
     // multiMaterial(renderer);
-    // quadTex(renderer);
+    quadTex(renderer);
     // await vtxCol(renderer);
     // packed(renderer);
-    renderTarget(renderer, "texture");
+    // renderTarget(renderer, "texture");
     // shuffle(renderer);
     // srgb(renderer);
     // texVertices(renderer);

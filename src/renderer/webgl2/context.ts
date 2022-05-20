@@ -8,6 +8,7 @@ export interface RendererContext extends ReadonlyContextArray {
         readonly multiDraw: WebGLMultiDrawExt;
     }
     readonly defaultState: State;
+    currentProgram: WebGLProgram | null; // we cache this here to avoid possible pipeline flush/stall when reading current state.
 };
 
 export interface WebGLMultiDrawExt {
@@ -24,7 +25,7 @@ export function createContext(gl: WebGL2RenderingContext) {
         multiDraw: gl.getExtension("WEBGL_MULTI_DRAW") as WebGLMultiDrawExt,
         // multiDraw: undefined as unknown as WebGLMultiDrawExt,
     } as const;
-    return { gl, extensions, limits, defaultState, ...contextArrays() } as const;
+    return { gl, extensions, limits, defaultState, currentProgram: null, ...contextArrays() } as const;
 }
 
 function contextArrays() {
