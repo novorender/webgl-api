@@ -26,7 +26,7 @@ export function createTimer(gl: WebGL2RenderingContext): Timer {
 }
 
 class CPUTimer {
-    readonly measurement: Promise<number>;
+    readonly promise: Promise<number>;
     readonly creationTime;
     #begin = 0;
     #end = 0;
@@ -34,7 +34,7 @@ class CPUTimer {
 
     constructor(readonly gl: WebGL2RenderingContext) {
         this.creationTime = performance.now();
-        this.measurement = new Promise<number>(resolve => { this.#resolve = resolve; });
+        this.promise = new Promise<number>(resolve => { this.#resolve = resolve; });
     }
 
     dispose() {
@@ -57,7 +57,7 @@ class CPUTimer {
 }
 
 class GPUTimer {
-    readonly measurement: Promise<number>;
+    readonly promise: Promise<number>;
     private readonly query;
     readonly #creationTime;
     #resolve: ((value: number | PromiseLike<number>) => void) = undefined!;
@@ -66,7 +66,7 @@ class GPUTimer {
     constructor(readonly gl: WebGL2RenderingContext, readonly ext: EXT_disjoint_timer_query_webgl2) {
         this.#creationTime = performance.now();
         this.query = gl.createQuery()!;
-        this.measurement = new Promise<number>((resolve, reject) => { this.#resolve = resolve; this.#reject = reject; });
+        this.promise = new Promise<number>((resolve, reject) => { this.#resolve = resolve; this.#reject = reject; });
     }
 
     dispose() {
@@ -105,7 +105,7 @@ class GPUTimer {
 
 
 class GPUTimerTS {
-    readonly measurement: Promise<number>;
+    readonly promise: Promise<number>;
     private readonly startQuery;
     private readonly endQuery;
     readonly #creationTime;
@@ -117,7 +117,7 @@ class GPUTimerTS {
         this.#creationTime = performance.now();
         this.startQuery = gl.createQuery()!;
         this.endQuery = gl.createQuery()!;
-        this.measurement = new Promise<number>((resolve, reject) => { this.#resolve = resolve; this.#reject = reject; });
+        this.promise = new Promise<number>((resolve, reject) => { this.#resolve = resolve; this.#reject = reject; });
     }
 
     dispose() {

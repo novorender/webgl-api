@@ -2,14 +2,6 @@ import type { JsonRendererData } from "@novorender/renderer/json.js";
 import { createWebGL2Renderer } from "@novorender/renderer";
 import { replay } from "./replay.js";
 
-async function nextFrame(): Promise<number> {
-    return new Promise<number>(resolve => {
-        const handle = requestAnimationFrame(time => {
-            resolve(time);
-        })
-    });
-}
-
 async function main(canvas: HTMLCanvasElement) {
     // resizeCanvasToDisplaySize(canvas);
     // const { width, height } = canvas;
@@ -77,8 +69,8 @@ async function main(canvas: HTMLCanvasElement) {
             });
         }
         while (!quit) {
-            const time = await nextFrame();
-            renderer.pollPromises(); // resolve promises for timers and readPixels that are ready/valid
+            const time = await renderer.nextFrame(); // resolve promises for timers and readPixels that are ready/valid
+            // renderer.pollPromises();
             if (run) {
                 if (lastMeasureTime === undefined) {
                     lastMeasureTime = time;

@@ -1,4 +1,4 @@
-import type { RendererContext } from ".";
+import type { PolledPromise, RendererContext } from ".";
 import type { Pixels } from "..";
 import { getPixelFormatChannels, getBufferViewType } from "./util.js";
 
@@ -14,11 +14,6 @@ export interface ReadPixelsParams {
     readonly buffer?: AttachmentType; // default: BACK
     readonly format?: PixelFormat; // default: RGBA
     readonly type?: PixelType; // default: UNSIGNED_BYTE
-}
-
-interface PolledPromise<T> {
-    readonly promise: Promise<T>;
-    poll(): boolean;
 }
 
 export function readPixelsAsync(context: RendererContext, params: ReadPixelsParams): PolledPromise<Pixels> {
@@ -53,6 +48,10 @@ export function readPixelsAsync(context: RendererContext, params: ReadPixelsPara
     gl.flush();
 
     let poll: (() => boolean) = undefined!;
+    const dispose = () => {
+        gl.deleteSync(sync);
+        gl.deleteBuffer(buf);
+    };
 
     const waitPromise = new Promise<void>((resolve, reject) => {
         poll = () => {
@@ -78,7 +77,7 @@ export function readPixelsAsync(context: RendererContext, params: ReadPixelsPara
         return pixels;
     });
 
-    return { promise, poll };
+    return { promise, poll, dispose };
 }
 
 

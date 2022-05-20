@@ -39,24 +39,11 @@ export function createWebGL2Renderer(canvas: HTMLCanvasElement, options?: WebGLC
     return new WebGL2Renderer(gl);
 }
 
-async function sleep(time: number) {
-    return new Promise(resolve => {
-        self.setTimeout(resolve, time);
-    });
-}
-
-async function nextFrame(): Promise<number> {
-    return new Promise<number>(resolve => {
-        const handle = requestAnimationFrame(time => {
-            resolve(time);
-        })
-    });
-}
-
 export class WebGL2Renderer implements Renderer {
     readonly #context; // we dont want anything GL specific to leak outside
-    readonly #polls: (() => boolean)[] = [];
+    readonly #promises: PolledPromise[] = [];
     #timer: Timer | undefined;
+    #animFrameHandle: number | undefined;
     readonly version = "0.0.1";
     readonly allocators = createAllocators();
 
@@ -65,6 +52,10 @@ export class WebGL2Renderer implements Renderer {
     }
 
     dispose() {
+        if (this.#animFrameHandle !== undefined) {
+            cancelAnimationFrame(this.#animFrameHandle);
+            this.#animFrameHandle = undefined;
+        }
         this.state(this.#context.defaultState); // make sure resources are unbound before deleting them.
         // this.resetState(); 
         const { gl } = this.#context;
@@ -82,6 +73,9 @@ export class WebGL2Renderer implements Renderer {
         for (let ar of arrays) {
             deleteArray(ar);
         }
+        for (const promise of this.#promises) {
+            promise.dispose();
+        }
     }
 
     get width() {
@@ -93,24 +87,30 @@ export class WebGL2Renderer implements Renderer {
     }
 
     pollPromises() {
-        const polls = this.#polls;
-        for (let i = 0; i < polls.length; i++) {
-            const poll = polls[i];
-            if (poll()) {
-                polls.splice(i--, 1);
+        const promises = this.#promises;
+        for (let i = 0; i < promises.length; i++) {
+            const promise = promises[i];
+            if (promise.poll()) {
+                promises.splice(i--, 1);
             }
         }
-        return polls.length > 0;
+        return promises.length > 0;
     }
 
     flush() {
         this.#context.gl.flush();
     }
 
-    async waitFrames(numFrames = 1) {
-        for (let i = 0; i < numFrames; i++) {
-            await nextFrame();
-        }
+    async nextFrame() {
+        const promise = new Promise<number>(resolve => {
+            this.#animFrameHandle = requestAnimationFrame(time => {
+                this.#animFrameHandle = undefined;
+                resolve(time);
+            })
+        });
+        const time = await promise;
+        this.pollPromises();
+        return time;
     }
 
     measureBegin() {
@@ -123,8 +123,8 @@ export class WebGL2Renderer implements Renderer {
         const timer = this.#timer!;
         timer.end();
         this.#timer = undefined;
-        this.#polls.push(() => timer.poll());
-        return timer.measurement;
+        this.#promises.push(timer);
+        return timer.promise;
     }
 
     createBlob(index: BlobIndex, params: BlobParams) {
@@ -235,9 +235,9 @@ export class WebGL2Renderer implements Renderer {
     }
 
     readPixels(params: ReadPixelsParams): Promise<Pixels> {
-        const { promise, poll } = readPixelsAsync(this.#context, params);
-        this.#polls.push(poll);
-        return promise;
+        const result = readPixelsAsync(this.#context, params);
+        this.#promises.push(result);
+        return result.promise;
     }
 
     copy(params: CopyParams) {
@@ -270,3 +270,24 @@ export class WebGL2Renderer implements Renderer {
         }
     }
 }
+
+export interface PolledPromise<T = any> {
+    promise: Promise<T>;
+    poll(): boolean;
+    dispose(): void;
+};
+
+async function nextFrame(): Promise<number> {
+    return new Promise<number>(resolve => {
+        const handle = requestAnimationFrame(time => {
+            resolve(time);
+        })
+    });
+}
+
+async function sleep(time: number) {
+    return new Promise(resolve => {
+        self.setTimeout(resolve, time);
+    });
+}
+

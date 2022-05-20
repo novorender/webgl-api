@@ -13,10 +13,10 @@ export interface Renderer {
     readonly height: number;
     readonly allocators: Allocators;
 
-    waitFrames(numFrames: number): Promise<void>;
+    nextFrame(numFrames?: number): Promise<number>;
+    // pollPromises(): boolean;
     measureBegin(): void;
     measureEnd(): Promise<number>;
-    pollPromises(): boolean;
     checkStatus(message?: string): void;
     flush(): void;
 
